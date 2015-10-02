@@ -1,0 +1,3 @@
+add_subdirectory(class_factory)
+add_subdirectory(service_registry)
+add_subdirectory(regtool)
