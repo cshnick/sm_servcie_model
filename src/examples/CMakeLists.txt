@@ -8,3 +8,8 @@ add_subdirectory(simple_component)
 add_subdirectory(simple_enum)
 add_subdirectory(simple_object)
 add_subdirectory(string_enum)
+
+add_custom_target(RegExamples
+    COMMAND cp -v ${TOP_LEVEL}/bin/RegExamples.sh ${EXECUTABLE_OUTPUT_PATH}/RegExamples.sh
+    DEPENDS ${TOP_LEVEL}/bin/RegExamples.sh
+)

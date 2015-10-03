@@ -21,6 +21,8 @@ SET (COMMON_LIBS
     dl
 )
 
+SET (TOP_LEVEL ${CMAKE_CURRENT_SOURCE_DIR})
+
 SET (service_registry service_registry)
 SET (class_factory class_factory)
 SET (regtool regtool)

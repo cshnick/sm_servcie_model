@@ -7,8 +7,8 @@ include_directories(
 
 file (GLOB SOURCE_LIST "calc_service/*.cpp")
 
-add_library(simple_component SHARED ${SOURCE_LIST})
-target_link_libraries(simple_component ${COMMON_LIBS})
+add_library(calc_service SHARED ${SOURCE_LIST})
+target_link_libraries(calc_service ${COMMON_LIBS})
 
 file (GLOB SOURCE_LIST_CLIENT "client/*.cpp")
 
