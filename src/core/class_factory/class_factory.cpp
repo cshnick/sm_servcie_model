@@ -90,7 +90,7 @@ namespace Boss
     {
       try
       {
-        assert(!i.second->GetModule().GetRefCount() && "Module has not null reference counter.");
+        //assert(!i.second->GetModule().GetRefCount() && "Module has not null reference counter.");
       }
       catch (...)
       {
