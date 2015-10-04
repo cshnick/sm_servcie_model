@@ -21,11 +21,18 @@ int main()
   {
     Boss::Loader Ldr("Registry.xml", "./" MAKE_MODULE_NAME("service_registry"),
                      "./" MAKE_MODULE_NAME("class_factory"));
-    auto Obj = Boss::CreateObject<MyNs::ISum>(MyNs::Service::Id::Sum);
-    int Res = 0;
+    //Boss::RefObjPtr<MyNs::ISum> Obj = Boss::CreateObject<MyNs::ISum>(MyNs::Service::Id::Sum);
+    int stub = 0;
+    int stub1 = 1;
+    int stub2 = 2;
+    {
+    	auto Obj = Boss::CreateObject<MyNs::ISum>(MyNs::Service::Id::Sum);
+    }
+    /*int Res = 0;
     if (Obj->CalcSum(10, 20, &Res))
       std::cout << "Failed to calc sum." << std::endl;
     std::cout << "Sum: " << Res << std::endl;
+    */
   }
   catch (std::exception const &e)
   {

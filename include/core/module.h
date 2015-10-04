@@ -14,6 +14,9 @@
 #include "private/module_ref_counter_impl.h"
 
 #include <atomic>
+#include <iostream>
+
+#include <common/sm_debug.h>
 
 namespace Boss
 {
@@ -35,11 +38,15 @@ namespace Boss
     void ModuleCounterImpl::AddRef()
     {
       GetModuleCounter().fetch_add(1, std::memory_order_relaxed);
+      std::cout << "Added: " << GetModuleCounter() << std::endl;
+      ::sm::callstack::print();
     }
 
     void ModuleCounterImpl::Release()
     {
       GetModuleCounter().fetch_sub(1, std::memory_order_relaxed);
+      std::cout << "Released: " << GetModuleCounter() << std::endl;
+      ::sm::callstack::print();
     }
 
     UInt ModuleCounterImpl::GetCounter()
