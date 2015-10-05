@@ -14,29 +14,28 @@
 #include "plugin/loader.h"
 
   #include <iostream>
+#include "common/filewatcher.h"
 
 int main()
 {
-  try
-  {
-    Boss::Loader Ldr("Registry.xml", "./" MAKE_MODULE_NAME("service_registry"),
-                     "./" MAKE_MODULE_NAME("class_factory"));
-    //Boss::RefObjPtr<MyNs::ISum> Obj = Boss::CreateObject<MyNs::ISum>(MyNs::Service::Id::Sum);
-    int stub = 0;
-    int stub1 = 1;
-    int stub2 = 2;
-    {
-    	auto Obj = Boss::CreateObject<MyNs::ISum>(MyNs::Service::Id::Sum);
-    }
-    /*int Res = 0;
-    if (Obj->CalcSum(10, 20, &Res))
-      std::cout << "Failed to calc sum." << std::endl;
-    std::cout << "Sum: " << Res << std::endl;
-    */
-  }
-  catch (std::exception const &e)
-  {
-    std::cerr << "Error: " << e.what() << std::endl;
-  }
-  return 0;
+	sm::filewatcher fw("/home/ilia/.Skype/sc.ryabokon.ilia/main.db", [](std::string str, int mod) {
+		std::cout << "File: " << str << "; mod: " << mod << std::endl;
+	});
+	fw.start();
+	try	{
+		Boss::Loader Ldr("Registry.xml", "./" MAKE_MODULE_NAME("service_registry"),
+				"./" MAKE_MODULE_NAME("class_factory"));
+		int stub = 0;
+		int stub1 = 1;
+		int stub2 = 2;
+		auto Obj = Boss::CreateObject<MyNs::ISum>(MyNs::Service::Id::Sum);
+		int Res = 0;
+		if (Obj->CalcSum(10, 20, &Res))
+			std::cout << "Failed to calc sum." << std::endl;
+		std::cout << "Sum: " << Res << std::endl;
+	}
+	catch (std::exception const &e) {
+		std::cerr << "Error: " << e.what() << std::endl;
+	}
+	return 0;
 }

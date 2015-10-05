@@ -23,7 +23,6 @@ SET (COMMON_LIBS
 )
 
 add_definitions (
-    -DHAVE_DECL_BASENAME=1 #to make demangle compilable
 )
 
 SET (TOP_LEVEL ${CMAKE_CURRENT_SOURCE_DIR})
