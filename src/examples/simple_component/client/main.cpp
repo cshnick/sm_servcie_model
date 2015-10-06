@@ -18,10 +18,6 @@
 
 int main()
 {
-	sm::filewatcher fw("/home/ilia/.Skype/sc.ryabokon.ilia/main.db", [](std::string str, int mod) {
-		std::cout << "File: " << str << "; mod: " << mod << std::endl;
-	});
-	fw.start();
 	try	{
 		Boss::Loader Ldr("Registry.xml", "./" MAKE_MODULE_NAME("service_registry"),
 				"./" MAKE_MODULE_NAME("class_factory"));

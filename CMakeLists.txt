@@ -20,6 +20,7 @@ SET (SRC_DIR
 SET (COMMON_LIBS
     dl
     iberty
+    pthread
 )
 
 add_definitions (
