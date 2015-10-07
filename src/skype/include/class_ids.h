@@ -11,9 +11,9 @@ namespace skype_sc
     {
       enum
       {
-    	DBEvent    = 0x19840a6f, // CRC32(skype_sc.service.id.DBEvent),
-        DBWatcher  = 0xb1ac99c0, // CRC32(skype_sc.service.id.DBWatcher),
-        DBObserver = 0xdf684aeb  // CRC32(skype_sc.service.id.DBObserver)
+    	DBEvent    = Boss::MakeId("skype_sc.service.id.DBEvent"),   //0x19840a6f
+        DBWatcher  = Boss::MakeId("skype_sc.service.id.DBWatcher"), //0xb1ac99c0
+        DBObserver = Boss::MakeId("skype_sc.service.id.DBObserver") //0xdf684aeb
       };
     }
   }

@@ -95,7 +95,7 @@ int main(int argc, char const **argv)
         if (Ctrl->AddService(Info.Get()) != Boss::Status::Ok)
         {
           std::cout << "Failed to reg service." << std::endl;
-          return -1;
+          return 0;
         }
         
         Save(Serializable, RegistryFilePath);

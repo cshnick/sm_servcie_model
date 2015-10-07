@@ -13,6 +13,7 @@
 
 #include "core/ibase.h"
 #include "core/core_types.h"
+#include "common/istring.h"
 
 namespace skype_sc {
 
@@ -30,6 +31,8 @@ struct IDBWatcher
 
 	virtual Boss::RetCode BOSS_CALL AddObserver() = 0;
 	virtual Boss::RetCode BOSS_CALL RemoveObserver() = 0;
+	virtual Boss::RetCode BOSS_CALL SetWatchFile(Boss::IString *) = 0;
+	virtual Boss::RetCode BOSS_CALL GetWatchFile(Boss::IString **) = 0;
 };
 
 struct IDBObserver
@@ -38,6 +41,15 @@ struct IDBObserver
 	BOSS_DECLARE_IFACEID_HEX(0x7b2fc386)  // CRC32(skype_sc.IDBObserver)
 
     virtual Boss::RetCode BOSS_CALL ReactOnDbChanged(IDBEvent*) = 0;
+};
+
+struct IService
+	: public Boss::Inherit<Boss::IBase> {
+
+	BOSS_DECLARE_IFACEID(skype_sc.IService)
+
+	virtual Boss::RetCode BOSS_CALL Start() = 0;
+	virtual Boss::RetCode BOSS_CALL Stop() = 0;
 };
 
 } //namespace skype_sc

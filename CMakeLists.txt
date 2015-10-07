@@ -17,6 +17,8 @@ SET (SRC_DIR
 	"${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
+SET (REGISTRY_FILE sc_reg.xml)
+
 SET (COMMON_LIBS
     dl
     iberty
@@ -33,5 +35,15 @@ SET (class_factory class_factory)
 SET (regtool regtool)
 
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+
+function (reg_lib reg_lib_name)
+    add_custom_command(
+    TARGET ${reg_lib_name}
+    POST_BUILD
+    COMMAND ./regtool -reg ${REGISTRY_FILE} ./lib${reg_lib_name}.so
+    WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
+    COMMENT "Registering ${reg_lib_name}"
+    )
+endfunction(reg_lib)
 
 add_subdirectory(src)

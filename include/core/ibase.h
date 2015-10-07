@@ -18,7 +18,7 @@
 #include <tuple>
 
 #define BOSS_DECLARE_IFACEID(ifaceid_) \
-  static Boss::InterfaceId const BOSSInterfaceId__ = Boss::MakeId(ifaceid_);
+  static Boss::InterfaceId const BOSSInterfaceId__ = Boss::MakeId(#ifaceid_);
 
 #define BOSS_DECLARE_IFACEID_HEX(hex_id_) \
   static Boss::InterfaceId const BOSSInterfaceId__ = hex_id_;

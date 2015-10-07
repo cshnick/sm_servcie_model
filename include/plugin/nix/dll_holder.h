@@ -39,7 +39,7 @@ namespace Boss
         : DllInst(dlopen(path.c_str(), RTLD_LAZY))
       {
         if (DllInst == nullptr)
-          throw DllHolderException("failed to load \"" + path + "\"");
+          throw DllHolderException("failed to load \"" + path + "\", dlerror: " + dlerror());
       }
       DllHolder(DllHolder &&dll)
         : DllInst(dll.DllInst)
