@@ -59,7 +59,7 @@ namespace Boss
     }
 
     // IString
-    virtual RetCode BOSS_CALL GetLength(UInt *length) const
+    virtual RetCode BOSS_CALL GetLength(UInt *length) const override
     {
       if (!length)
         return Status::InvalidArgument;
@@ -74,7 +74,7 @@ namespace Boss
       }
       return Status::Fail;
     }
-    virtual RetCode BOSS_CALL GetType(UInt *type) const
+    virtual RetCode BOSS_CALL GetType(UInt *type) const override
     {
       if (!type)
         return Status::InvalidArgument;
@@ -89,7 +89,7 @@ namespace Boss
       }
       return Status::Fail;
     }
-    virtual RetCode BOSS_CALL GetString(UInt type, IBuffer **str) const
+    virtual RetCode BOSS_CALL GetString(UInt type, IBuffer **str) const override
     {
       if (!str || *str)
         return Status::InvalidArgument;
@@ -106,7 +106,7 @@ namespace Boss
       }
       return Status::Fail;
     }
-    virtual RetCode BOSS_CALL IsEqual(IString *str) const
+    virtual RetCode BOSS_CALL IsEqual(IString *str) const override
     {
       if (!str)
         return Status::InvalidArgument;
@@ -145,7 +145,7 @@ namespace Boss
       }
       return Status::Fail;
     }
-    virtual RetCode BOSS_CALL SetString(UInt type, IBuffer *str)
+    virtual RetCode BOSS_CALL SetString(UInt type, IBuffer *str) override
     {
       if (!str || (type != AnsiString && type != Utf8String && type != UnicodeString))
         return Status::InvalidArgument;
@@ -169,7 +169,7 @@ namespace Boss
       }
       return Status::Fail;
     }
-    virtual RetCode BOSS_CALL Convert(UInt type)
+    virtual RetCode BOSS_CALL Convert(UInt type) override
     {
       try
       {
@@ -181,7 +181,7 @@ namespace Boss
       }
       return Status::Fail;
     }
-    virtual RetCode BOSS_CALL Clear()
+    virtual RetCode BOSS_CALL Clear() override
     {
       try
       {

@@ -4,16 +4,20 @@
 #include <iostream>
 #include "common/filewatcher.h"
 #include "common/string.h"
+#include "common/string_helper.h"
 
 namespace skype_sc {
 
 class DBWatcherImplPrivate {
 	friend class DBWatcherImpl;
 	DBWatcherImplPrivate(DBWatcherImpl *p_q) : q(p_q) {
+
 	}
 
 private:
 	DBWatcherImpl *q;
+
+	std::string m_filename;
 };
 
 DBWatcherImpl::DBWatcherImpl()
@@ -22,6 +26,14 @@ DBWatcherImpl::DBWatcherImpl()
 }
 
 DBWatcherImpl::~DBWatcherImpl() {
+}
+
+Boss::RetCode BOSS_CALL DBWatcherImpl::SetWatchFile(Boss::IString *p_str) {
+	//std::string str = Boss::StringHelper(p_str);
+	return Boss::Status::Ok;
+}
+Boss::RetCode BOSS_CALL DBWatcherImpl::GetWatchFile(Boss::IString **) {
+	return Boss::Status::Ok;
 }
 
 Boss::RetCode BOSS_CALL DBWatcherImpl::Start() {

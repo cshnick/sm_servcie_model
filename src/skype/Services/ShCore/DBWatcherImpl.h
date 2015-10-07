@@ -17,8 +17,8 @@ class DBWatcherImpl
 	DBWatcherImpl();
 	virtual ~DBWatcherImpl();
 
-	virtual Boss::RetCode BOSS_CALL SetWatchFile(Boss::IString *);
-	virtual Boss::RetCode BOSS_CALL GetWatchFile(Boss::IString **);
+	virtual Boss::RetCode BOSS_CALL SetWatchFile(Boss::IString *) override;
+	virtual Boss::RetCode BOSS_CALL GetWatchFile(Boss::IString **) override;
 
 	virtual Boss::RetCode BOSS_CALL Start() override;
 	virtual Boss::RetCode BOSS_CALL Stop() override;
