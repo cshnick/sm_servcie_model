@@ -9,8 +9,14 @@ namespace skype_sc {
 
 class DBObserverImpl
  :public Boss::CoClass<skype_sc::service::id::DBObserver, IDBObserver> {
+
+ public:
 	DBObserverImpl();
 	virtual ~DBObserverImpl();
+
+	virtual Boss::RetCode BOSS_CALL ReactOnDbChanged(IDBEvent*);
 };
+
+} //namespace skype_sc
 
 #endif /* SRC_SKYPE_SERVICES_CORE_DBOBSERVERIMPL_H_ */

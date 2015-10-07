@@ -9,8 +9,9 @@ namespace
   
   typedef std::tuple
     <
-      MyNs::Face1,
-      MyNs::Face2
+      skype_sc::DBObserverImpl,
+      skype_sc::DBEventImpl,
+	  skype_sc::DBWatcherImpl
     >
     ExportedCoClasses;
 
