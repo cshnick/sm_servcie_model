@@ -6,7 +6,7 @@ SET (EXECUTABLE_OUTPUT_PATH
 	"${PROJECT_BINARY_DIR}/bin"
 )
 SET(LIBRARY_OUTPUT_PATH 
-	"${PROJECT_BINARY_DIR}/bin"
+	"${PROJECT_BINARY_DIR}/lib"
 )	
 
 SET (INCLUDES_DIR 
@@ -40,7 +40,7 @@ function (reg_lib reg_lib_name)
     add_custom_command(
     TARGET ${reg_lib_name}
     POST_BUILD
-    COMMAND ./regtool -reg ${REGISTRY_FILE} ./lib${reg_lib_name}.so
+    COMMAND ./regtool -reg ${REGISTRY_FILE} ./../lib/lib${reg_lib_name}.so
     WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}
     COMMENT "Registering ${reg_lib_name}"
     )
