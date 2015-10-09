@@ -4,6 +4,22 @@ cmake_minimum_required(VERSION 2.8)
 enable_language(C)
 enable_language(CXX)
 
+function(gen_from_xml xml_file target_loc)
+    add_custom_target(${target_loc}
+        COMMAND echo -n
+        COMMENT "Generating source files from ${xml_file}"
+        DEPENDS ${xml_file}
+    )
+   add_custom_command(
+       TARGET ${target_loc}
+       POST_BUILD
+       COMMAND litesql-gen -t c++ ${xml_file}
+       MAIN_DEPENDENCY ${xml_file}
+       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+       DEPENDS ${xml_file}
+   )
+endfunction(gen_from_xml)
+
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 if (NOT APPLE)
     SET(CMAKE_INSTALL_RPATH

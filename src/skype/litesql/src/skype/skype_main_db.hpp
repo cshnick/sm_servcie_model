@@ -1,5 +1,5 @@
-#ifndef main_hpp
-#define main_hpp
+#ifndef skype_main_db_hpp
+#define skype_main_db_hpp
 #include "litesql.hpp"
 namespace SkypeDB {
 class Messages;

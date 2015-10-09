@@ -1225,8 +1225,12 @@ void writeDatabaseClass(FILE* hpp, FILE* cpp,
 
 void CppGenerator::writeCPPClasses(const ObjectModel* model) 
 {
-    string hppName = toLower(model->db->name) + ".hpp";
-    string defName = toLower(model->db->name) + "_hpp";
+    string hppName = toLower(model->db->output_filename.empty()
+			  ? model->db->name
+			  : model->db->output_filename) + ".hpp";
+    string defName = toLower(model->db->output_filename.empty()
+			  ? model->db->name
+			  : model->db->output_filename) + "_hpp";
     fprintf(hpp, "#ifndef %s\n", defName.c_str());
     fprintf(hpp, "#define %s\n", defName.c_str());
     fprintf(hpp, "#include \"litesql.hpp\"\n");
@@ -1348,7 +1352,10 @@ bool CppGenerator::generateCode(const ObjectModel* model)
 {
   sanityCheck(model->db, model->objects, model->relations);
 
-  string hppName = getOutputIncludesFilename(toLower(model->db->name)+ ".hpp");
+  string hppName = getOutputIncludesFilename(
+		  toLower(model->db->output_filename.empty()
+		  ? model->db->name
+		  : model->db->output_filename)+ ".hpp");
 
   hpp = fopen(hppName.c_str(), "w");
   if (!hpp) {
@@ -1357,7 +1364,10 @@ bool CppGenerator::generateCode(const ObjectModel* model)
     return false;
   }
 
-  string cppName = getOutputSourcesFilename(toLower(model->db->name)+ ".cpp");
+  string cppName = getOutputSourcesFilename(
+		  toLower(model->db->output_filename.empty()
+				  ? model->db->name
+				  : model->db->output_filename)+ ".cpp");
   cpp = fopen(cppName.c_str(), "w");
   if (!cpp) {
     string msg = "could not open file : " + cppName;

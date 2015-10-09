@@ -1,4 +1,4 @@
-#include "main.hpp"
+#include "skype_main_db.hpp"
 namespace SkypeDB {
 using namespace litesql;
 const litesql::FieldType Messages::Own::Id("id",A_field_type_integer,"Messages");

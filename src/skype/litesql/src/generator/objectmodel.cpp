@@ -287,6 +287,7 @@ void LitesqlParser::onStartElement(const XML_Char *fullname,
       pDb->name = safe((char*)xmlGetAttrValue(atts,"name"));
       pDb->include = safe((char*)xmlGetAttrValue(atts,"include"));
       pDb->nspace = safe((char*)xmlGetAttrValue(atts,"namespace"));
+      pDb->output_filename = safe((char*)xmlGetAttrValue(atts,"output_filename"));
       
       m_pObjectModel->db = pDb;
       Logger::report("database = " , m_pObjectModel->db->name);

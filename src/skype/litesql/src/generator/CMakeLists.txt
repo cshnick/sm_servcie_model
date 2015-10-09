@@ -1,3 +1,5 @@
+cmake_minimum_required(VERSION 2.8.11)
+
 set(libmodel_SOURCES 
 			generator.cpp generator.hpp
 			litesql-gen-xml.cpp litesql-gen-xml.hpp 

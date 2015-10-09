@@ -479,6 +479,7 @@ public:
     string name;
     string include;
     string nspace;
+    string output_filename;
 
     bool hasNamespace() const { return !nspace.empty(); }
 };

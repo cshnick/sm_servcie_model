@@ -1,16 +1,11 @@
-set(SkypeDB_SOURCES skype.cpp main.cpp main.hpp)
+set(SkypeDB_SOURCES skype.cpp skype_main_db.cpp skype_main_db.hpp)
 
-message("Cmake current source dir: ${CMAKE_CURRENT_SOURCE_DIR}")
-#add_custom_command(
-#   OUTPUT ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp ${CMAKE_CURRENT_SOURCE_DIR}/main.hpp
-#   COMMAND litesql-gen -v -t c++ main_skype.xml
-#   MAIN_DEPENDENCY main_skype.xml
-#   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-#   DEPENDS litesql-gen main_skype.xml
-#)
+gen_from_xml(main_skype.xml fake_skype_db)
 
 add_executable(skype_db ${SkypeDB_SOURCES})
-
 target_link_libraries (skype_db litesql litesql-util ${BACKEND_LIBRARIES})
 
+add_dependencies(skype_db fake_skype_db)
 
+add_library(skype_dbs SHARED ${SkypeDB_SOURCES})
+target_link_libraries (skype_dbs litesql litesql-util ${BACKEND_LIBRARIES})
