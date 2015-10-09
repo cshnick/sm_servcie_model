@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<!DOCTYPE database SYSTEM "litesql.dtd"> 
+<database name="main" db_name="main" namespace="SkypeDB">
+  <object name="Messages" db_name="Messages">
+    <field name="is_permanent" db_name="is_permanent" type="integer" />
+    <field name="convo_id" db_name="convo_id" type="integer"/>
+    <field name="chatname" db_name="chatname" type="string"/>
+    <field name="author" db_name="author" type="string"/>
+    <field name="from_dispname" db_name="from_dispname" type="string"/>
+    <field name="author_was_live" db_name="author_was_live" type="integer"/>
+    <field name="guid" db_name="guid" type="blob"/>
+    <field name="dialog_partner" db_name="dialog_partner" type="string"/>
+    <field name="timestamp" db_name="timestamp" type="integer"/>
+    <!-- <field name="type" db_name="type" type="integer"/> -->
+    <field name="sending_status" db_name="sending_status" type="integer"/>
+    <field name="consumption_status" db_name="consumption_status" type="integer"/>
+    <field name="edited_by" db_name="edited_by" type="string"/>
+    <field name="edited_timestamp" db_name="edited_timestamp" type="integer"/>
+    <field name="param_key" db_name="param_key" type="integer"/>
+    <field name="param_value" db_name="param_value" type="integer"/>
+    <field name="body_xml" db_name="body_xml" type="string"/>
+    <field name="identities" db_name="identities" type="string"/>
+    <field name="reason" db_name="reason" type="string"/>
+    <field name="leavereason" db_name="leavereason" type="integer"/>
+    <field name="participant_count" db_name="participant_count" type="integer"/>
+    <field name="error_code" db_name="error_code" type="integer"/>
+    <field name="chatmsg_type" db_name="chatmsg_type" type="integer"/>
+    <field name="chatmsg_status" db_name="chatmsg_status" type="integer"/>
+    <field name="body_is_rawxml" db_name="body_is_rawxml" type="integer"/>
+    <field name="oldoptions" db_name="oldoptions" type="integer"/>
+    <field name="newoptions" db_name="newoptions" type="integer"/>
+    <field name="newrole" db_name="newrole" type="integer"/>
+    <field name="pk_id" db_name="pk_id" type="integer"/>
+    <field name="crc" db_name="crc" type="integer"/>
+    <field name="remote_id" db_name="remote_id" type="integer"/>
+    <field name="call_guid" db_name="call_guid" type="string"/>
+
+  </object>
+  <object name="Chats" db_name="Chats">
+    <field name="is_permanent" db_name="is_permanent" type="integer" />
+    <field name="name" db_name="name" type="string"/>
+    <field name="options" db_name="options" type="integer"/>
+    <field name="friendlyname" db_name="friendlyname" type="string"/>
+    <field name="description" db_name="description" type="string"/>
+    <field name="timestamp" db_name="timestamp" type="integer"/>
+    <field name="activity_timestamp" db_name="activity_timestamp" type="integer"/>
+    <field name="dialog_partner" db_name="dialog_partner" type="string"/>
+    <field name="adder" db_name="adder" type="string"/>
+    <!-- <field name="type" db_name="type" type="integer"/> -->
+    <field name="mystatus" db_name="mystatus" type="integer"/>
+    <field name="myrole" db_name="myrole" type="integer"/>
+    <field name="posters" db_name="posters" type="string"/>
+    <field name="participants" db_name="participants" type="string"/>
+    <field name="applicants" db_name="applicants" type="string"/>
+    <field name="banned_users" db_name="banned_users" type="string"/>
+    <field name="name_text" db_name="name_text" type="string"/>
+    <field name="topic" db_name="topic" type="string"/>
+    <field name="topic_xml" db_name="topic_xml" type="string"/>
+    <field name="guidelines" db_name="guidelines" type="string"/>
+    <field name="picture" db_name="picture" type="blob"/>
+    <field name="alertstring" db_name="alertstring" type="string"/>
+    <field name="is_bookmarked" db_name="is_bookmarked" type="integer"/>
+    <field name="passwordhint" db_name="passwordhint" type="string"/>
+    <field name="unconsumed_suppressed_msg" db_name="unconsumed_suppressed_msg" type="integer"/>
+    <field name="unconsumed_normal_msg" db_name="unconsumed_normal_msg" type="integer"/>
+    <field name="unconsumed_elevated_msg" db_name="unconsumed_elevated_msg" type="integer"/>
+    <field name="unconsumed_msg_voice" db_name="unconsumed_msg_voice" type="integer"/>
+    <field name="activemembers" db_name="activemembers" type="string"/>
+    <field name="state_data" db_name="state_data" type="blob"/>
+    <field name="lifesigns" db_name="lifesigns" type="integer"/>
+    <field name="last_change" db_name="last_change" type="integer" />
+    <field name="first_unread_message" db_name="first_unread_message" type="integer"/>
+    <field name="pk_type" db_name="pk_type" type="integer"/>
+    <field name="dbpath" db_name="dbpath" type="string"/>
+    <field name="split_friendlyname" db_name="split_friendlyname" type="string"/>
+    <field name="conv_dbid" db_name="conv_dbid" type="integer"/>
+
+  </object>
+  
+  <object name="Contacts" db_name="Contacts">
+    <field name="is_permanent" type="integer" />
+    <!-- <field name="type" type="integer" />  -->
+    <field name="skypename" type="string"/>
+    <field name="pstnnumber" type="string"/>
+    <field name="aliases" type="string"/>
+    <field name="fullname" type="string"/>
+    <field name="birthday" type="integer" />
+    <field name="gender" type="integer" />
+    <field name="languages" type="string"/>
+    <field name="country" type="string"/>
+    <field name="province" type="string"/>
+    <field name="city" type="string"/>
+    <field name="phone_home" type="string"/>
+    <field name="phone_office" type="string"/>
+    <field name="phone_mobile" type="string"/>
+    <field name="emails" type="string"/>
+    <field name="hashed_emails" type="string"/>
+    <field name="homepage" type="string"/>
+    <field name="about" type="string"/>
+    <!-- <field name="avatar_image" type="blob"/>  -->
+    <field name="mood_text" type="string"/>
+    <field name="rich_mood_text" type="string"/>
+    <field name="timezone" type="integer" />
+    <!-- <field name="capabilities" type="blob"/>  -->
+    <field name="profile_timestamp" type="integer" />
+    <field name="nrof_authed_buddies" type="integer" />
+    <field name="ipcountry" type="string"/>
+    <field name="avatar_timestamp" type="integer" />
+    <field name="mood_timestamp" type="integer" />
+    <field name="received_authrequest" type="string"/>
+    <field name="authreq_timestamp" type="integer" />
+    <field name="lastonline_timestamp" type="integer" />
+    <field name="availability" type="integer" />
+    <field name="displayname" type="string"/>
+    <field name="refreshing" type="integer" />
+    <field name="given_authlevel" type="integer" />
+    <field name="given_displayname" type="string"/>
+    <field name="assigned_speeddial" type="string"/>
+    <field name="assigned_comment" type="string"/>
+    <field name="alertstring" type="string"/>
+    <field name="lastused_timestamp" type="integer" />
+    <field name="authrequest_count" type="integer" />
+    <field name="assigned_phone1" type="string"/>
+    <field name="assigned_phone1_label" type="string"/>
+    <field name="assigned_phone2" type="string"/>
+    <field name="assigned_phone2_label" type="string"/>
+    <field name="assigned_phone3" type="string"/>
+    <field name="assigned_phone3_label" type="string"/>
+    <field name="buddystatus" type="integer" />
+    <field name="isauthorized" type="integer" />
+    <field name="popularity_ord" type="integer" />
+    <field name="external_id" type="string"/>
+    <field name="external_system_id" type="string"/>
+    <field name="isblocked" type="integer" />
+    <!-- <field name="authorization_certificate" type="blob"/> -->
+    <field name="certificate_send_count" type="integer" />
+    <field name="account_modification_serial_nr" type="integer" />
+    <!-- <field name="saved_directory_blob" type="blob"/> -->
+    <field name="nr_of_buddies" type="integer" />
+    <field name="server_synced" type="integer" />
+    <field name="contactlist_track" type="integer" />
+    <field name="last_used_networktime" type="integer" />
+    <field name="authorized_time" type="integer" />
+    <field name="sent_authrequest" type="string"/>
+    <field name="sent_authrequest_time" type="integer" />
+    <field name="sent_authrequest_serial" type="integer" />
+    <!-- <field name="buddyblob" type="blob"/> -->
+    <!-- <field name="cbl_future" type="blob"/> -->
+    <field name="node_capabilities" type="integer" />
+    <field name="revoked_auth" type="integer" />
+    <field name="added_in_shared_group" type="integer" />
+    <field name="in_shared_group" type="integer" />
+    <!-- <field name="authreq_history" type="blob"/> -->
+    <!-- <field name="profile_attachments" type="blob"/> -->
+    <field name="stack_version" type="integer" />
+    <field name="offline_authreq_id" type="integer" />
+    <field name="node_capabilities_and" type="integer" />
+    <field name="authreq_crc" type="integer" />
+    <field name="authreq_src" type="integer" />
+    <field name="pop_score" type="integer" />
+    <!-- <field name="authreq_nodeinfo" type="blob"/> -->
+    <field name="main_phone" type="string"/>
+    <field name="unified_servants" type="string"/>
+    <field name="phone_home_normalized" type="string"/>
+    <field name="phone_office_normalized" type="string"/>
+    <field name="phone_mobile_normalized" type="string"/>
+    <field name="sent_authrequest_initmethod" type="integer" />
+    <field name="authreq_initmethod" type="integer" />
+    <!-- <field name="verified_email" type="blob"/> -->
+    <!-- <field name="verified_company" type="blob"/> -->
+    <field name="sent_authrequest_extrasbitmask" type="integer" />
+    <field name="liveid_cid" type="string"/>
+   <!--  <field name="extprop_tags" type="string"/> -->
+   <!--  <field name="extprop_away_since" type="integer" /> -->
+  </object>
+</database>
