@@ -8,8 +8,8 @@ class MutexStub {
 	MutexStub& operator=(const MutexStub&) = delete;
 
 public:
-	void Lock() {}
-	void UnLock() {}
+	void lock() {}
+	void unlock() {}
 };
 
 } //namespace Boss

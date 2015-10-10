@@ -1,7 +1,7 @@
 /*
  * nix_filewatcher.h
  *
- *  Created on: 05 окт. 2015 г.
+ *  Created on: 05 пїЅпїЅпїЅ. 2015 пїЅ.
  *      Author: ilia
  */
 
@@ -110,7 +110,11 @@ private:
 			char *p;
 			struct inotify_event *event;
 
-			inotify_wd = inotify_add_watch(inotify_fd, m_filename.c_str(), IN_ALL_EVENTS);
+			constexpr uint mask = IN_MODIFY | IN_ATTRIB | IN_CLOSE_WRITE
+					  | IN_CLOSE_NOWRITE | IN_OPEN | IN_MOVED_FROM
+					  | IN_MOVED_TO | IN_CREATE | IN_DELETE
+					  | IN_DELETE_SELF | IN_MOVE_SELF;
+			inotify_wd = inotify_add_watch(inotify_fd, m_filename.c_str(), mask);
 			if (inotify_wd == -1) {
 				throw FileWatcherException("inotify_add_watch");
 			}

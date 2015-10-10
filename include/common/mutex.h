@@ -4,7 +4,7 @@
 #ifdef _WIN32
 #include "win/win_mutex.h"
 #else
-#ifdef _OS_NIX
+#ifdef __unix__
 #include "nix/nix_mutex.h"
 #else
 #error Unsupporetd OS

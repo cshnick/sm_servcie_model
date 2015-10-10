@@ -21,7 +21,6 @@ SET (REGISTRY_FILE sc_reg.xml)
 
 SET (COMMON_LIBS
     dl
-    iberty
     pthread
 )
 

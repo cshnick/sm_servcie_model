@@ -15,6 +15,7 @@
 #include "factory_tools.h"
 #include "../core/module.h"
 #include "../common/iservice_locator.h"
+#include <iostream>
 
 namespace Boss
 {
@@ -108,8 +109,10 @@ namespace Boss
     { \
       return Boss::CoClassSet<Boss::Private::ModuleExportedCoClasses>::CreateObject(clsId).QueryInterface(inst); \
     } \
-    catch (std::exception const &) \
+    catch (std::exception const &e) \
     { \
+      std::cout << "An exception generated during BossCreateObject module symbol; " \
+		        << "Reason: " << e.what() << std::endl; \
       return Boss::Status::Fail; \
     } \
     return Boss::Status::Fail; \

@@ -20,6 +20,21 @@ function(gen_from_xml xml_file target_loc)
    )
 endfunction(gen_from_xml)
 
+function(gen_file_depend xml_file output_files)
+    set_source_files_properties(output_files
+        PROPERTIES SYMBOLIC TRUE
+    )
+    add_custom_command(
+       OUTPUT ${output_files}
+       COMMAND litesql-gen -t c++ ${xml_file}
+       COMMAND cp -rvf "${CMAKE_CURRENT_SOURCE_DIR}/../../../files/history.db" "${EXECUTABLE_OUTPUT_PATH}"
+       MAIN_DEPENDENCY ${xml_file}
+       DEPENDS ${xml_file}
+       WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+       COMMENT "Generating source ${output_files} from ${xml_file}"
+    )
+endfunction(gen_file_depend)
+
 SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 if (NOT APPLE)
     SET(CMAKE_INSTALL_RPATH

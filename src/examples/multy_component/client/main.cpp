@@ -19,8 +19,8 @@ int main()
 {
   try
   {
-    Boss::Loader Ldr("Registry.xml", "./" MAKE_MODULE_NAME("service_registry"),
-                     "./" MAKE_MODULE_NAME("class_factory"));
+    Boss::Loader Ldr("Registry.xml", "../lib/" MAKE_MODULE_NAME("service_registry"),
+                     "../lib/" MAKE_MODULE_NAME("class_factory"));
     auto Obj1 = Boss::CreateObject<MyNs::IFace1>(MyNs::Service::Id::Face1);
     if (Obj1->Method() != Boss::Status::Ok)
       std::cerr << "Failed to call IFace1::Method" << std::endl;

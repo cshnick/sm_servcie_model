@@ -20,6 +20,8 @@
 #include <pthread.h>
 #include <dlfcn.h>
 #include <assert.h>
+#include <cxxabi.h>
+#include "string.h"
 
 namespace Boss
 {
@@ -28,6 +30,25 @@ namespace Boss
 
   namespace Private
   {
+	std::string DemangledDlError() {
+		constexpr unsigned int buf_sz = 256;
+		char *buff = new char[buf_sz];
+		memset(buff, '\0', buf_sz);
+		const char *err = dlerror();
+		if (!err) {
+			return "";
+		}
+		strcpy(buff, err);
+		const char *search = "undefined symbol";
+		char *pos = strstr(buff, search);
+		if (pos != buff) { //Substring found, demangle mangled func
+			pos += strlen(search) +2; //": "
+			int status; size_t length = buf_sz;
+			char* ret = abi::__cxa_demangle(pos,
+					pos, &length, &status);
+		}
+		return buff;
+	}
 
     class DllHolder final
     {
@@ -39,7 +60,7 @@ namespace Boss
         : DllInst(dlopen(path.c_str(), RTLD_LAZY))
       {
         if (DllInst == nullptr)
-          throw DllHolderException("failed to load \"" + path + "\", dlerror: " + dlerror());
+          throw DllHolderException("failed to load \"" + path + "\", dlerror: " + DemangledDlError());
       }
       DllHolder(DllHolder &&dll)
         : DllInst(dll.DllInst)

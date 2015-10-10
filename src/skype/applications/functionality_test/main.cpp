@@ -14,18 +14,20 @@ int main()
 {
   try
   {
-    Boss::Loader Ldr("sc_reg.xml", "./" MAKE_MODULE_NAME("service_registry"),
-                     "./" MAKE_MODULE_NAME("class_factory"));
+    Boss::Loader Ldr("sc_reg.xml", "../lib/" MAKE_MODULE_NAME("service_registry"),
+                     "../lib/" MAKE_MODULE_NAME("class_factory"));
     auto watcher = Boss::CreateObject<skype_sc::IDBWatcher>(skype_sc::service::id::DBWatcher);
 
-    watcher->SetWatchFile(Base<String>::Create("/home/ilia/.Skype/sc.ryabokon.ilia/main.db").Get());
+    watcher->SetWatchFile(Base<String>::Create("/home/ilia/.Skype/luxa_ryabic/main.db").Get());
 
     Boss::RefObjQIPtr<skype_sc::IService> service(watcher);
     service->Start();
 
     RefObjPtr<IString> str;
 
-    sleep(20);
+    while (true) {
+    	sleep(5);
+    }
   }
   catch (std::exception const &e)
   {

@@ -3,7 +3,7 @@
 
 #include <pthread.h>
 
-#include "../exceptions.h"
+#include "core/exceptions.h"
 
 #include <memory>
 #include <cstring>
@@ -46,11 +46,11 @@ public:
 	~MutexImpl() {
 		pthread_mutex_destroy(MutexHandle.get());
 	}
-	void Lock() {
+	void lock() {
 		if (pthread_mutex_lock(MutexHandle.get()))
 			throw MutexException("Can't lock mutex");
 	}
-	void UnLock() {
+	void unlock() {
 		if (pthread_mutex_unlock(MutexHandle.get()))
 			throw MutexException("Can't unlock mutex");
 	}

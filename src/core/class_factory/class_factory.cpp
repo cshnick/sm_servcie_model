@@ -17,6 +17,8 @@
 
 #include <chrono>
 #include <set>
+#include <exception>
+#include <iostream>
 
 #include <assert.h>
 
@@ -150,9 +152,14 @@ namespace Boss
         }
       }
     }
-    catch (...)
+    catch (const std::runtime_error &e)
     {
-      return Status::Fail;
+    	std::cout << "std::runtime_error generated: " << e.what() << std::endl;
+    	return Status::Fail;
+    }
+    catch (...) {
+    	std::cout << "failed to create object" << std::endl;
+    	return Status::Fail;
     }
     return Status::NotFound;
   }
