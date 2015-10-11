@@ -1,16 +1,17 @@
 #include "plugin/module.h"
+
+#include "DBCtrlImp.h"
 #include "DBEventImpl.h"
 #include "DBObserverImpl.h"
-#include "DBWatcherImpl.h"
 
 namespace
 {
   typedef std::tuple
     <
+	  skype_sc::DBControllerImpl,
       skype_sc::DBObserverImpl,
-      skype_sc::DBEventImpl,
-	  skype_sc::DBWatcherImpl
-    >
+      skype_sc::DBEventImpl
+      >
     ExportedCoClasses;
 }
 

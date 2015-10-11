@@ -1,4 +1,4 @@
-#include "DBWatcherImpl.h"
+#include "DBCtrlImp.h"
 
 #include <atomic>
 #include <iostream>
@@ -14,6 +14,7 @@
 
 #include "litesql.hpp"
 #include "skype_main_db.hpp"
+#include "history_main_db.hpp"
 
 using Boss::RefObjPtr;
 using Boss::RefObjQIPtr;
@@ -27,11 +28,17 @@ using namespace litesql;
 
 namespace skype_sc {
 
-class DBWatcherImplPrivate {
-	friend class DBWatcherImpl;
-	DBWatcherImplPrivate(DBWatcherImpl *p_q)
+class DBControllerImplPrivate {
+	friend class DBControllerImpl;
+	DBControllerImplPrivate(DBControllerImpl *p_q)
 		: q(p_q)
 		, m_watching_bound_line(-1) {
+		try {
+			history_db.reset(new HistoryDB::history("sqlite3", std::string("database=") + "history.db"));
+		} catch (const std::exception &e) {
+			cout << "Error in constructor DBControllerImplPrivate" << endl;
+			throw std::runtime_error(e.what());
+		}
 	}
 	void start() {
 		if (m_filename.empty()) {
@@ -91,48 +98,59 @@ class DBWatcherImplPrivate {
 		return atoi(skype_main->query(q)[0][0]);
 	}
 
+	void import() {
+
+	}
+
 private:
-	DBWatcherImpl *q;
+	DBControllerImpl *q;
 	std::string m_filename;
 	std::unique_ptr<sm::filewatcher> m_w = nullptr;
 	atomic_int m_watching_bound_line;
 	Boss::Mutex m_mutex;
 	std::unique_ptr<SkypeDB::main> skype_main;
+	std::unique_ptr<HistoryDB::history> history_db;
 };
 
-DBWatcherImpl::DBWatcherImpl()
-	: d(new DBWatcherImplPrivate(this)) {
+DBControllerImpl::DBControllerImpl()
+	: d(new DBControllerImplPrivate(this)) {
 
 }
 
-DBWatcherImpl::~DBWatcherImpl() {
+DBControllerImpl::~DBControllerImpl() {
 }
 
-Boss::RetCode BOSS_CALL DBWatcherImpl::SetWatchFile(Boss::IString *p_str) {
+Boss::RetCode BOSS_CALL DBControllerImpl::Import() {
+	cout << "DBControllerImpl::Import()" << endl;
+	d->import();
+	return Boss::Status::Ok;
+}
+
+Boss::RetCode BOSS_CALL DBControllerImpl::SetWatchFile(Boss::IString *p_str) {
 	d->setWatchFile(StringHelper(p_str).GetString<IString::AnsiString>());
 	return Boss::Status::Ok;
 }
-Boss::RetCode BOSS_CALL DBWatcherImpl::GetWatchFile(Boss::IString **pptr) {
+Boss::RetCode BOSS_CALL DBControllerImpl::GetWatchFile(Boss::IString **pptr) {
 	RefObjPtr<IString> str = Base<String>::Create(d->m_filename);
 	return str.QueryInterface(pptr);
 }
 
-Boss::RetCode BOSS_CALL DBWatcherImpl::Start() {
+Boss::RetCode BOSS_CALL DBControllerImpl::Start() {
 	std::cout << "DBWatcherImpl::Start()" << std::endl;
 	d->start();
 	return Boss::Status::Ok;
 }
-Boss::RetCode BOSS_CALL DBWatcherImpl::Stop() {
+Boss::RetCode BOSS_CALL DBControllerImpl::Stop() {
 	std::cout << "DBWatcherImpl::Stop()" << std::endl;
 	d->stop();
 	return Boss::Status::Ok;
 }
 
-Boss::RetCode BOSS_CALL DBWatcherImpl::AddObserver() {
+Boss::RetCode BOSS_CALL DBControllerImpl::AddObserver() {
 	std::cout << "DBWatcherImpl::AddObserver()" << std::endl;
 	return Boss::Status::Ok;
 }
-Boss::RetCode BOSS_CALL DBWatcherImpl::RemoveObserver() {
+Boss::RetCode BOSS_CALL DBControllerImpl::RemoveObserver() {
 	std::cout << "DBWatcherImpl::RemoveObserver()" << std::endl;
 	return Boss::Status::Ok;
 }

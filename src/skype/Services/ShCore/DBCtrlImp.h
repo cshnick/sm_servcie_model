@@ -1,5 +1,5 @@
-#ifndef SRC_SKYPE_SERVICES_SHCORE_DBWATCHERIMPL_H_
-#define SRC_SKYPE_SERVICES_SHCORE_DBWATCHERIMPL_H_
+#ifndef SRC_SKYPE_SERVICES_SHCORE_DBCTRLIMP_H_
+#define SRC_SKYPE_SERVICES_SHCORE_DBCTRLIMP_H_
 
 #include "../../include/ifaces.h"
 #include "../../include/class_ids.h"
@@ -9,13 +9,18 @@
 
 namespace skype_sc {
 
-class DBWatcherImplPrivate;
-class DBWatcherImpl
- :public Boss::CoClass <skype_sc::service::id::DBWatcher, IDBWatcher, IService> {
+class DBControllerImplPrivate;
+class DBControllerImpl
+ :public Boss::CoClass <skype_sc::service::id::DBControler
+  	  , IDBController
+	  , IDBWatcher
+	  , IService> {
 
  public:
-	DBWatcherImpl();
-	virtual ~DBWatcherImpl();
+	DBControllerImpl();
+	virtual ~DBControllerImpl();
+
+	virtual Boss::RetCode BOSS_CALL Import() override;
 
 	virtual Boss::RetCode BOSS_CALL SetWatchFile(Boss::IString *) override;
 	virtual Boss::RetCode BOSS_CALL GetWatchFile(Boss::IString **) override;
@@ -28,10 +33,10 @@ class DBWatcherImpl
 
  private:
 
-	friend class DBWatcherImplPrivate;
-	std::unique_ptr<DBWatcherImplPrivate> d;
+	friend class DBControllerImplPrivate;
+	std::unique_ptr<DBControllerImplPrivate> d;
 };
 
 } //namespace skype_sc
 
-#endif /* SRC_SKYPE_SERVICES_SHCORE_DBWATCHERIMPL_H_ */
+#endif /* SRC_SKYPE_SERVICES_SHCORE_DBCTRLIMP_H_ */

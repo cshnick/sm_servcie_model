@@ -17,13 +17,20 @@
 
 namespace skype_sc {
 
+struct IDBController
+		: public Boss::Inherit<Boss::IBase> {
+
+	BOSS_DECLARE_IFACEID(skype_sc.DBController) //0x52dd9648
+
+	virtual Boss::RetCode BOSS_CALL Import() = 0;
+};
+
 struct IDBEvent
 		: public Boss::Inherit<Boss::IBase> {
 
 	BOSS_DECLARE_IFACEID_HEX(0xb5413303) //skype_sc.IDBEvent
 };
 
-  
 struct IDBWatcher
 		: public Boss::Inherit<Boss::IBase>  {
 
@@ -46,7 +53,7 @@ struct IDBObserver
 struct IService
 	: public Boss::Inherit<Boss::IBase> {
 
-	BOSS_DECLARE_IFACEID(skype_sc.IService)
+	BOSS_DECLARE_IFACEID(skype_sc.IService) //0xc8946780
 
 	virtual Boss::RetCode BOSS_CALL Start() = 0;
 	virtual Boss::RetCode BOSS_CALL Stop() = 0;

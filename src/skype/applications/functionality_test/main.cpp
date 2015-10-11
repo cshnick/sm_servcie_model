@@ -16,7 +16,9 @@ int main()
   {
     Boss::Loader Ldr("sc_reg.xml", "../lib/" MAKE_MODULE_NAME("service_registry"),
                      "../lib/" MAKE_MODULE_NAME("class_factory"));
-    auto watcher = Boss::CreateObject<skype_sc::IDBWatcher>(skype_sc::service::id::DBWatcher);
+
+    auto ctrl = Boss::CreateObject<skype_sc::IDBController>(skype_sc::service::id::DBControler);
+    RefObjQIPtr<skype_sc::IDBWatcher> watcher(ctrl);
 
     watcher->SetWatchFile(Base<String>::Create("/home/ilia/.Skype/luxa_ryabic/main.db").Get());
 
