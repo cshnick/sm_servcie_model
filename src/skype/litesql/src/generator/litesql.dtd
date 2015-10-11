@@ -2,16 +2,20 @@
 <!ATTLIST database
           name ID #REQUIRED
           namespace NMTOKEN #REQUIRED
-	  include CDATA #IMPLIED>
+          db_name NMTOKEN #IMPLIED
+          output_filename NMTOKEN #IMPLIED
+          include CDATA #IMPLIED>
 
 <!ELEMENT object ((field)*,(method)*,(index)*)>
 <!ATTLIST object
           name ID #REQUIRED
-          inherits NMTOKEN #IMPLIED>
+          inherits NMTOKEN #IMPLIED
+          db_name NMTOKEN #IMPLIED>
 
 <!ELEMENT field (value)*>
 <!ATTLIST field 
           name NMTOKEN #REQUIRED
+          db_name NMTOKEN #IMPLIED
           type (boolean|integer|bigint|string|float|double|time|date|datetime|blob) #REQUIRED
           default CDATA #IMPLIED
           indexed (true|false) "false"

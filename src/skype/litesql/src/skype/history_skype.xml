@@ -1,37 +1,37 @@
 <?xml version="1.0"?>
-<!DOCTYPE database SYSTEM "litesql.dtd"> 
-<database name="history" db_name="history" namespace="HistoryDB" output_filename="history_main_db">
+<!DOCTYPE database SYSTEM "../generator/litesql.dtd"> 
+<database name="history" db_name="history" namespace="HistoryDB" output_filename="history_main_db"> 
 
-<object name="Chats" db_name="Chats"
-	<field name="id" type="integer" />
+<object name="Chats" db_name="Chats">
+	<!-- <field name="id" type="integer" /> -->
 	<field name="owner" type="string"/>
 	<field name="name" type="string"/>
-	<field creationtime="chat_id" type="integer" />
+	<field name="creationtime" type="integer" />
 </object>
 
-<object name="ChatUsers" db_name="ChatUsers"
+<object name="ChatUsers" db_name="ChatUsers">
 	<field name="user_id" type="integer" />
 	<field name="chat_id" type="integer" />
 </object>
 
-<object name="info" db_name="info"
-	<field name="id" type="integer" />
+<object name="info" db_name="info">
+	<!-- <field name="id" type="integer" /> -->
 	<field name="dbversion" type="integer" />
 </object>
 
 <object name="Messages" db_name="Messages">
-	<field name="id" type="integer" />
+	<!--  <field name="id" type="integer" /> -->
+	<!--  <field name="type" type="integer" />  -->
 	<field name="body" type="string"/>
 	<field name="chat_id" type="integer" />
 	<field name="timestamp" type="integer" />
 	<field name="sender_id" type="integer" />
 	<field name="skype_id" type="integer" />
 	<field name="skype_timestamp" type="integer" />
-	<field name="type" type="integer" />
 </object>
 
 <object name="Users" db_name="Users">
-	<field name="id" type="integer" />
+	<!-- <field name="id" type="integer" /> -->
 	<field name="displayname" type="string"/>
 	<field name="name" type="string" />
 	<field name="lastmessagetime" type="integer" />

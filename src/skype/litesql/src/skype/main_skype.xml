@@ -9,12 +9,12 @@
     <field name="from_dispname" db_name="from_dispname" type="string"/>
     <field name="author_was_live" db_name="author_was_live" type="integer"/>
     <field name="guid" db_name="guid" type="blob"/>
-    <field name="dialog_partner" db_name="dialog_partner" type="string"/>  
+    <field name="dialog_partner" db_name="dialog_partner" type="string"/>
     <field name="timestamp" db_name="timestamp" type="integer"/>
     <!-- <field name="type" db_name="type" type="integer"/> -->
     <field name="sending_status" db_name="sending_status" type="integer"/>
-    <field name="consumption_status" db_name="consumption_status" type="integer"/>
-    <field name="edited_by" db_name="edited_by" type="string"/>
+    <field name="consumption_status" db_name="consumption_status" type="integer"/> 
+    <field name="edited_by" db_name="edited_by" type="string"/> 
     <field name="edited_timestamp" db_name="edited_timestamp" type="integer"/>
     <field name="param_key" db_name="param_key" type="integer"/>
     <field name="param_value" db_name="param_value" type="integer"/> 
