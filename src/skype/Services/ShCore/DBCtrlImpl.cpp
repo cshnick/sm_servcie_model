@@ -3,6 +3,8 @@
 #include <atomic>
 #include <iostream>
 #include <algorithm>
+#include <unordered_map>
+#include <functional>
 
 #include "core/error_codes.h"
 #include "core/ref_obj_qi_ptr.h"
@@ -26,6 +28,8 @@ using Boss::Base;
 using std::atomic; using std::atomic_int; using std::cout; using std::endl;
 using namespace litesql;
 
+void(*g_func)() = [](){};
+
 namespace skype_sc {
 
 class DBControllerImplPrivate {
@@ -35,6 +39,9 @@ class DBControllerImplPrivate {
 		, m_watching_bound_line(-1) {
 		try {
 			history_db.reset(new HistoryDB::history("sqlite3", std::string("database=") + "history.db"));
+			if (history_db->needsUpgrade()) {
+				history_db->upgrade();
+			}
 		} catch (const std::exception &e) {
 			cout << "Error in constructor DBControllerImplPrivate" << endl;
 			throw std::runtime_error(e.what());
@@ -53,6 +60,7 @@ class DBControllerImplPrivate {
 				throw runtime_error(e.what());
 			}
 		}
+		cacheHistoryDB();
 		m_watching_bound_line = check_bound();
 		if (!m_w.get()) {
 			m_w.reset(new sm::filewatcher(m_filename, [this](std::string file, int mode) {
@@ -66,8 +74,16 @@ class DBControllerImplPrivate {
 					auto ms = select<SkypeDB::Messages>
 						(*skype_main, (Messages::Id > oldBound) && (Messages::Id <= newBound))
 						     .orderBy(Messages::Id, false).all();
-					std::for_each(ms.begin(), ms.end(), [](const Messages &m) {
+					std::for_each(ms.begin(), ms.end(), [this](const Messages &m) {
 						cout << m.id << " - " << m.body_xml << std::endl;
+						HistoryDB::Messages hm(*history_db);
+						hm.skype_id = m.id;
+						hm.timestamp = (unsigned)time(nullptr);
+						hm.skype_timestamp = m.timestamp;
+						hm.body = conv_body(m.body_xml);
+//						hm.chat_id = setHistoryDefault<HistoryDB::Chats>(m.chatname);
+
+						hm.update();
 					});
 					m_watching_bound_line = newBound;
 					//cout << "New message detected; latest index: " << m_watching_bound_line << endl;
@@ -102,6 +118,34 @@ class DBControllerImplPrivate {
 
 	}
 
+	std::string conv_body(const std::string &resource) {
+		std::string converted(resource);
+		return std::move(converted);
+	}
+
+	template<typename T>
+	using DBCache = std::unordered_map<std::string, T>;
+
+	void cacheHistoryDB() {
+		//void(**fn)();// = [](const HistoryDB::Chats &row){};
+		wrap<&::g_func>();
+//		cache<HistoryDB::Chats, &func>();
+//		cache<HistoryDB::Users>();
+	}
+
+	template<typename T, void(**lambda)(const T &)>
+	void cache() {
+		auto rows = select<T>(*history_db).all();
+//		std::for_each(rows.begin(), rows.end(), [this](const T &row) {
+//			std::get<DBCache<T, U>>(m_hash).emplace(row.id, std::move(row));
+//		});
+		std::for_each(rows.begin(), rows.end(), *lambda);
+	}
+	template<void(**fn)()>
+	void wrap() {
+		*(fn);
+	}
+
 private:
 	DBControllerImpl *q;
 	std::string m_filename;
@@ -110,6 +154,8 @@ private:
 	Boss::Mutex m_mutex;
 	std::unique_ptr<SkypeDB::main> skype_main;
 	std::unique_ptr<HistoryDB::history> history_db;
+	std::tuple< DBCache<HistoryDB::Chats>,
+			    DBCache<HistoryDB::Users> > m_hash;
 };
 
 DBControllerImpl::DBControllerImpl()

@@ -8,8 +8,8 @@ include_directories(
 )
 
 set (OWN_LIBS
+    litesql
     skype_dbs
-    #litesql
 )
 message("own libs: ${OWN_LIBS}")
 

@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 2.8.11)
 
+set(CMAKE_C_COMPILER "gcc-4.9")
+set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.9")
+
 project(Sm)
 
 SET (EXECUTABLE_OUTPUT_PATH 
@@ -33,7 +36,7 @@ SET (service_registry service_registry)
 SET (class_factory class_factory)
 SET (regtool regtool)
 
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wno-vla")
 
 function (reg_lib reg_lib_name)
     add_custom_command(
