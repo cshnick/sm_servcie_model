@@ -29,6 +29,10 @@ using std::atomic; using std::atomic_int; using std::cout; using std::endl;
 using namespace litesql;
 
 void(*g_func)() = [](){};
+void gl_func(const HistoryDB::Chats &) {
+
+}
+
 
 namespace skype_sc {
 
@@ -81,7 +85,8 @@ class DBControllerImplPrivate {
 						hm.timestamp = (unsigned)time(nullptr);
 						hm.skype_timestamp = m.timestamp;
 						hm.body = conv_body(m.body_xml);
-//						hm.chat_id = setHistoryDefault<HistoryDB::Chats>(m.chatname);
+						hm.chat_id = setHistoryDefault<HistoryDB::Chats>(m.chatname).id;
+
 
 						hm.update();
 					});
@@ -124,26 +129,25 @@ class DBControllerImplPrivate {
 	}
 
 	template<typename T>
+	T setHistoryDefault(const std::string &key) {
+		litesql::Field<std::string> HistoryDB::Chats::*p_name = &HistoryDB::Chats::name;
+		return std::get<DBCache<T>>(m_hash).at(key);
+	}
+
+	template<typename T>
 	using DBCache = std::unordered_map<std::string, T>;
 
 	void cacheHistoryDB() {
-		//void(**fn)();// = [](const HistoryDB::Chats &row){};
-		wrap<&::g_func>();
-//		cache<HistoryDB::Chats, &func>();
-//		cache<HistoryDB::Users>();
+		auto chats_func = [this](const HistoryDB::Chats &row) {
+			std::get<DBCache<HistoryDB::Chats>>(m_hash).emplace(row.name, std::move(row));
+		};
+		cache<HistoryDB::Chats, decltype(chats_func)>(chats_func);
 	}
 
-	template<typename T, void(**lambda)(const T &)>
-	void cache() {
+	template<typename T, typename F>
+	void cache(F func) {
 		auto rows = select<T>(*history_db).all();
-//		std::for_each(rows.begin(), rows.end(), [this](const T &row) {
-//			std::get<DBCache<T, U>>(m_hash).emplace(row.id, std::move(row));
-//		});
-		std::for_each(rows.begin(), rows.end(), *lambda);
-	}
-	template<void(**fn)()>
-	void wrap() {
-		*(fn);
+		std::for_each(rows.begin(), rows.end(), func);
 	}
 
 private:
