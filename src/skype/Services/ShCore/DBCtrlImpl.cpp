@@ -28,10 +28,9 @@ using Boss::Base;
 using std::atomic; using std::atomic_int; using std::cout; using std::endl;
 using namespace litesql;
 
-void(*g_func)() = [](){};
-void gl_func(const HistoryDB::Chats &) {
-
-}
+struct schats {
+	std::string method;
+};
 
 
 namespace skype_sc {
@@ -138,17 +137,26 @@ class DBControllerImplPrivate {
 	using DBCache = std::unordered_map<std::string, T>;
 
 	void cacheHistoryDB() {
-		auto chats_func = [this](const HistoryDB::Chats &row) {
-			std::get<DBCache<HistoryDB::Chats>>(m_hash).emplace(row.name, std::move(row));
-		};
-		cache<HistoryDB::Chats, decltype(chats_func)>(chats_func);
+		cache_m<HistoryDB::Chats, &HistoryDB::Chats::name>();
+		cache_m<HistoryDB::Users, &HistoryDB::Users::name>();
 	}
 
 	template<typename T, typename F>
-	void cache(F func) {
+	void cache_func(F func) {
 		auto rows = select<T>(*history_db).all();
 		std::for_each(rows.begin(), rows.end(), func);
 	}
+
+	template<typename T, typename litesql::Field<string> T::*m>
+	void cache_m() {
+		auto rows = select<T>(*history_db).all();
+		std::for_each(rows.begin(), rows.end(), [this] (const T &row) {
+			std::get<DBCache<T>>(m_hash).emplace(row.*m, std::move(row));
+		});
+	}
+
+//	template<typename T>
+//	struct
 
 private:
 	DBControllerImpl *q;
