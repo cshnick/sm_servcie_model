@@ -28,11 +28,6 @@ using Boss::Base;
 using std::atomic; using std::atomic_int; using std::cout; using std::endl;
 using namespace litesql;
 
-struct schats {
-	std::string method;
-};
-
-
 namespace skype_sc {
 
 class DBControllerImplPrivate {
@@ -58,12 +53,13 @@ class DBControllerImplPrivate {
 		if (!skype_main.get()) {
 			try {
 				skype_main.reset(new SkypeDB::main("sqlite3", std::string("database=") + m_filename));
-				skype_main->verbose = true;
+				skype_main->verbose = false;
 			} catch (const std::exception &e) {
 				throw runtime_error(e.what());
 			}
 		}
 		cacheHistoryDB();
+		import();
 		m_watching_bound_line = check_bound();
 		if (!m_w.get()) {
 			m_w.reset(new sm::filewatcher(m_filename, [this](std::string file, int mode) {
@@ -77,17 +73,14 @@ class DBControllerImplPrivate {
 					auto ms = select<SkypeDB::Messages>
 						(*skype_main, (Messages::Id > oldBound) && (Messages::Id <= newBound))
 						     .orderBy(Messages::Id, false).all();
-					std::for_each(ms.begin(), ms.end(), [this](const Messages &m) {
-						cout << m.id << " - " << m.body_xml << std::endl;
-						HistoryDB::Messages hm(*history_db);
-						hm.skype_id = m.id;
-						hm.timestamp = (unsigned)time(nullptr);
-						hm.skype_timestamp = m.timestamp;
-						hm.body = conv_body(m.body_xml);
-						hm.chat_id = setHistoryDefault<HistoryDB::Chats>(m.chatname).id;
-
-
-						hm.update();
+					std::for_each(ms.begin(), ms.end(), [this](const Messages &source) {
+						cout << source.id << " - " << source.body_xml << std::endl;
+						HistoryDB::Messages dest(*history_db);
+						dest.skype_id = (int)source.id;
+						dest.timestamp = (int)time(nullptr);
+						dest.skype_timestamp = (int)source.timestamp;
+						dest.body = conv_body(source.body_xml);
+						dest.chat_id = static_cast<int>(getOrCreate<HistoryDB::Chats>(source.chatname).id);
 					});
 					m_watching_bound_line = newBound;
 					//cout << "New message detected; latest index: " << m_watching_bound_line << endl;
@@ -118,8 +111,43 @@ class DBControllerImplPrivate {
 		return atoi(skype_main->query(q)[0][0]);
 	}
 
-	void import() {
+	int calcPercent(int cnt, int i) {
+	    int offset = 9;
+	    double status_move = (cnt - i) << offset;
+	    double percentage = status_move / cnt;
+	    int status_res = static_cast<int>(percentage * 100) >> offset;
 
+	    return status_res;
+	}
+
+	template<typename T = void>
+	void import() {
+		std::unordered_map<std::string, std::string> chats_hash, contacts_hash;
+		auto contacts_cursor = select<SkypeDB::Contacts>(*skype_main).cursor();
+		for (;contacts_cursor.rowsLeft();contacts_cursor++) {
+			SkypeDB::Contacts ctc = *contacts_cursor;
+			contacts_hash.emplace(ctc.skypename, ctc.fullname);
+		}
+		auto chats = select<SkypeDB::Chats>(*skype_main).orderBy(SkypeDB::Chats::Activity_timestamp, false).all();
+		auto cnt = chats.size();
+		auto i = cnt;
+		int percent = 0;
+		int cut = 20;
+		for (SkypeDB::Chats ch: chats) {
+			chats_hash.emplace(ch.name, ch.friendlyname);
+			auto messages = select<SkypeDB::Messages>(*skype_main, SkypeDB::Messages::Chatname == ch.name).orderBy(SkypeDB::Messages::Timestamp, false).all();
+			for (SkypeDB::Messages sky_mes: messages) {
+				percent = calcPercent(cnt, i);
+				cout << "\r" << percent << "%" << flush;
+				HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
+				hm.update();
+			}
+			--i;
+			if (!--cut) {
+//				break;
+			}
+		}
+		cout << endl << "Succeeded!" << endl;
 	}
 
 	std::string conv_body(const std::string &resource) {
@@ -128,17 +156,25 @@ class DBControllerImplPrivate {
 	}
 
 	template<typename T>
-	T setHistoryDefault(const std::string &key) {
-		litesql::Field<std::string> HistoryDB::Chats::*p_name = &HistoryDB::Chats::name;
-		return std::get<DBCache<T>>(m_hash).at(key);
+	T getOrCreate(const std::string &key) {
+		auto hash = std::get<DBCache<T>>(m_hash);
+		if (hash.count(key)) {
+			return hash.at(key);
+		}
+		auto element = select<SkypeDB::Chats>(*skype_main, SkypeDB::Chats::Name == key).all().at(0);
+		auto converted = convert<SkypeDB::Chats, T>(element);
+		converted.update();
+		cache_element<T>(std::move(converted));
+
+		return converted;
 	}
 
 	template<typename T>
 	using DBCache = std::unordered_map<std::string, T>;
 
 	void cacheHistoryDB() {
-		cache_m<HistoryDB::Chats, &HistoryDB::Chats::name>();
-		cache_m<HistoryDB::Users, &HistoryDB::Users::name>();
+		cache_m<HistoryDB::Chats>();
+		cache_m<HistoryDB::Users>();
 	}
 
 	template<typename T, typename F>
@@ -147,16 +183,22 @@ class DBControllerImplPrivate {
 		std::for_each(rows.begin(), rows.end(), func);
 	}
 
-	template<typename T, typename litesql::Field<string> T::*m>
+	template<typename T>
 	void cache_m() {
 		auto rows = select<T>(*history_db).all();
-		std::for_each(rows.begin(), rows.end(), [this] (const T &row) {
-			std::get<DBCache<T>>(m_hash).emplace(row.*m, std::move(row));
+		std::for_each(rows.begin(), rows.end(), [this] (T &row) {
+			auto method = row.cache_field();
+			std::get<DBCache<T>>(m_hash).emplace(row.*method, std::move(row));
 		});
 	}
 
-//	template<typename T>
-//	struct
+	template<typename T>
+	void cache_element(T &&element) {
+		auto method = element.cache_field();
+		std::get<DBCache<T>>(m_hash).emplace(element.*method, element);
+	}
+	template<typename From, typename To>
+	To convert(const From &);
 
 private:
 	DBControllerImpl *q;
@@ -168,7 +210,29 @@ private:
 	std::unique_ptr<HistoryDB::history> history_db;
 	std::tuple< DBCache<HistoryDB::Chats>,
 			    DBCache<HistoryDB::Users> > m_hash;
-};
+}; //class DBControllerImplPrivate
+
+template<>
+HistoryDB::Messages DBControllerImplPrivate::convert(const SkypeDB::Messages &source) {
+	HistoryDB::Messages dest(*history_db);
+	dest.skype_id = (int)source.id;
+	dest.timestamp = (int)time(nullptr);
+	dest.skype_timestamp = (int)source.timestamp;
+	dest.body = conv_body(source.body_xml);
+	dest.chat_id = static_cast<int>(getOrCreate<HistoryDB::Chats>(source.chatname).id);
+
+	return std::move(dest);
+}
+
+template<>
+HistoryDB::Chats DBControllerImplPrivate::convert(const SkypeDB::Chats &source) {
+	HistoryDB::Chats dest(*history_db);
+	dest.name = static_cast<std::string>(source.name);
+	dest.owner= static_cast<std::string>(source.friendlyname);
+	dest.creationtime = static_cast<int>(source.timestamp);
+
+	return std::move(dest);
+}
 
 DBControllerImpl::DBControllerImpl()
 	: d(new DBControllerImplPrivate(this)) {

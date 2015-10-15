@@ -34,6 +34,7 @@ public:
     Chats(const litesql::Database& db, const litesql::Record& rec);
     Chats(const Chats& obj);
     const Chats& operator=(const Chats& obj);
+    virtual litesql::Field<std::string> Chats::* cache_field();
 protected:
     std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
     void create();
@@ -214,6 +215,7 @@ public:
     Users(const litesql::Database& db, const litesql::Record& rec);
     Users(const Users& obj);
     const Users& operator=(const Users& obj);
+    virtual litesql::Field<std::string> Users::* cache_field();
 protected:
     std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
     void create();

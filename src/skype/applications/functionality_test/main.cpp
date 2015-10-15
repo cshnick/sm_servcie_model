@@ -8,7 +8,45 @@
 #include <common/string.h>
 #include "common/string_helper.h"
 
+#include "cxxabi.h"
+
 using namespace Boss;
+
+struct Frobnigator
+{
+	Frobnigator() {
+	}
+
+    template<typename T>
+    void foo();
+
+    template<typename T>
+    void bar();
+};
+
+template<typename T>
+void Frobnigator::bar()
+{
+}
+
+template<typename T>
+void Frobnigator::foo()
+{
+    bar<T>();
+}
+
+template<>
+void Frobnigator::bar<bool>()
+{
+}
+
+template<>      // error
+void Frobnigator::foo<bool>()
+{
+    bar<bool>();
+}
+
+
 
 int main()
 {

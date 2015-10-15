@@ -7,6 +7,7 @@
 	<field name="owner" type="string"/>
 	<field name="name" type="string"/>
 	<field name="creationtime" type="integer" />
+	<method name="cache_field" returntype="litesql::Field&lt;std::string&gt; Chats::*" />
 </object>
 
 <object name="ChatUsers" db_name="ChatUsers">
@@ -35,6 +36,7 @@
 	<field name="displayname" type="string"/>
 	<field name="name" type="string" />
 	<field name="lastmessagetime" type="integer" />
+	<method name="cache_field" returntype="litesql::Field&lt;std::string&gt; Users::*" />
 </object>
 
 </database>

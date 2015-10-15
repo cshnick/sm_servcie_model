@@ -74,7 +74,7 @@
     <field name="dbpath" db_name="dbpath" type="string"/>
     <field name="split_friendlyname" db_name="split_friendlyname" type="string"/>
     <field name="conv_dbid" db_name="conv_dbid" type="integer"/>
-
+    <method name="cache_field" returntype="litesql::Field&lt;std::string&gt; Chats::*" />
   </object>
   
   <object name="Contacts" db_name="Contacts">
