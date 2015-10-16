@@ -394,7 +394,7 @@ void Messages::update() {
 }
 void Messages::del() {
     if (!typeIsCorrect()) {
-        std::auto_ptr<Messages> p(upcastCopy());
+        std::unique_ptr<Messages> p(upcastCopy());
         p->delRelations();
         p->onDelete();
         p->delRecord();
@@ -408,10 +408,10 @@ void Messages::del() {
 bool Messages::typeIsCorrect() const {
     return type == type__;
 }
-std::auto_ptr<Messages> Messages::upcast() const {
-    return auto_ptr<Messages>(new Messages(*this));
+std::unique_ptr<Messages> Messages::upcast() const {
+    return unique_ptr<Messages>(new Messages(*this));
 }
-std::auto_ptr<Messages> Messages::upcastCopy() const {
+std::unique_ptr<Messages> Messages::upcastCopy() const {
     Messages* np = new Messages(*this);
     np->id = id;
     np->type = type;
@@ -447,7 +447,7 @@ std::auto_ptr<Messages> Messages::upcastCopy() const {
     np->remote_id = remote_id;
     np->call_guid = call_guid;
     np->inDatabase = inDatabase;
-    return auto_ptr<Messages>(np);
+    return unique_ptr<Messages>(np);
 }
 std::ostream & operator<<(std::ostream& os, Messages o) {
     os << "-------------------------------------" << std::endl;
@@ -921,7 +921,7 @@ void Chats::update() {
 }
 void Chats::del() {
     if (!typeIsCorrect()) {
-        std::auto_ptr<Chats> p(upcastCopy());
+        std::unique_ptr<Chats> p(upcastCopy());
         p->delRelations();
         p->onDelete();
         p->delRecord();
@@ -935,10 +935,10 @@ void Chats::del() {
 bool Chats::typeIsCorrect() const {
     return type == type__;
 }
-std::auto_ptr<Chats> Chats::upcast() const {
-    return auto_ptr<Chats>(new Chats(*this));
+std::unique_ptr<Chats> Chats::upcast() const {
+    return unique_ptr<Chats>(new Chats(*this));
 }
-std::auto_ptr<Chats> Chats::upcastCopy() const {
+std::unique_ptr<Chats> Chats::upcastCopy() const {
     Chats* np = new Chats(*this);
     np->id = id;
     np->type = type;
@@ -979,7 +979,7 @@ std::auto_ptr<Chats> Chats::upcastCopy() const {
     np->split_friendlyname = split_friendlyname;
     np->conv_dbid = conv_dbid;
     np->inDatabase = inDatabase;
-    return auto_ptr<Chats>(np);
+    return unique_ptr<Chats>(np);
 }
 std::ostream & operator<<(std::ostream& os, Chats o) {
     os << "-------------------------------------" << std::endl;
@@ -1877,7 +1877,7 @@ void Contacts::update() {
 }
 void Contacts::del() {
     if (!typeIsCorrect()) {
-        std::auto_ptr<Contacts> p(upcastCopy());
+        std::unique_ptr<Contacts> p(upcastCopy());
         p->delRelations();
         p->onDelete();
         p->delRecord();
@@ -1891,10 +1891,10 @@ void Contacts::del() {
 bool Contacts::typeIsCorrect() const {
     return type == type__;
 }
-std::auto_ptr<Contacts> Contacts::upcast() const {
-    return auto_ptr<Contacts>(new Contacts(*this));
+std::unique_ptr<Contacts> Contacts::upcast() const {
+    return unique_ptr<Contacts>(new Contacts(*this));
 }
-std::auto_ptr<Contacts> Contacts::upcastCopy() const {
+std::unique_ptr<Contacts> Contacts::upcastCopy() const {
     Contacts* np = new Contacts(*this);
     np->id = id;
     np->type = type;
@@ -1979,7 +1979,7 @@ std::auto_ptr<Contacts> Contacts::upcastCopy() const {
     np->sent_authrequest_extrasbitmask = sent_authrequest_extrasbitmask;
     np->liveid_cid = liveid_cid;
     np->inDatabase = inDatabase;
-    return auto_ptr<Contacts>(np);
+    return unique_ptr<Contacts>(np);
 }
 std::ostream & operator<<(std::ostream& os, Contacts o) {
     os << "-------------------------------------" << std::endl;
@@ -2068,6 +2068,864 @@ std::ostream & operator<<(std::ostream& os, Contacts o) {
     os << "-------------------------------------" << std::endl;
     return os;
 }
+const litesql::FieldType Conversations::Own::Id("id",A_field_type_integer,"Conversations");
+const std::string Conversations::type__("Conversations");
+const std::string Conversations::table__("Conversations");
+const std::string Conversations::sequence__("Conversations_seq");
+const litesql::FieldType Conversations::Id("id",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Type("type",A_field_type_string,table__);
+const litesql::FieldType Conversations::Is_permanent("is_permanent",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Identity("identity",A_field_type_string,table__);
+const litesql::FieldType Conversations::Live_host("live_host",A_field_type_string,table__);
+const litesql::FieldType Conversations::Live_start_timestamp("live_start_timestamp",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Live_is_muted("live_is_muted",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Alert_string("alert_string",A_field_type_string,table__);
+const litesql::FieldType Conversations::Is_bookmarked("is_bookmarked",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Given_displayname("given_displayname",A_field_type_string,table__);
+const litesql::FieldType Conversations::Displayname("displayname",A_field_type_string,table__);
+const litesql::FieldType Conversations::Local_livestatus("local_livestatus",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Inbox_timestamp("inbox_timestamp",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Inbox_message_id("inbox_message_id",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Unconsumed_suppressed_messages("unconsumed_suppressed_messages",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Unconsumed_normal_messages("unconsumed_normal_messages",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Unconsumed_elevated_messages("unconsumed_elevated_messages",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Unconsumed_messages_voice("unconsumed_messages_voice",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Active_vm_id("active_vm_id",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Context_horizon("context_horizon",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Consumption_horizon("consumption_horizon",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Last_activity_timestamp("last_activity_timestamp",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Active_invoice_message("active_invoice_message",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Spawned_from_convo_id("spawned_from_convo_id",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Pinned_order("pinned_order",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Creator("creator",A_field_type_string,table__);
+const litesql::FieldType Conversations::Creation_timestamp("creation_timestamp",A_field_type_integer,table__);
+const litesql::FieldType Conversations::My_status("my_status",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Opt_joining_enabled("opt_joining_enabled",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Opt_access_token("opt_access_token",A_field_type_string,table__);
+const litesql::FieldType Conversations::Opt_entry_level_rank("opt_entry_level_rank",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Opt_disclose_history("opt_disclose_history",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Opt_history_limit_in_days("opt_history_limit_in_days",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Opt_admin_only_activities("opt_admin_only_activities",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Passwordhint("passwordhint",A_field_type_string,table__);
+const litesql::FieldType Conversations::Meta_name("meta_name",A_field_type_string,table__);
+const litesql::FieldType Conversations::Meta_topic("meta_topic",A_field_type_string,table__);
+const litesql::FieldType Conversations::Meta_guidelines("meta_guidelines",A_field_type_string,table__);
+const litesql::FieldType Conversations::Meta_picture("meta_picture",A_field_type_blob,table__);
+const litesql::FieldType Conversations::Premium_video_status("premium_video_status",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Premium_video_is_grace_period("premium_video_is_grace_period",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Guid("guid",A_field_type_string,table__);
+const litesql::FieldType Conversations::Dialog_partner("dialog_partner",A_field_type_string,table__);
+const litesql::FieldType Conversations::Meta_description("meta_description",A_field_type_string,table__);
+const litesql::FieldType Conversations::Premium_video_sponsor_list("premium_video_sponsor_list",A_field_type_string,table__);
+const litesql::FieldType Conversations::Mcr_caller("mcr_caller",A_field_type_string,table__);
+const litesql::FieldType Conversations::Chat_dbid("chat_dbid",A_field_type_integer,table__);
+const litesql::FieldType Conversations::History_horizon("history_horizon",A_field_type_integer,table__);
+const litesql::FieldType Conversations::History_sync_state("history_sync_state",A_field_type_string,table__);
+const litesql::FieldType Conversations::Extprop_windowpos_x("extprop_windowpos_x",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Extprop_windowpos_y("extprop_windowpos_y",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Extprop_windowpos_w("extprop_windowpos_w",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Extprop_windowpos_h("extprop_windowpos_h",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Extprop_window_roster_visible("extprop_window_roster_visible",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Extprop_window_splitter_layout("extprop_window_splitter_layout",A_field_type_string,table__);
+const litesql::FieldType Conversations::Extprop_hide_from_history("extprop_hide_from_history",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Extprop_window_detached("extprop_window_detached",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Is_blocked("is_blocked",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Last_message_id("last_message_id",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Picture("picture",A_field_type_string,table__);
+const litesql::FieldType Conversations::Is_p2p_migrated("is_p2p_migrated",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Thread_version("thread_version",A_field_type_string,table__);
+const litesql::FieldType Conversations::Consumption_horizon_set_at("consumption_horizon_set_at",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Alt_identity("alt_identity",A_field_type_string,table__);
+const litesql::FieldType Conversations::In_migrated_thread_since("in_migrated_thread_since",A_field_type_integer,table__);
+void Conversations::initValues() {
+}
+void Conversations::defaults() {
+    id = 0;
+    is_permanent = 0;
+    live_start_timestamp = 0;
+    live_is_muted = 0;
+    is_bookmarked = 0;
+    local_livestatus = 0;
+    inbox_timestamp = 0;
+    inbox_message_id = 0;
+    unconsumed_suppressed_messages = 0;
+    unconsumed_normal_messages = 0;
+    unconsumed_elevated_messages = 0;
+    unconsumed_messages_voice = 0;
+    active_vm_id = 0;
+    context_horizon = 0;
+    consumption_horizon = 0;
+    last_activity_timestamp = 0;
+    active_invoice_message = 0;
+    spawned_from_convo_id = 0;
+    pinned_order = 0;
+    creation_timestamp = 0;
+    my_status = 0;
+    opt_joining_enabled = 0;
+    opt_entry_level_rank = 0;
+    opt_disclose_history = 0;
+    opt_history_limit_in_days = 0;
+    opt_admin_only_activities = 0;
+    meta_picture = Blob();
+    premium_video_status = 0;
+    premium_video_is_grace_period = 0;
+    chat_dbid = 0;
+    history_horizon = 0;
+    extprop_windowpos_x = 0;
+    extprop_windowpos_y = 0;
+    extprop_windowpos_w = 0;
+    extprop_windowpos_h = 0;
+    extprop_window_roster_visible = 0;
+    extprop_hide_from_history = 0;
+    extprop_window_detached = 0;
+    is_blocked = 0;
+    last_message_id = 0;
+    is_p2p_migrated = 0;
+    consumption_horizon_set_at = 0;
+    in_migrated_thread_since = 0;
+}
+Conversations::Conversations(const litesql::Database& db)
+     : litesql::Persistent(db), id(Id), type(Type), is_permanent(Is_permanent), identity(Identity), live_host(Live_host), live_start_timestamp(Live_start_timestamp), live_is_muted(Live_is_muted), alert_string(Alert_string), is_bookmarked(Is_bookmarked), given_displayname(Given_displayname), displayname(Displayname), local_livestatus(Local_livestatus), inbox_timestamp(Inbox_timestamp), inbox_message_id(Inbox_message_id), unconsumed_suppressed_messages(Unconsumed_suppressed_messages), unconsumed_normal_messages(Unconsumed_normal_messages), unconsumed_elevated_messages(Unconsumed_elevated_messages), unconsumed_messages_voice(Unconsumed_messages_voice), active_vm_id(Active_vm_id), context_horizon(Context_horizon), consumption_horizon(Consumption_horizon), last_activity_timestamp(Last_activity_timestamp), active_invoice_message(Active_invoice_message), spawned_from_convo_id(Spawned_from_convo_id), pinned_order(Pinned_order), creator(Creator), creation_timestamp(Creation_timestamp), my_status(My_status), opt_joining_enabled(Opt_joining_enabled), opt_access_token(Opt_access_token), opt_entry_level_rank(Opt_entry_level_rank), opt_disclose_history(Opt_disclose_history), opt_history_limit_in_days(Opt_history_limit_in_days), opt_admin_only_activities(Opt_admin_only_activities), passwordhint(Passwordhint), meta_name(Meta_name), meta_topic(Meta_topic), meta_guidelines(Meta_guidelines), meta_picture(Meta_picture), premium_video_status(Premium_video_status), premium_video_is_grace_period(Premium_video_is_grace_period), guid(Guid), dialog_partner(Dialog_partner), meta_description(Meta_description), premium_video_sponsor_list(Premium_video_sponsor_list), mcr_caller(Mcr_caller), chat_dbid(Chat_dbid), history_horizon(History_horizon), history_sync_state(History_sync_state), extprop_windowpos_x(Extprop_windowpos_x), extprop_windowpos_y(Extprop_windowpos_y), extprop_windowpos_w(Extprop_windowpos_w), extprop_windowpos_h(Extprop_windowpos_h), extprop_window_roster_visible(Extprop_window_roster_visible), extprop_window_splitter_layout(Extprop_window_splitter_layout), extprop_hide_from_history(Extprop_hide_from_history), extprop_window_detached(Extprop_window_detached), is_blocked(Is_blocked), last_message_id(Last_message_id), picture(Picture), is_p2p_migrated(Is_p2p_migrated), thread_version(Thread_version), consumption_horizon_set_at(Consumption_horizon_set_at), alt_identity(Alt_identity), in_migrated_thread_since(In_migrated_thread_since) {
+    defaults();
+}
+Conversations::Conversations(const litesql::Database& db, const litesql::Record& rec)
+     : litesql::Persistent(db, rec), id(Id), type(Type), is_permanent(Is_permanent), identity(Identity), live_host(Live_host), live_start_timestamp(Live_start_timestamp), live_is_muted(Live_is_muted), alert_string(Alert_string), is_bookmarked(Is_bookmarked), given_displayname(Given_displayname), displayname(Displayname), local_livestatus(Local_livestatus), inbox_timestamp(Inbox_timestamp), inbox_message_id(Inbox_message_id), unconsumed_suppressed_messages(Unconsumed_suppressed_messages), unconsumed_normal_messages(Unconsumed_normal_messages), unconsumed_elevated_messages(Unconsumed_elevated_messages), unconsumed_messages_voice(Unconsumed_messages_voice), active_vm_id(Active_vm_id), context_horizon(Context_horizon), consumption_horizon(Consumption_horizon), last_activity_timestamp(Last_activity_timestamp), active_invoice_message(Active_invoice_message), spawned_from_convo_id(Spawned_from_convo_id), pinned_order(Pinned_order), creator(Creator), creation_timestamp(Creation_timestamp), my_status(My_status), opt_joining_enabled(Opt_joining_enabled), opt_access_token(Opt_access_token), opt_entry_level_rank(Opt_entry_level_rank), opt_disclose_history(Opt_disclose_history), opt_history_limit_in_days(Opt_history_limit_in_days), opt_admin_only_activities(Opt_admin_only_activities), passwordhint(Passwordhint), meta_name(Meta_name), meta_topic(Meta_topic), meta_guidelines(Meta_guidelines), meta_picture(Meta_picture), premium_video_status(Premium_video_status), premium_video_is_grace_period(Premium_video_is_grace_period), guid(Guid), dialog_partner(Dialog_partner), meta_description(Meta_description), premium_video_sponsor_list(Premium_video_sponsor_list), mcr_caller(Mcr_caller), chat_dbid(Chat_dbid), history_horizon(History_horizon), history_sync_state(History_sync_state), extprop_windowpos_x(Extprop_windowpos_x), extprop_windowpos_y(Extprop_windowpos_y), extprop_windowpos_w(Extprop_windowpos_w), extprop_windowpos_h(Extprop_windowpos_h), extprop_window_roster_visible(Extprop_window_roster_visible), extprop_window_splitter_layout(Extprop_window_splitter_layout), extprop_hide_from_history(Extprop_hide_from_history), extprop_window_detached(Extprop_window_detached), is_blocked(Is_blocked), last_message_id(Last_message_id), picture(Picture), is_p2p_migrated(Is_p2p_migrated), thread_version(Thread_version), consumption_horizon_set_at(Consumption_horizon_set_at), alt_identity(Alt_identity), in_migrated_thread_since(In_migrated_thread_since) {
+    defaults();
+    size_t size = (rec.size() > 65) ? 65 : rec.size();
+    switch(size) {
+    case 65: in_migrated_thread_since = convert<const std::string&, int>(rec[64]);
+        in_migrated_thread_since.setModified(false);
+    case 64: alt_identity = convert<const std::string&, std::string>(rec[63]);
+        alt_identity.setModified(false);
+    case 63: consumption_horizon_set_at = convert<const std::string&, int>(rec[62]);
+        consumption_horizon_set_at.setModified(false);
+    case 62: thread_version = convert<const std::string&, std::string>(rec[61]);
+        thread_version.setModified(false);
+    case 61: is_p2p_migrated = convert<const std::string&, int>(rec[60]);
+        is_p2p_migrated.setModified(false);
+    case 60: picture = convert<const std::string&, std::string>(rec[59]);
+        picture.setModified(false);
+    case 59: last_message_id = convert<const std::string&, int>(rec[58]);
+        last_message_id.setModified(false);
+    case 58: is_blocked = convert<const std::string&, int>(rec[57]);
+        is_blocked.setModified(false);
+    case 57: extprop_window_detached = convert<const std::string&, int>(rec[56]);
+        extprop_window_detached.setModified(false);
+    case 56: extprop_hide_from_history = convert<const std::string&, int>(rec[55]);
+        extprop_hide_from_history.setModified(false);
+    case 55: extprop_window_splitter_layout = convert<const std::string&, std::string>(rec[54]);
+        extprop_window_splitter_layout.setModified(false);
+    case 54: extprop_window_roster_visible = convert<const std::string&, int>(rec[53]);
+        extprop_window_roster_visible.setModified(false);
+    case 53: extprop_windowpos_h = convert<const std::string&, int>(rec[52]);
+        extprop_windowpos_h.setModified(false);
+    case 52: extprop_windowpos_w = convert<const std::string&, int>(rec[51]);
+        extprop_windowpos_w.setModified(false);
+    case 51: extprop_windowpos_y = convert<const std::string&, int>(rec[50]);
+        extprop_windowpos_y.setModified(false);
+    case 50: extprop_windowpos_x = convert<const std::string&, int>(rec[49]);
+        extprop_windowpos_x.setModified(false);
+    case 49: history_sync_state = convert<const std::string&, std::string>(rec[48]);
+        history_sync_state.setModified(false);
+    case 48: history_horizon = convert<const std::string&, int>(rec[47]);
+        history_horizon.setModified(false);
+    case 47: chat_dbid = convert<const std::string&, int>(rec[46]);
+        chat_dbid.setModified(false);
+    case 46: mcr_caller = convert<const std::string&, std::string>(rec[45]);
+        mcr_caller.setModified(false);
+    case 45: premium_video_sponsor_list = convert<const std::string&, std::string>(rec[44]);
+        premium_video_sponsor_list.setModified(false);
+    case 44: meta_description = convert<const std::string&, std::string>(rec[43]);
+        meta_description.setModified(false);
+    case 43: dialog_partner = convert<const std::string&, std::string>(rec[42]);
+        dialog_partner.setModified(false);
+    case 42: guid = convert<const std::string&, std::string>(rec[41]);
+        guid.setModified(false);
+    case 41: premium_video_is_grace_period = convert<const std::string&, int>(rec[40]);
+        premium_video_is_grace_period.setModified(false);
+    case 40: premium_video_status = convert<const std::string&, int>(rec[39]);
+        premium_video_status.setModified(false);
+    case 39: meta_picture = convert<const std::string&, litesql::Blob>(rec[38]);
+        meta_picture.setModified(false);
+    case 38: meta_guidelines = convert<const std::string&, std::string>(rec[37]);
+        meta_guidelines.setModified(false);
+    case 37: meta_topic = convert<const std::string&, std::string>(rec[36]);
+        meta_topic.setModified(false);
+    case 36: meta_name = convert<const std::string&, std::string>(rec[35]);
+        meta_name.setModified(false);
+    case 35: passwordhint = convert<const std::string&, std::string>(rec[34]);
+        passwordhint.setModified(false);
+    case 34: opt_admin_only_activities = convert<const std::string&, int>(rec[33]);
+        opt_admin_only_activities.setModified(false);
+    case 33: opt_history_limit_in_days = convert<const std::string&, int>(rec[32]);
+        opt_history_limit_in_days.setModified(false);
+    case 32: opt_disclose_history = convert<const std::string&, int>(rec[31]);
+        opt_disclose_history.setModified(false);
+    case 31: opt_entry_level_rank = convert<const std::string&, int>(rec[30]);
+        opt_entry_level_rank.setModified(false);
+    case 30: opt_access_token = convert<const std::string&, std::string>(rec[29]);
+        opt_access_token.setModified(false);
+    case 29: opt_joining_enabled = convert<const std::string&, int>(rec[28]);
+        opt_joining_enabled.setModified(false);
+    case 28: my_status = convert<const std::string&, int>(rec[27]);
+        my_status.setModified(false);
+    case 27: creation_timestamp = convert<const std::string&, int>(rec[26]);
+        creation_timestamp.setModified(false);
+    case 26: creator = convert<const std::string&, std::string>(rec[25]);
+        creator.setModified(false);
+    case 25: pinned_order = convert<const std::string&, int>(rec[24]);
+        pinned_order.setModified(false);
+    case 24: spawned_from_convo_id = convert<const std::string&, int>(rec[23]);
+        spawned_from_convo_id.setModified(false);
+    case 23: active_invoice_message = convert<const std::string&, int>(rec[22]);
+        active_invoice_message.setModified(false);
+    case 22: last_activity_timestamp = convert<const std::string&, int>(rec[21]);
+        last_activity_timestamp.setModified(false);
+    case 21: consumption_horizon = convert<const std::string&, int>(rec[20]);
+        consumption_horizon.setModified(false);
+    case 20: context_horizon = convert<const std::string&, int>(rec[19]);
+        context_horizon.setModified(false);
+    case 19: active_vm_id = convert<const std::string&, int>(rec[18]);
+        active_vm_id.setModified(false);
+    case 18: unconsumed_messages_voice = convert<const std::string&, int>(rec[17]);
+        unconsumed_messages_voice.setModified(false);
+    case 17: unconsumed_elevated_messages = convert<const std::string&, int>(rec[16]);
+        unconsumed_elevated_messages.setModified(false);
+    case 16: unconsumed_normal_messages = convert<const std::string&, int>(rec[15]);
+        unconsumed_normal_messages.setModified(false);
+    case 15: unconsumed_suppressed_messages = convert<const std::string&, int>(rec[14]);
+        unconsumed_suppressed_messages.setModified(false);
+    case 14: inbox_message_id = convert<const std::string&, int>(rec[13]);
+        inbox_message_id.setModified(false);
+    case 13: inbox_timestamp = convert<const std::string&, int>(rec[12]);
+        inbox_timestamp.setModified(false);
+    case 12: local_livestatus = convert<const std::string&, int>(rec[11]);
+        local_livestatus.setModified(false);
+    case 11: displayname = convert<const std::string&, std::string>(rec[10]);
+        displayname.setModified(false);
+    case 10: given_displayname = convert<const std::string&, std::string>(rec[9]);
+        given_displayname.setModified(false);
+    case 9: is_bookmarked = convert<const std::string&, int>(rec[8]);
+        is_bookmarked.setModified(false);
+    case 8: alert_string = convert<const std::string&, std::string>(rec[7]);
+        alert_string.setModified(false);
+    case 7: live_is_muted = convert<const std::string&, int>(rec[6]);
+        live_is_muted.setModified(false);
+    case 6: live_start_timestamp = convert<const std::string&, int>(rec[5]);
+        live_start_timestamp.setModified(false);
+    case 5: live_host = convert<const std::string&, std::string>(rec[4]);
+        live_host.setModified(false);
+    case 4: identity = convert<const std::string&, std::string>(rec[3]);
+        identity.setModified(false);
+    case 3: is_permanent = convert<const std::string&, int>(rec[2]);
+        is_permanent.setModified(false);
+    case 2: type = convert<const std::string&, std::string>(rec[1]);
+        type.setModified(false);
+    case 1: id = convert<const std::string&, int>(rec[0]);
+        id.setModified(false);
+    }
+}
+Conversations::Conversations(const Conversations& obj)
+     : litesql::Persistent(obj), id(obj.id), type(obj.type), is_permanent(obj.is_permanent), identity(obj.identity), live_host(obj.live_host), live_start_timestamp(obj.live_start_timestamp), live_is_muted(obj.live_is_muted), alert_string(obj.alert_string), is_bookmarked(obj.is_bookmarked), given_displayname(obj.given_displayname), displayname(obj.displayname), local_livestatus(obj.local_livestatus), inbox_timestamp(obj.inbox_timestamp), inbox_message_id(obj.inbox_message_id), unconsumed_suppressed_messages(obj.unconsumed_suppressed_messages), unconsumed_normal_messages(obj.unconsumed_normal_messages), unconsumed_elevated_messages(obj.unconsumed_elevated_messages), unconsumed_messages_voice(obj.unconsumed_messages_voice), active_vm_id(obj.active_vm_id), context_horizon(obj.context_horizon), consumption_horizon(obj.consumption_horizon), last_activity_timestamp(obj.last_activity_timestamp), active_invoice_message(obj.active_invoice_message), spawned_from_convo_id(obj.spawned_from_convo_id), pinned_order(obj.pinned_order), creator(obj.creator), creation_timestamp(obj.creation_timestamp), my_status(obj.my_status), opt_joining_enabled(obj.opt_joining_enabled), opt_access_token(obj.opt_access_token), opt_entry_level_rank(obj.opt_entry_level_rank), opt_disclose_history(obj.opt_disclose_history), opt_history_limit_in_days(obj.opt_history_limit_in_days), opt_admin_only_activities(obj.opt_admin_only_activities), passwordhint(obj.passwordhint), meta_name(obj.meta_name), meta_topic(obj.meta_topic), meta_guidelines(obj.meta_guidelines), meta_picture(obj.meta_picture), premium_video_status(obj.premium_video_status), premium_video_is_grace_period(obj.premium_video_is_grace_period), guid(obj.guid), dialog_partner(obj.dialog_partner), meta_description(obj.meta_description), premium_video_sponsor_list(obj.premium_video_sponsor_list), mcr_caller(obj.mcr_caller), chat_dbid(obj.chat_dbid), history_horizon(obj.history_horizon), history_sync_state(obj.history_sync_state), extprop_windowpos_x(obj.extprop_windowpos_x), extprop_windowpos_y(obj.extprop_windowpos_y), extprop_windowpos_w(obj.extprop_windowpos_w), extprop_windowpos_h(obj.extprop_windowpos_h), extprop_window_roster_visible(obj.extprop_window_roster_visible), extprop_window_splitter_layout(obj.extprop_window_splitter_layout), extprop_hide_from_history(obj.extprop_hide_from_history), extprop_window_detached(obj.extprop_window_detached), is_blocked(obj.is_blocked), last_message_id(obj.last_message_id), picture(obj.picture), is_p2p_migrated(obj.is_p2p_migrated), thread_version(obj.thread_version), consumption_horizon_set_at(obj.consumption_horizon_set_at), alt_identity(obj.alt_identity), in_migrated_thread_since(obj.in_migrated_thread_since) {
+}
+const Conversations& Conversations::operator=(const Conversations& obj) {
+    if (this != &obj) {
+        id = obj.id;
+        type = obj.type;
+        is_permanent = obj.is_permanent;
+        identity = obj.identity;
+        live_host = obj.live_host;
+        live_start_timestamp = obj.live_start_timestamp;
+        live_is_muted = obj.live_is_muted;
+        alert_string = obj.alert_string;
+        is_bookmarked = obj.is_bookmarked;
+        given_displayname = obj.given_displayname;
+        displayname = obj.displayname;
+        local_livestatus = obj.local_livestatus;
+        inbox_timestamp = obj.inbox_timestamp;
+        inbox_message_id = obj.inbox_message_id;
+        unconsumed_suppressed_messages = obj.unconsumed_suppressed_messages;
+        unconsumed_normal_messages = obj.unconsumed_normal_messages;
+        unconsumed_elevated_messages = obj.unconsumed_elevated_messages;
+        unconsumed_messages_voice = obj.unconsumed_messages_voice;
+        active_vm_id = obj.active_vm_id;
+        context_horizon = obj.context_horizon;
+        consumption_horizon = obj.consumption_horizon;
+        last_activity_timestamp = obj.last_activity_timestamp;
+        active_invoice_message = obj.active_invoice_message;
+        spawned_from_convo_id = obj.spawned_from_convo_id;
+        pinned_order = obj.pinned_order;
+        creator = obj.creator;
+        creation_timestamp = obj.creation_timestamp;
+        my_status = obj.my_status;
+        opt_joining_enabled = obj.opt_joining_enabled;
+        opt_access_token = obj.opt_access_token;
+        opt_entry_level_rank = obj.opt_entry_level_rank;
+        opt_disclose_history = obj.opt_disclose_history;
+        opt_history_limit_in_days = obj.opt_history_limit_in_days;
+        opt_admin_only_activities = obj.opt_admin_only_activities;
+        passwordhint = obj.passwordhint;
+        meta_name = obj.meta_name;
+        meta_topic = obj.meta_topic;
+        meta_guidelines = obj.meta_guidelines;
+        meta_picture = obj.meta_picture;
+        premium_video_status = obj.premium_video_status;
+        premium_video_is_grace_period = obj.premium_video_is_grace_period;
+        guid = obj.guid;
+        dialog_partner = obj.dialog_partner;
+        meta_description = obj.meta_description;
+        premium_video_sponsor_list = obj.premium_video_sponsor_list;
+        mcr_caller = obj.mcr_caller;
+        chat_dbid = obj.chat_dbid;
+        history_horizon = obj.history_horizon;
+        history_sync_state = obj.history_sync_state;
+        extprop_windowpos_x = obj.extprop_windowpos_x;
+        extprop_windowpos_y = obj.extprop_windowpos_y;
+        extprop_windowpos_w = obj.extprop_windowpos_w;
+        extprop_windowpos_h = obj.extprop_windowpos_h;
+        extprop_window_roster_visible = obj.extprop_window_roster_visible;
+        extprop_window_splitter_layout = obj.extprop_window_splitter_layout;
+        extprop_hide_from_history = obj.extprop_hide_from_history;
+        extprop_window_detached = obj.extprop_window_detached;
+        is_blocked = obj.is_blocked;
+        last_message_id = obj.last_message_id;
+        picture = obj.picture;
+        is_p2p_migrated = obj.is_p2p_migrated;
+        thread_version = obj.thread_version;
+        consumption_horizon_set_at = obj.consumption_horizon_set_at;
+        alt_identity = obj.alt_identity;
+        in_migrated_thread_since = obj.in_migrated_thread_since;
+    }
+    litesql::Persistent::operator=(obj);
+    return *this;
+}
+std::string Conversations::insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs) {
+    tables.push_back(table__);
+    litesql::Record fields;
+    litesql::Record values;
+    fields.push_back(id.name());
+    values.push_back(id);
+    id.setModified(false);
+    fields.push_back(type.name());
+    values.push_back(type);
+    type.setModified(false);
+    fields.push_back(is_permanent.name());
+    values.push_back(is_permanent);
+    is_permanent.setModified(false);
+    fields.push_back(identity.name());
+    values.push_back(identity);
+    identity.setModified(false);
+    fields.push_back(live_host.name());
+    values.push_back(live_host);
+    live_host.setModified(false);
+    fields.push_back(live_start_timestamp.name());
+    values.push_back(live_start_timestamp);
+    live_start_timestamp.setModified(false);
+    fields.push_back(live_is_muted.name());
+    values.push_back(live_is_muted);
+    live_is_muted.setModified(false);
+    fields.push_back(alert_string.name());
+    values.push_back(alert_string);
+    alert_string.setModified(false);
+    fields.push_back(is_bookmarked.name());
+    values.push_back(is_bookmarked);
+    is_bookmarked.setModified(false);
+    fields.push_back(given_displayname.name());
+    values.push_back(given_displayname);
+    given_displayname.setModified(false);
+    fields.push_back(displayname.name());
+    values.push_back(displayname);
+    displayname.setModified(false);
+    fields.push_back(local_livestatus.name());
+    values.push_back(local_livestatus);
+    local_livestatus.setModified(false);
+    fields.push_back(inbox_timestamp.name());
+    values.push_back(inbox_timestamp);
+    inbox_timestamp.setModified(false);
+    fields.push_back(inbox_message_id.name());
+    values.push_back(inbox_message_id);
+    inbox_message_id.setModified(false);
+    fields.push_back(unconsumed_suppressed_messages.name());
+    values.push_back(unconsumed_suppressed_messages);
+    unconsumed_suppressed_messages.setModified(false);
+    fields.push_back(unconsumed_normal_messages.name());
+    values.push_back(unconsumed_normal_messages);
+    unconsumed_normal_messages.setModified(false);
+    fields.push_back(unconsumed_elevated_messages.name());
+    values.push_back(unconsumed_elevated_messages);
+    unconsumed_elevated_messages.setModified(false);
+    fields.push_back(unconsumed_messages_voice.name());
+    values.push_back(unconsumed_messages_voice);
+    unconsumed_messages_voice.setModified(false);
+    fields.push_back(active_vm_id.name());
+    values.push_back(active_vm_id);
+    active_vm_id.setModified(false);
+    fields.push_back(context_horizon.name());
+    values.push_back(context_horizon);
+    context_horizon.setModified(false);
+    fields.push_back(consumption_horizon.name());
+    values.push_back(consumption_horizon);
+    consumption_horizon.setModified(false);
+    fields.push_back(last_activity_timestamp.name());
+    values.push_back(last_activity_timestamp);
+    last_activity_timestamp.setModified(false);
+    fields.push_back(active_invoice_message.name());
+    values.push_back(active_invoice_message);
+    active_invoice_message.setModified(false);
+    fields.push_back(spawned_from_convo_id.name());
+    values.push_back(spawned_from_convo_id);
+    spawned_from_convo_id.setModified(false);
+    fields.push_back(pinned_order.name());
+    values.push_back(pinned_order);
+    pinned_order.setModified(false);
+    fields.push_back(creator.name());
+    values.push_back(creator);
+    creator.setModified(false);
+    fields.push_back(creation_timestamp.name());
+    values.push_back(creation_timestamp);
+    creation_timestamp.setModified(false);
+    fields.push_back(my_status.name());
+    values.push_back(my_status);
+    my_status.setModified(false);
+    fields.push_back(opt_joining_enabled.name());
+    values.push_back(opt_joining_enabled);
+    opt_joining_enabled.setModified(false);
+    fields.push_back(opt_access_token.name());
+    values.push_back(opt_access_token);
+    opt_access_token.setModified(false);
+    fields.push_back(opt_entry_level_rank.name());
+    values.push_back(opt_entry_level_rank);
+    opt_entry_level_rank.setModified(false);
+    fields.push_back(opt_disclose_history.name());
+    values.push_back(opt_disclose_history);
+    opt_disclose_history.setModified(false);
+    fields.push_back(opt_history_limit_in_days.name());
+    values.push_back(opt_history_limit_in_days);
+    opt_history_limit_in_days.setModified(false);
+    fields.push_back(opt_admin_only_activities.name());
+    values.push_back(opt_admin_only_activities);
+    opt_admin_only_activities.setModified(false);
+    fields.push_back(passwordhint.name());
+    values.push_back(passwordhint);
+    passwordhint.setModified(false);
+    fields.push_back(meta_name.name());
+    values.push_back(meta_name);
+    meta_name.setModified(false);
+    fields.push_back(meta_topic.name());
+    values.push_back(meta_topic);
+    meta_topic.setModified(false);
+    fields.push_back(meta_guidelines.name());
+    values.push_back(meta_guidelines);
+    meta_guidelines.setModified(false);
+    fields.push_back(meta_picture.name());
+    values.push_back(meta_picture);
+    meta_picture.setModified(false);
+    fields.push_back(premium_video_status.name());
+    values.push_back(premium_video_status);
+    premium_video_status.setModified(false);
+    fields.push_back(premium_video_is_grace_period.name());
+    values.push_back(premium_video_is_grace_period);
+    premium_video_is_grace_period.setModified(false);
+    fields.push_back(guid.name());
+    values.push_back(guid);
+    guid.setModified(false);
+    fields.push_back(dialog_partner.name());
+    values.push_back(dialog_partner);
+    dialog_partner.setModified(false);
+    fields.push_back(meta_description.name());
+    values.push_back(meta_description);
+    meta_description.setModified(false);
+    fields.push_back(premium_video_sponsor_list.name());
+    values.push_back(premium_video_sponsor_list);
+    premium_video_sponsor_list.setModified(false);
+    fields.push_back(mcr_caller.name());
+    values.push_back(mcr_caller);
+    mcr_caller.setModified(false);
+    fields.push_back(chat_dbid.name());
+    values.push_back(chat_dbid);
+    chat_dbid.setModified(false);
+    fields.push_back(history_horizon.name());
+    values.push_back(history_horizon);
+    history_horizon.setModified(false);
+    fields.push_back(history_sync_state.name());
+    values.push_back(history_sync_state);
+    history_sync_state.setModified(false);
+    fields.push_back(extprop_windowpos_x.name());
+    values.push_back(extprop_windowpos_x);
+    extprop_windowpos_x.setModified(false);
+    fields.push_back(extprop_windowpos_y.name());
+    values.push_back(extprop_windowpos_y);
+    extprop_windowpos_y.setModified(false);
+    fields.push_back(extprop_windowpos_w.name());
+    values.push_back(extprop_windowpos_w);
+    extprop_windowpos_w.setModified(false);
+    fields.push_back(extprop_windowpos_h.name());
+    values.push_back(extprop_windowpos_h);
+    extprop_windowpos_h.setModified(false);
+    fields.push_back(extprop_window_roster_visible.name());
+    values.push_back(extprop_window_roster_visible);
+    extprop_window_roster_visible.setModified(false);
+    fields.push_back(extprop_window_splitter_layout.name());
+    values.push_back(extprop_window_splitter_layout);
+    extprop_window_splitter_layout.setModified(false);
+    fields.push_back(extprop_hide_from_history.name());
+    values.push_back(extprop_hide_from_history);
+    extprop_hide_from_history.setModified(false);
+    fields.push_back(extprop_window_detached.name());
+    values.push_back(extprop_window_detached);
+    extprop_window_detached.setModified(false);
+    fields.push_back(is_blocked.name());
+    values.push_back(is_blocked);
+    is_blocked.setModified(false);
+    fields.push_back(last_message_id.name());
+    values.push_back(last_message_id);
+    last_message_id.setModified(false);
+    fields.push_back(picture.name());
+    values.push_back(picture);
+    picture.setModified(false);
+    fields.push_back(is_p2p_migrated.name());
+    values.push_back(is_p2p_migrated);
+    is_p2p_migrated.setModified(false);
+    fields.push_back(thread_version.name());
+    values.push_back(thread_version);
+    thread_version.setModified(false);
+    fields.push_back(consumption_horizon_set_at.name());
+    values.push_back(consumption_horizon_set_at);
+    consumption_horizon_set_at.setModified(false);
+    fields.push_back(alt_identity.name());
+    values.push_back(alt_identity);
+    alt_identity.setModified(false);
+    fields.push_back(in_migrated_thread_since.name());
+    values.push_back(in_migrated_thread_since);
+    in_migrated_thread_since.setModified(false);
+    fieldRecs.push_back(fields);
+    valueRecs.push_back(values);
+    return litesql::Persistent::insert(tables, fieldRecs, valueRecs, sequence__);
+}
+void Conversations::create() {
+    litesql::Record tables;
+    litesql::Records fieldRecs;
+    litesql::Records valueRecs;
+    type = type__;
+    std::string newID = insert(tables, fieldRecs, valueRecs);
+    if (id == 0)
+        id = newID;
+}
+void Conversations::addUpdates(Updates& updates) {
+    prepareUpdate(updates, table__);
+    updateField(updates, table__, id);
+    updateField(updates, table__, type);
+    updateField(updates, table__, is_permanent);
+    updateField(updates, table__, identity);
+    updateField(updates, table__, live_host);
+    updateField(updates, table__, live_start_timestamp);
+    updateField(updates, table__, live_is_muted);
+    updateField(updates, table__, alert_string);
+    updateField(updates, table__, is_bookmarked);
+    updateField(updates, table__, given_displayname);
+    updateField(updates, table__, displayname);
+    updateField(updates, table__, local_livestatus);
+    updateField(updates, table__, inbox_timestamp);
+    updateField(updates, table__, inbox_message_id);
+    updateField(updates, table__, unconsumed_suppressed_messages);
+    updateField(updates, table__, unconsumed_normal_messages);
+    updateField(updates, table__, unconsumed_elevated_messages);
+    updateField(updates, table__, unconsumed_messages_voice);
+    updateField(updates, table__, active_vm_id);
+    updateField(updates, table__, context_horizon);
+    updateField(updates, table__, consumption_horizon);
+    updateField(updates, table__, last_activity_timestamp);
+    updateField(updates, table__, active_invoice_message);
+    updateField(updates, table__, spawned_from_convo_id);
+    updateField(updates, table__, pinned_order);
+    updateField(updates, table__, creator);
+    updateField(updates, table__, creation_timestamp);
+    updateField(updates, table__, my_status);
+    updateField(updates, table__, opt_joining_enabled);
+    updateField(updates, table__, opt_access_token);
+    updateField(updates, table__, opt_entry_level_rank);
+    updateField(updates, table__, opt_disclose_history);
+    updateField(updates, table__, opt_history_limit_in_days);
+    updateField(updates, table__, opt_admin_only_activities);
+    updateField(updates, table__, passwordhint);
+    updateField(updates, table__, meta_name);
+    updateField(updates, table__, meta_topic);
+    updateField(updates, table__, meta_guidelines);
+    updateField(updates, table__, meta_picture);
+    updateField(updates, table__, premium_video_status);
+    updateField(updates, table__, premium_video_is_grace_period);
+    updateField(updates, table__, guid);
+    updateField(updates, table__, dialog_partner);
+    updateField(updates, table__, meta_description);
+    updateField(updates, table__, premium_video_sponsor_list);
+    updateField(updates, table__, mcr_caller);
+    updateField(updates, table__, chat_dbid);
+    updateField(updates, table__, history_horizon);
+    updateField(updates, table__, history_sync_state);
+    updateField(updates, table__, extprop_windowpos_x);
+    updateField(updates, table__, extprop_windowpos_y);
+    updateField(updates, table__, extprop_windowpos_w);
+    updateField(updates, table__, extprop_windowpos_h);
+    updateField(updates, table__, extprop_window_roster_visible);
+    updateField(updates, table__, extprop_window_splitter_layout);
+    updateField(updates, table__, extprop_hide_from_history);
+    updateField(updates, table__, extprop_window_detached);
+    updateField(updates, table__, is_blocked);
+    updateField(updates, table__, last_message_id);
+    updateField(updates, table__, picture);
+    updateField(updates, table__, is_p2p_migrated);
+    updateField(updates, table__, thread_version);
+    updateField(updates, table__, consumption_horizon_set_at);
+    updateField(updates, table__, alt_identity);
+    updateField(updates, table__, in_migrated_thread_since);
+}
+void Conversations::addIDUpdates(Updates& updates) {
+}
+void Conversations::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
+    ftypes.push_back(Id);
+    ftypes.push_back(Type);
+    ftypes.push_back(Is_permanent);
+    ftypes.push_back(Identity);
+    ftypes.push_back(Live_host);
+    ftypes.push_back(Live_start_timestamp);
+    ftypes.push_back(Live_is_muted);
+    ftypes.push_back(Alert_string);
+    ftypes.push_back(Is_bookmarked);
+    ftypes.push_back(Given_displayname);
+    ftypes.push_back(Displayname);
+    ftypes.push_back(Local_livestatus);
+    ftypes.push_back(Inbox_timestamp);
+    ftypes.push_back(Inbox_message_id);
+    ftypes.push_back(Unconsumed_suppressed_messages);
+    ftypes.push_back(Unconsumed_normal_messages);
+    ftypes.push_back(Unconsumed_elevated_messages);
+    ftypes.push_back(Unconsumed_messages_voice);
+    ftypes.push_back(Active_vm_id);
+    ftypes.push_back(Context_horizon);
+    ftypes.push_back(Consumption_horizon);
+    ftypes.push_back(Last_activity_timestamp);
+    ftypes.push_back(Active_invoice_message);
+    ftypes.push_back(Spawned_from_convo_id);
+    ftypes.push_back(Pinned_order);
+    ftypes.push_back(Creator);
+    ftypes.push_back(Creation_timestamp);
+    ftypes.push_back(My_status);
+    ftypes.push_back(Opt_joining_enabled);
+    ftypes.push_back(Opt_access_token);
+    ftypes.push_back(Opt_entry_level_rank);
+    ftypes.push_back(Opt_disclose_history);
+    ftypes.push_back(Opt_history_limit_in_days);
+    ftypes.push_back(Opt_admin_only_activities);
+    ftypes.push_back(Passwordhint);
+    ftypes.push_back(Meta_name);
+    ftypes.push_back(Meta_topic);
+    ftypes.push_back(Meta_guidelines);
+    ftypes.push_back(Meta_picture);
+    ftypes.push_back(Premium_video_status);
+    ftypes.push_back(Premium_video_is_grace_period);
+    ftypes.push_back(Guid);
+    ftypes.push_back(Dialog_partner);
+    ftypes.push_back(Meta_description);
+    ftypes.push_back(Premium_video_sponsor_list);
+    ftypes.push_back(Mcr_caller);
+    ftypes.push_back(Chat_dbid);
+    ftypes.push_back(History_horizon);
+    ftypes.push_back(History_sync_state);
+    ftypes.push_back(Extprop_windowpos_x);
+    ftypes.push_back(Extprop_windowpos_y);
+    ftypes.push_back(Extprop_windowpos_w);
+    ftypes.push_back(Extprop_windowpos_h);
+    ftypes.push_back(Extprop_window_roster_visible);
+    ftypes.push_back(Extprop_window_splitter_layout);
+    ftypes.push_back(Extprop_hide_from_history);
+    ftypes.push_back(Extprop_window_detached);
+    ftypes.push_back(Is_blocked);
+    ftypes.push_back(Last_message_id);
+    ftypes.push_back(Picture);
+    ftypes.push_back(Is_p2p_migrated);
+    ftypes.push_back(Thread_version);
+    ftypes.push_back(Consumption_horizon_set_at);
+    ftypes.push_back(Alt_identity);
+    ftypes.push_back(In_migrated_thread_since);
+}
+void Conversations::delRecord() {
+    deleteFromTable(table__, id);
+}
+void Conversations::delRelations() {
+}
+void Conversations::update() {
+    if (!inDatabase) {
+        create();
+        return;
+    }
+    Updates updates;
+    addUpdates(updates);
+    if (id != oldKey) {
+        if (!typeIsCorrect()) 
+            upcastCopy()->addIDUpdates(updates);
+    }
+    litesql::Persistent::update(updates);
+    oldKey = id;
+}
+void Conversations::del() {
+    if (!typeIsCorrect()) {
+        std::unique_ptr<Conversations> p(upcastCopy());
+        p->delRelations();
+        p->onDelete();
+        p->delRecord();
+    } else {
+        delRelations();
+        onDelete();
+        delRecord();
+    }
+    inDatabase = false;
+}
+bool Conversations::typeIsCorrect() const {
+    return type == type__;
+}
+std::unique_ptr<Conversations> Conversations::upcast() const {
+    return unique_ptr<Conversations>(new Conversations(*this));
+}
+std::unique_ptr<Conversations> Conversations::upcastCopy() const {
+    Conversations* np = new Conversations(*this);
+    np->id = id;
+    np->type = type;
+    np->is_permanent = is_permanent;
+    np->identity = identity;
+    np->live_host = live_host;
+    np->live_start_timestamp = live_start_timestamp;
+    np->live_is_muted = live_is_muted;
+    np->alert_string = alert_string;
+    np->is_bookmarked = is_bookmarked;
+    np->given_displayname = given_displayname;
+    np->displayname = displayname;
+    np->local_livestatus = local_livestatus;
+    np->inbox_timestamp = inbox_timestamp;
+    np->inbox_message_id = inbox_message_id;
+    np->unconsumed_suppressed_messages = unconsumed_suppressed_messages;
+    np->unconsumed_normal_messages = unconsumed_normal_messages;
+    np->unconsumed_elevated_messages = unconsumed_elevated_messages;
+    np->unconsumed_messages_voice = unconsumed_messages_voice;
+    np->active_vm_id = active_vm_id;
+    np->context_horizon = context_horizon;
+    np->consumption_horizon = consumption_horizon;
+    np->last_activity_timestamp = last_activity_timestamp;
+    np->active_invoice_message = active_invoice_message;
+    np->spawned_from_convo_id = spawned_from_convo_id;
+    np->pinned_order = pinned_order;
+    np->creator = creator;
+    np->creation_timestamp = creation_timestamp;
+    np->my_status = my_status;
+    np->opt_joining_enabled = opt_joining_enabled;
+    np->opt_access_token = opt_access_token;
+    np->opt_entry_level_rank = opt_entry_level_rank;
+    np->opt_disclose_history = opt_disclose_history;
+    np->opt_history_limit_in_days = opt_history_limit_in_days;
+    np->opt_admin_only_activities = opt_admin_only_activities;
+    np->passwordhint = passwordhint;
+    np->meta_name = meta_name;
+    np->meta_topic = meta_topic;
+    np->meta_guidelines = meta_guidelines;
+    np->meta_picture = meta_picture;
+    np->premium_video_status = premium_video_status;
+    np->premium_video_is_grace_period = premium_video_is_grace_period;
+    np->guid = guid;
+    np->dialog_partner = dialog_partner;
+    np->meta_description = meta_description;
+    np->premium_video_sponsor_list = premium_video_sponsor_list;
+    np->mcr_caller = mcr_caller;
+    np->chat_dbid = chat_dbid;
+    np->history_horizon = history_horizon;
+    np->history_sync_state = history_sync_state;
+    np->extprop_windowpos_x = extprop_windowpos_x;
+    np->extprop_windowpos_y = extprop_windowpos_y;
+    np->extprop_windowpos_w = extprop_windowpos_w;
+    np->extprop_windowpos_h = extprop_windowpos_h;
+    np->extprop_window_roster_visible = extprop_window_roster_visible;
+    np->extprop_window_splitter_layout = extprop_window_splitter_layout;
+    np->extprop_hide_from_history = extprop_hide_from_history;
+    np->extprop_window_detached = extprop_window_detached;
+    np->is_blocked = is_blocked;
+    np->last_message_id = last_message_id;
+    np->picture = picture;
+    np->is_p2p_migrated = is_p2p_migrated;
+    np->thread_version = thread_version;
+    np->consumption_horizon_set_at = consumption_horizon_set_at;
+    np->alt_identity = alt_identity;
+    np->in_migrated_thread_since = in_migrated_thread_since;
+    np->inDatabase = inDatabase;
+    return unique_ptr<Conversations>(np);
+}
+std::ostream & operator<<(std::ostream& os, Conversations o) {
+    os << "-------------------------------------" << std::endl;
+    os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
+    os << o.is_permanent.name() << " = " << o.is_permanent << std::endl;
+    os << o.identity.name() << " = " << o.identity << std::endl;
+    os << o.live_host.name() << " = " << o.live_host << std::endl;
+    os << o.live_start_timestamp.name() << " = " << o.live_start_timestamp << std::endl;
+    os << o.live_is_muted.name() << " = " << o.live_is_muted << std::endl;
+    os << o.alert_string.name() << " = " << o.alert_string << std::endl;
+    os << o.is_bookmarked.name() << " = " << o.is_bookmarked << std::endl;
+    os << o.given_displayname.name() << " = " << o.given_displayname << std::endl;
+    os << o.displayname.name() << " = " << o.displayname << std::endl;
+    os << o.local_livestatus.name() << " = " << o.local_livestatus << std::endl;
+    os << o.inbox_timestamp.name() << " = " << o.inbox_timestamp << std::endl;
+    os << o.inbox_message_id.name() << " = " << o.inbox_message_id << std::endl;
+    os << o.unconsumed_suppressed_messages.name() << " = " << o.unconsumed_suppressed_messages << std::endl;
+    os << o.unconsumed_normal_messages.name() << " = " << o.unconsumed_normal_messages << std::endl;
+    os << o.unconsumed_elevated_messages.name() << " = " << o.unconsumed_elevated_messages << std::endl;
+    os << o.unconsumed_messages_voice.name() << " = " << o.unconsumed_messages_voice << std::endl;
+    os << o.active_vm_id.name() << " = " << o.active_vm_id << std::endl;
+    os << o.context_horizon.name() << " = " << o.context_horizon << std::endl;
+    os << o.consumption_horizon.name() << " = " << o.consumption_horizon << std::endl;
+    os << o.last_activity_timestamp.name() << " = " << o.last_activity_timestamp << std::endl;
+    os << o.active_invoice_message.name() << " = " << o.active_invoice_message << std::endl;
+    os << o.spawned_from_convo_id.name() << " = " << o.spawned_from_convo_id << std::endl;
+    os << o.pinned_order.name() << " = " << o.pinned_order << std::endl;
+    os << o.creator.name() << " = " << o.creator << std::endl;
+    os << o.creation_timestamp.name() << " = " << o.creation_timestamp << std::endl;
+    os << o.my_status.name() << " = " << o.my_status << std::endl;
+    os << o.opt_joining_enabled.name() << " = " << o.opt_joining_enabled << std::endl;
+    os << o.opt_access_token.name() << " = " << o.opt_access_token << std::endl;
+    os << o.opt_entry_level_rank.name() << " = " << o.opt_entry_level_rank << std::endl;
+    os << o.opt_disclose_history.name() << " = " << o.opt_disclose_history << std::endl;
+    os << o.opt_history_limit_in_days.name() << " = " << o.opt_history_limit_in_days << std::endl;
+    os << o.opt_admin_only_activities.name() << " = " << o.opt_admin_only_activities << std::endl;
+    os << o.passwordhint.name() << " = " << o.passwordhint << std::endl;
+    os << o.meta_name.name() << " = " << o.meta_name << std::endl;
+    os << o.meta_topic.name() << " = " << o.meta_topic << std::endl;
+    os << o.meta_guidelines.name() << " = " << o.meta_guidelines << std::endl;
+    os << o.meta_picture.name() << " = " << o.meta_picture << std::endl;
+    os << o.premium_video_status.name() << " = " << o.premium_video_status << std::endl;
+    os << o.premium_video_is_grace_period.name() << " = " << o.premium_video_is_grace_period << std::endl;
+    os << o.guid.name() << " = " << o.guid << std::endl;
+    os << o.dialog_partner.name() << " = " << o.dialog_partner << std::endl;
+    os << o.meta_description.name() << " = " << o.meta_description << std::endl;
+    os << o.premium_video_sponsor_list.name() << " = " << o.premium_video_sponsor_list << std::endl;
+    os << o.mcr_caller.name() << " = " << o.mcr_caller << std::endl;
+    os << o.chat_dbid.name() << " = " << o.chat_dbid << std::endl;
+    os << o.history_horizon.name() << " = " << o.history_horizon << std::endl;
+    os << o.history_sync_state.name() << " = " << o.history_sync_state << std::endl;
+    os << o.extprop_windowpos_x.name() << " = " << o.extprop_windowpos_x << std::endl;
+    os << o.extprop_windowpos_y.name() << " = " << o.extprop_windowpos_y << std::endl;
+    os << o.extprop_windowpos_w.name() << " = " << o.extprop_windowpos_w << std::endl;
+    os << o.extprop_windowpos_h.name() << " = " << o.extprop_windowpos_h << std::endl;
+    os << o.extprop_window_roster_visible.name() << " = " << o.extprop_window_roster_visible << std::endl;
+    os << o.extprop_window_splitter_layout.name() << " = " << o.extprop_window_splitter_layout << std::endl;
+    os << o.extprop_hide_from_history.name() << " = " << o.extprop_hide_from_history << std::endl;
+    os << o.extprop_window_detached.name() << " = " << o.extprop_window_detached << std::endl;
+    os << o.is_blocked.name() << " = " << o.is_blocked << std::endl;
+    os << o.last_message_id.name() << " = " << o.last_message_id << std::endl;
+    os << o.picture.name() << " = " << o.picture << std::endl;
+    os << o.is_p2p_migrated.name() << " = " << o.is_p2p_migrated << std::endl;
+    os << o.thread_version.name() << " = " << o.thread_version << std::endl;
+    os << o.consumption_horizon_set_at.name() << " = " << o.consumption_horizon_set_at << std::endl;
+    os << o.alt_identity.name() << " = " << o.alt_identity << std::endl;
+    os << o.in_migrated_thread_since.name() << " = " << o.in_migrated_thread_since << std::endl;
+    os << "-------------------------------------" << std::endl;
+    return os;
+}
 main::main(std::string backendType, std::string connInfo)
      : litesql::Database(backendType, connInfo) {
     initialize();
@@ -2081,13 +2939,16 @@ std::vector<litesql::Database::SchemaItem> main::getSchema() const {
         res.push_back(Database::SchemaItem("Messages_seq","sequence",backend->getCreateSequenceSQL("Messages_seq")));
         res.push_back(Database::SchemaItem("Chats_seq","sequence",backend->getCreateSequenceSQL("Chats_seq")));
         res.push_back(Database::SchemaItem("Contacts_seq","sequence",backend->getCreateSequenceSQL("Contacts_seq")));
+        res.push_back(Database::SchemaItem("Conversations_seq","sequence",backend->getCreateSequenceSQL("Conversations_seq")));
     }
     res.push_back(Database::SchemaItem("Messages","table","CREATE TABLE Messages (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",chatname " + backend->getSQLType(A_field_type_string,"") + "" +",author " + backend->getSQLType(A_field_type_string,"") + "" +",from_dispname " + backend->getSQLType(A_field_type_string,"") + "" +",author_was_live " + backend->getSQLType(A_field_type_integer,"") + "" +",guid " + backend->getSQLType(A_field_type_blob,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",sending_status " + backend->getSQLType(A_field_type_integer,"") + "" +",consumption_status " + backend->getSQLType(A_field_type_integer,"") + "" +",edited_by " + backend->getSQLType(A_field_type_string,"") + "" +",edited_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",param_key " + backend->getSQLType(A_field_type_integer,"") + "" +",param_value " + backend->getSQLType(A_field_type_integer,"") + "" +",body_xml " + backend->getSQLType(A_field_type_string,"") + "" +",identities " + backend->getSQLType(A_field_type_string,"") + "" +",reason " + backend->getSQLType(A_field_type_string,"") + "" +",leavereason " + backend->getSQLType(A_field_type_integer,"") + "" +",participant_count " + backend->getSQLType(A_field_type_integer,"") + "" +",error_code " + backend->getSQLType(A_field_type_integer,"") + "" +",chatmsg_type " + backend->getSQLType(A_field_type_integer,"") + "" +",chatmsg_status " + backend->getSQLType(A_field_type_integer,"") + "" +",body_is_rawxml " + backend->getSQLType(A_field_type_integer,"") + "" +",oldoptions " + backend->getSQLType(A_field_type_integer,"") + "" +",newoptions " + backend->getSQLType(A_field_type_integer,"") + "" +",newrole " + backend->getSQLType(A_field_type_integer,"") + "" +",pk_id " + backend->getSQLType(A_field_type_integer,"") + "" +",crc " + backend->getSQLType(A_field_type_integer,"") + "" +",remote_id " + backend->getSQLType(A_field_type_integer,"") + "" +",call_guid " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("Chats","table","CREATE TABLE Chats (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",name " + backend->getSQLType(A_field_type_string,"") + "" +",options " + backend->getSQLType(A_field_type_integer,"") + "" +",friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +",description " + backend->getSQLType(A_field_type_string,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",activity_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",adder " + backend->getSQLType(A_field_type_string,"") + "" +",mystatus " + backend->getSQLType(A_field_type_integer,"") + "" +",myrole " + backend->getSQLType(A_field_type_integer,"") + "" +",posters " + backend->getSQLType(A_field_type_string,"") + "" +",participants " + backend->getSQLType(A_field_type_string,"") + "" +",applicants " + backend->getSQLType(A_field_type_string,"") + "" +",banned_users " + backend->getSQLType(A_field_type_string,"") + "" +",name_text " + backend->getSQLType(A_field_type_string,"") + "" +",topic " + backend->getSQLType(A_field_type_string,"") + "" +",topic_xml " + backend->getSQLType(A_field_type_string,"") + "" +",guidelines " + backend->getSQLType(A_field_type_string,"") + "" +",picture " + backend->getSQLType(A_field_type_blob,"") + "" +",alertstring " + backend->getSQLType(A_field_type_string,"") + "" +",is_bookmarked " + backend->getSQLType(A_field_type_integer,"") + "" +",passwordhint " + backend->getSQLType(A_field_type_string,"") + "" +",unconsumed_suppressed_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_normal_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_elevated_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_msg_voice " + backend->getSQLType(A_field_type_integer,"") + "" +",activemembers " + backend->getSQLType(A_field_type_string,"") + "" +",state_data " + backend->getSQLType(A_field_type_blob,"") + "" +",lifesigns " + backend->getSQLType(A_field_type_integer,"") + "" +",last_change " + backend->getSQLType(A_field_type_integer,"") + "" +",first_unread_message " + backend->getSQLType(A_field_type_integer,"") + "" +",pk_type " + backend->getSQLType(A_field_type_integer,"") + "" +",dbpath " + backend->getSQLType(A_field_type_string,"") + "" +",split_friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +",conv_dbid " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Contacts","table","CREATE TABLE Contacts (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",skypename " + backend->getSQLType(A_field_type_string,"") + "" +",pstnnumber " + backend->getSQLType(A_field_type_string,"") + "" +",aliases " + backend->getSQLType(A_field_type_string,"") + "" +",fullname " + backend->getSQLType(A_field_type_string,"") + "" +",birthday " + backend->getSQLType(A_field_type_integer,"") + "" +",gender " + backend->getSQLType(A_field_type_integer,"") + "" +",languages " + backend->getSQLType(A_field_type_string,"") + "" +",country " + backend->getSQLType(A_field_type_string,"") + "" +",province " + backend->getSQLType(A_field_type_string,"") + "" +",city " + backend->getSQLType(A_field_type_string,"") + "" +",phone_home " + backend->getSQLType(A_field_type_string,"") + "" +",phone_office " + backend->getSQLType(A_field_type_string,"") + "" +",phone_mobile " + backend->getSQLType(A_field_type_string,"") + "" +",emails " + backend->getSQLType(A_field_type_string,"") + "" +",hashed_emails " + backend->getSQLType(A_field_type_string,"") + "" +",homepage " + backend->getSQLType(A_field_type_string,"") + "" +",about " + backend->getSQLType(A_field_type_string,"") + "" +",mood_text " + backend->getSQLType(A_field_type_string,"") + "" +",rich_mood_text " + backend->getSQLType(A_field_type_string,"") + "" +",timezone " + backend->getSQLType(A_field_type_integer,"") + "" +",profile_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",nrof_authed_buddies " + backend->getSQLType(A_field_type_integer,"") + "" +",ipcountry " + backend->getSQLType(A_field_type_string,"") + "" +",avatar_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",mood_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",received_authrequest " + backend->getSQLType(A_field_type_string,"") + "" +",authreq_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",lastonline_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",availability " + backend->getSQLType(A_field_type_integer,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",refreshing " + backend->getSQLType(A_field_type_integer,"") + "" +",given_authlevel " + backend->getSQLType(A_field_type_integer,"") + "" +",given_displayname " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_speeddial " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_comment " + backend->getSQLType(A_field_type_string,"") + "" +",alertstring " + backend->getSQLType(A_field_type_string,"") + "" +",lastused_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",authrequest_count " + backend->getSQLType(A_field_type_integer,"") + "" +",assigned_phone1 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone1_label " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone2 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone2_label " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone3 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone3_label " + backend->getSQLType(A_field_type_string,"") + "" +",buddystatus " + backend->getSQLType(A_field_type_integer,"") + "" +",isauthorized " + backend->getSQLType(A_field_type_integer,"") + "" +",popularity_ord " + backend->getSQLType(A_field_type_integer,"") + "" +",external_id " + backend->getSQLType(A_field_type_string,"") + "" +",external_system_id " + backend->getSQLType(A_field_type_string,"") + "" +",isblocked " + backend->getSQLType(A_field_type_integer,"") + "" +",certificate_send_count " + backend->getSQLType(A_field_type_integer,"") + "" +",account_modification_serial_nr " + backend->getSQLType(A_field_type_integer,"") + "" +",nr_of_buddies " + backend->getSQLType(A_field_type_integer,"") + "" +",server_synced " + backend->getSQLType(A_field_type_integer,"") + "" +",contactlist_track " + backend->getSQLType(A_field_type_integer,"") + "" +",last_used_networktime " + backend->getSQLType(A_field_type_integer,"") + "" +",authorized_time " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest " + backend->getSQLType(A_field_type_string,"") + "" +",sent_authrequest_time " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest_serial " + backend->getSQLType(A_field_type_integer,"") + "" +",node_capabilities " + backend->getSQLType(A_field_type_integer,"") + "" +",revoked_auth " + backend->getSQLType(A_field_type_integer,"") + "" +",added_in_shared_group " + backend->getSQLType(A_field_type_integer,"") + "" +",in_shared_group " + backend->getSQLType(A_field_type_integer,"") + "" +",stack_version " + backend->getSQLType(A_field_type_integer,"") + "" +",offline_authreq_id " + backend->getSQLType(A_field_type_integer,"") + "" +",node_capabilities_and " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_crc " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_src " + backend->getSQLType(A_field_type_integer,"") + "" +",pop_score " + backend->getSQLType(A_field_type_integer,"") + "" +",main_phone " + backend->getSQLType(A_field_type_string,"") + "" +",unified_servants " + backend->getSQLType(A_field_type_string,"") + "" +",phone_home_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",phone_office_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",phone_mobile_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",sent_authrequest_initmethod " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_initmethod " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest_extrasbitmask " + backend->getSQLType(A_field_type_integer,"") + "" +",liveid_cid " + backend->getSQLType(A_field_type_string,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Conversations","table","CREATE TABLE Conversations (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",identity " + backend->getSQLType(A_field_type_string,"") + "" +",live_host " + backend->getSQLType(A_field_type_string,"") + "" +",live_start_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",live_is_muted " + backend->getSQLType(A_field_type_integer,"") + "" +",alert_string " + backend->getSQLType(A_field_type_string,"") + "" +",is_bookmarked " + backend->getSQLType(A_field_type_integer,"") + "" +",given_displayname " + backend->getSQLType(A_field_type_string,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",local_livestatus " + backend->getSQLType(A_field_type_integer,"") + "" +",inbox_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",inbox_message_id " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_suppressed_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_normal_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_elevated_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_messages_voice " + backend->getSQLType(A_field_type_integer,"") + "" +",active_vm_id " + backend->getSQLType(A_field_type_integer,"") + "" +",context_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",consumption_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",last_activity_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",active_invoice_message " + backend->getSQLType(A_field_type_integer,"") + "" +",spawned_from_convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",pinned_order " + backend->getSQLType(A_field_type_integer,"") + "" +",creator " + backend->getSQLType(A_field_type_string,"") + "" +",creation_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",my_status " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_joining_enabled " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_access_token " + backend->getSQLType(A_field_type_string,"") + "" +",opt_entry_level_rank " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_disclose_history " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_history_limit_in_days " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_admin_only_activities " + backend->getSQLType(A_field_type_integer,"") + "" +",passwordhint " + backend->getSQLType(A_field_type_string,"") + "" +",meta_name " + backend->getSQLType(A_field_type_string,"") + "" +",meta_topic " + backend->getSQLType(A_field_type_string,"") + "" +",meta_guidelines " + backend->getSQLType(A_field_type_string,"") + "" +",meta_picture " + backend->getSQLType(A_field_type_blob,"") + "" +",premium_video_status " + backend->getSQLType(A_field_type_integer,"") + "" +",premium_video_is_grace_period " + backend->getSQLType(A_field_type_integer,"") + "" +",guid " + backend->getSQLType(A_field_type_string,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",meta_description " + backend->getSQLType(A_field_type_string,"") + "" +",premium_video_sponsor_list " + backend->getSQLType(A_field_type_string,"") + "" +",mcr_caller " + backend->getSQLType(A_field_type_string,"") + "" +",chat_dbid " + backend->getSQLType(A_field_type_integer,"") + "" +",history_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",history_sync_state " + backend->getSQLType(A_field_type_string,"") + "" +",extprop_windowpos_x " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_y " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_w " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_h " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_roster_visible " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_splitter_layout " + backend->getSQLType(A_field_type_string,"") + "" +",extprop_hide_from_history " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_detached " + backend->getSQLType(A_field_type_integer,"") + "" +",is_blocked " + backend->getSQLType(A_field_type_integer,"") + "" +",last_message_id " + backend->getSQLType(A_field_type_integer,"") + "" +",picture " + backend->getSQLType(A_field_type_string,"") + "" +",is_p2p_migrated " + backend->getSQLType(A_field_type_integer,"") + "" +",thread_version " + backend->getSQLType(A_field_type_string,"") + "" +",consumption_horizon_set_at " + backend->getSQLType(A_field_type_integer,"") + "" +",alt_identity " + backend->getSQLType(A_field_type_string,"") + "" +",in_migrated_thread_since " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Messagesididx","index","CREATE INDEX Messagesididx ON Messages (id)"));
     res.push_back(Database::SchemaItem("Chatsididx","index","CREATE INDEX Chatsididx ON Chats (id)"));
     res.push_back(Database::SchemaItem("Contactsididx","index","CREATE INDEX Contactsididx ON Contacts (id)"));
+    res.push_back(Database::SchemaItem("Conversationsididx","index","CREATE INDEX Conversationsididx ON Conversations (id)"));
     return res;
 }
 void main::initialize() {

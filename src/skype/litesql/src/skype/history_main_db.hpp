@@ -49,8 +49,8 @@ public:
     virtual void update();
     virtual void del();
     virtual bool typeIsCorrect() const;
-    std::auto_ptr<Chats> upcast() const;
-    std::auto_ptr<Chats> upcastCopy() const;
+    std::unique_ptr<Chats> upcast() const;
+    std::unique_ptr<Chats> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, Chats o);
 class ChatUsers : public litesql::Persistent {
@@ -92,8 +92,8 @@ public:
     virtual void update();
     virtual void del();
     virtual bool typeIsCorrect() const;
-    std::auto_ptr<ChatUsers> upcast() const;
-    std::auto_ptr<ChatUsers> upcastCopy() const;
+    std::unique_ptr<ChatUsers> upcast() const;
+    std::unique_ptr<ChatUsers> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, ChatUsers o);
 class info : public litesql::Persistent {
@@ -133,8 +133,8 @@ public:
     virtual void update();
     virtual void del();
     virtual bool typeIsCorrect() const;
-    std::auto_ptr<info> upcast() const;
-    std::auto_ptr<info> upcastCopy() const;
+    std::unique_ptr<info> upcast() const;
+    std::unique_ptr<info> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, info o);
 class Messages : public litesql::Persistent {
@@ -184,8 +184,8 @@ public:
     virtual void update();
     virtual void del();
     virtual bool typeIsCorrect() const;
-    std::auto_ptr<Messages> upcast() const;
-    std::auto_ptr<Messages> upcastCopy() const;
+    std::unique_ptr<Messages> upcast() const;
+    std::unique_ptr<Messages> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, Messages o);
 class Users : public litesql::Persistent {
@@ -230,8 +230,8 @@ public:
     virtual void update();
     virtual void del();
     virtual bool typeIsCorrect() const;
-    std::auto_ptr<Users> upcast() const;
-    std::auto_ptr<Users> upcastCopy() const;
+    std::unique_ptr<Users> upcast() const;
+    std::unique_ptr<Users> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, Users o);
 class history : public litesql::Database {

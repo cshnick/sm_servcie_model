@@ -5,6 +5,7 @@ namespace SkypeDB {
 class Messages;
 class Chats;
 class Contacts;
+class Conversations;
 class Messages : public litesql::Persistent {
 public:
     class Own {
@@ -102,8 +103,8 @@ public:
     virtual void update();
     virtual void del();
     virtual bool typeIsCorrect() const;
-    std::auto_ptr<Messages> upcast() const;
-    std::auto_ptr<Messages> upcastCopy() const;
+    std::unique_ptr<Messages> upcast() const;
+    std::unique_ptr<Messages> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, Messages o);
 class Chats : public litesql::Persistent {
@@ -214,8 +215,8 @@ public:
     virtual void update();
     virtual void del();
     virtual bool typeIsCorrect() const;
-    std::auto_ptr<Chats> upcast() const;
-    std::auto_ptr<Chats> upcastCopy() const;
+    std::unique_ptr<Chats> upcast() const;
+    std::unique_ptr<Chats> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, Chats o);
 class Contacts : public litesql::Persistent {
@@ -399,6 +400,7 @@ public:
     Contacts(const litesql::Database& db, const litesql::Record& rec);
     Contacts(const Contacts& obj);
     const Contacts& operator=(const Contacts& obj);
+    virtual litesql::Field<std::string> Contacts::* cache_field();
 protected:
     std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
     void create();
@@ -413,10 +415,175 @@ public:
     virtual void update();
     virtual void del();
     virtual bool typeIsCorrect() const;
-    std::auto_ptr<Contacts> upcast() const;
-    std::auto_ptr<Contacts> upcastCopy() const;
+    std::unique_ptr<Contacts> upcast() const;
+    std::unique_ptr<Contacts> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, Contacts o);
+class Conversations : public litesql::Persistent {
+public:
+    class Own {
+    public:
+        static const litesql::FieldType Id;
+    };
+    static const std::string type__;
+    static const std::string table__;
+    static const std::string sequence__;
+    static const litesql::FieldType Id;
+    litesql::Field<int> id;
+    static const litesql::FieldType Type;
+    litesql::Field<std::string> type;
+    static const litesql::FieldType Is_permanent;
+    litesql::Field<int> is_permanent;
+    static const litesql::FieldType Identity;
+    litesql::Field<std::string> identity;
+    static const litesql::FieldType Live_host;
+    litesql::Field<std::string> live_host;
+    static const litesql::FieldType Live_start_timestamp;
+    litesql::Field<int> live_start_timestamp;
+    static const litesql::FieldType Live_is_muted;
+    litesql::Field<int> live_is_muted;
+    static const litesql::FieldType Alert_string;
+    litesql::Field<std::string> alert_string;
+    static const litesql::FieldType Is_bookmarked;
+    litesql::Field<int> is_bookmarked;
+    static const litesql::FieldType Given_displayname;
+    litesql::Field<std::string> given_displayname;
+    static const litesql::FieldType Displayname;
+    litesql::Field<std::string> displayname;
+    static const litesql::FieldType Local_livestatus;
+    litesql::Field<int> local_livestatus;
+    static const litesql::FieldType Inbox_timestamp;
+    litesql::Field<int> inbox_timestamp;
+    static const litesql::FieldType Inbox_message_id;
+    litesql::Field<int> inbox_message_id;
+    static const litesql::FieldType Unconsumed_suppressed_messages;
+    litesql::Field<int> unconsumed_suppressed_messages;
+    static const litesql::FieldType Unconsumed_normal_messages;
+    litesql::Field<int> unconsumed_normal_messages;
+    static const litesql::FieldType Unconsumed_elevated_messages;
+    litesql::Field<int> unconsumed_elevated_messages;
+    static const litesql::FieldType Unconsumed_messages_voice;
+    litesql::Field<int> unconsumed_messages_voice;
+    static const litesql::FieldType Active_vm_id;
+    litesql::Field<int> active_vm_id;
+    static const litesql::FieldType Context_horizon;
+    litesql::Field<int> context_horizon;
+    static const litesql::FieldType Consumption_horizon;
+    litesql::Field<int> consumption_horizon;
+    static const litesql::FieldType Last_activity_timestamp;
+    litesql::Field<int> last_activity_timestamp;
+    static const litesql::FieldType Active_invoice_message;
+    litesql::Field<int> active_invoice_message;
+    static const litesql::FieldType Spawned_from_convo_id;
+    litesql::Field<int> spawned_from_convo_id;
+    static const litesql::FieldType Pinned_order;
+    litesql::Field<int> pinned_order;
+    static const litesql::FieldType Creator;
+    litesql::Field<std::string> creator;
+    static const litesql::FieldType Creation_timestamp;
+    litesql::Field<int> creation_timestamp;
+    static const litesql::FieldType My_status;
+    litesql::Field<int> my_status;
+    static const litesql::FieldType Opt_joining_enabled;
+    litesql::Field<int> opt_joining_enabled;
+    static const litesql::FieldType Opt_access_token;
+    litesql::Field<std::string> opt_access_token;
+    static const litesql::FieldType Opt_entry_level_rank;
+    litesql::Field<int> opt_entry_level_rank;
+    static const litesql::FieldType Opt_disclose_history;
+    litesql::Field<int> opt_disclose_history;
+    static const litesql::FieldType Opt_history_limit_in_days;
+    litesql::Field<int> opt_history_limit_in_days;
+    static const litesql::FieldType Opt_admin_only_activities;
+    litesql::Field<int> opt_admin_only_activities;
+    static const litesql::FieldType Passwordhint;
+    litesql::Field<std::string> passwordhint;
+    static const litesql::FieldType Meta_name;
+    litesql::Field<std::string> meta_name;
+    static const litesql::FieldType Meta_topic;
+    litesql::Field<std::string> meta_topic;
+    static const litesql::FieldType Meta_guidelines;
+    litesql::Field<std::string> meta_guidelines;
+    static const litesql::FieldType Meta_picture;
+    litesql::Field<litesql::Blob> meta_picture;
+    static const litesql::FieldType Premium_video_status;
+    litesql::Field<int> premium_video_status;
+    static const litesql::FieldType Premium_video_is_grace_period;
+    litesql::Field<int> premium_video_is_grace_period;
+    static const litesql::FieldType Guid;
+    litesql::Field<std::string> guid;
+    static const litesql::FieldType Dialog_partner;
+    litesql::Field<std::string> dialog_partner;
+    static const litesql::FieldType Meta_description;
+    litesql::Field<std::string> meta_description;
+    static const litesql::FieldType Premium_video_sponsor_list;
+    litesql::Field<std::string> premium_video_sponsor_list;
+    static const litesql::FieldType Mcr_caller;
+    litesql::Field<std::string> mcr_caller;
+    static const litesql::FieldType Chat_dbid;
+    litesql::Field<int> chat_dbid;
+    static const litesql::FieldType History_horizon;
+    litesql::Field<int> history_horizon;
+    static const litesql::FieldType History_sync_state;
+    litesql::Field<std::string> history_sync_state;
+    static const litesql::FieldType Extprop_windowpos_x;
+    litesql::Field<int> extprop_windowpos_x;
+    static const litesql::FieldType Extprop_windowpos_y;
+    litesql::Field<int> extprop_windowpos_y;
+    static const litesql::FieldType Extprop_windowpos_w;
+    litesql::Field<int> extprop_windowpos_w;
+    static const litesql::FieldType Extprop_windowpos_h;
+    litesql::Field<int> extprop_windowpos_h;
+    static const litesql::FieldType Extprop_window_roster_visible;
+    litesql::Field<int> extprop_window_roster_visible;
+    static const litesql::FieldType Extprop_window_splitter_layout;
+    litesql::Field<std::string> extprop_window_splitter_layout;
+    static const litesql::FieldType Extprop_hide_from_history;
+    litesql::Field<int> extprop_hide_from_history;
+    static const litesql::FieldType Extprop_window_detached;
+    litesql::Field<int> extprop_window_detached;
+    static const litesql::FieldType Is_blocked;
+    litesql::Field<int> is_blocked;
+    static const litesql::FieldType Last_message_id;
+    litesql::Field<int> last_message_id;
+    static const litesql::FieldType Picture;
+    litesql::Field<std::string> picture;
+    static const litesql::FieldType Is_p2p_migrated;
+    litesql::Field<int> is_p2p_migrated;
+    static const litesql::FieldType Thread_version;
+    litesql::Field<std::string> thread_version;
+    static const litesql::FieldType Consumption_horizon_set_at;
+    litesql::Field<int> consumption_horizon_set_at;
+    static const litesql::FieldType Alt_identity;
+    litesql::Field<std::string> alt_identity;
+    static const litesql::FieldType In_migrated_thread_since;
+    litesql::Field<int> in_migrated_thread_since;
+    static void initValues();
+protected:
+    void defaults();
+public:
+    Conversations(const litesql::Database& db);
+    Conversations(const litesql::Database& db, const litesql::Record& rec);
+    Conversations(const Conversations& obj);
+    const Conversations& operator=(const Conversations& obj);
+protected:
+    std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
+    void create();
+    virtual void addUpdates(Updates& updates);
+    virtual void addIDUpdates(Updates& updates);
+public:
+    static void getFieldTypes(std::vector<litesql::FieldType>& ftypes);
+protected:
+    virtual void delRecord();
+    virtual void delRelations();
+public:
+    virtual void update();
+    virtual void del();
+    virtual bool typeIsCorrect() const;
+    std::unique_ptr<Conversations> upcast() const;
+    std::unique_ptr<Conversations> upcastCopy() const;
+};
+std::ostream & operator<<(std::ostream& os, Conversations o);
 class main : public litesql::Database {
 public:
     main(std::string backendType, std::string connInfo);

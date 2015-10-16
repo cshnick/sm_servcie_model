@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE database SYSTEM "litesql.dtd"> 
-<database name="main" db_name="main" namespace="SkypeDB" output_filename="skype_main_db">
+<database name="main" db_name="main" namespace="SkypeDB" output_filename="skype_main_db"> 
   <object name="Messages" db_name="Messages">
     <field name="is_permanent" db_name="is_permanent" type="integer" />
     <field name="convo_id" db_name="convo_id" type="integer"/>
@@ -172,5 +172,74 @@
     <field name="liveid_cid" type="string"/>
    <!--  <field name="extprop_tags" type="string"/> -->
    <!--  <field name="extprop_away_since" type="integer" /> -->
+   <method name="cache_field" returntype="litesql::Field&lt;std::string&gt; Contacts::*" />
+  </object>
+    
+  <object name="Conversations" db_name="Conversations">
+  	<!--  <field name="id" type="integer" /> -->
+    <field name="is_permanent" type="integer" />
+    <field name="identity" type="string"/>
+    <!-- <field name="type" type="integer" /> -->
+    <field name="live_host" type="string"/>
+    <field name="live_start_timestamp" type="integer" />
+    <field name="live_is_muted" type="integer" />
+    <field name="alert_string" type="string"/>
+    <field name="is_bookmarked" type="integer" />
+    <field name="given_displayname" type="string"/>
+    <field name="displayname" type="string"/>
+    <field name="local_livestatus" type="integer" />
+    <field name="inbox_timestamp" type="integer" />
+    <field name="inbox_message_id" type="integer" />
+    <field name="unconsumed_suppressed_messages" type="integer" />
+    <field name="unconsumed_normal_messages" type="integer" />
+    <field name="unconsumed_elevated_messages" type="integer" />
+    <field name="unconsumed_messages_voice" type="integer" />
+    <field name="active_vm_id" type="integer" />
+    <field name="context_horizon" type="integer" />
+    <field name="consumption_horizon" type="integer" />
+    <field name="last_activity_timestamp" type="integer" />
+    <field name="active_invoice_message" type="integer" />
+    <field name="spawned_from_convo_id" type="integer" />
+    <field name="pinned_order" type="integer" />
+    <field name="creator" type="string"/>
+    <field name="creation_timestamp" type="integer" />
+    <field name="my_status" type="integer" />
+    <field name="opt_joining_enabled" type="integer" />
+    <field name="opt_access_token" type="string"/>
+    <field name="opt_entry_level_rank" type="integer" />
+    <field name="opt_disclose_history" type="integer" />
+    <field name="opt_history_limit_in_days" type="integer" />
+    <field name="opt_admin_only_activities" type="integer" />
+    <field name="passwordhint" type="string"/>
+    <field name="meta_name" type="string"/>
+    <field name="meta_topic" type="string"/>
+    <field name="meta_guidelines" type="string"/>
+    <field name="meta_picture" type="blob"/>
+    <field name="premium_video_status" type="integer" />
+    <field name="premium_video_is_grace_period" type="integer" />
+    <field name="guid" type="string"/>
+    <field name="dialog_partner" type="string"/>
+    <field name="meta_description" type="string"/>
+    <field name="premium_video_sponsor_list" type="string"/>
+    <field name="mcr_caller" type="string"/>
+    <field name="chat_dbid" type="integer" />
+    <field name="history_horizon" type="integer" />
+    <field name="history_sync_state" type="string"/>
+    <field name="extprop_windowpos_x" type="integer" />
+    <field name="extprop_windowpos_y" type="integer" />
+    <field name="extprop_windowpos_w" type="integer" />
+    <field name="extprop_windowpos_h" type="integer" />
+    <field name="extprop_window_roster_visible" type="integer" />
+    <field name="extprop_window_splitter_layout" type="string"/>
+    <field name="extprop_hide_from_history" type="integer" />
+    <field name="extprop_window_detached" type="integer" />
+    <field name="is_blocked" type="integer" />
+    <field name="last_message_id" type="integer" />
+    <field name="picture" type="string"/>
+    <field name="is_p2p_migrated" type="integer" />
+    <field name="thread_version" type="string"/>
+    <field name="consumption_horizon_set_at" type="integer" />
+    <field name="alt_identity" type="string"/>
+    <field name="in_migrated_thread_since" type="integer" />
   </object>
 </database>

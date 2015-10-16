@@ -121,7 +121,7 @@ void Chats::update() {
 }
 void Chats::del() {
     if (!typeIsCorrect()) {
-        std::auto_ptr<Chats> p(upcastCopy());
+        std::unique_ptr<Chats> p(upcastCopy());
         p->delRelations();
         p->onDelete();
         p->delRecord();
@@ -135,10 +135,10 @@ void Chats::del() {
 bool Chats::typeIsCorrect() const {
     return type == type__;
 }
-std::auto_ptr<Chats> Chats::upcast() const {
-    return auto_ptr<Chats>(new Chats(*this));
+std::unique_ptr<Chats> Chats::upcast() const {
+    return unique_ptr<Chats>(new Chats(*this));
 }
-std::auto_ptr<Chats> Chats::upcastCopy() const {
+std::unique_ptr<Chats> Chats::upcastCopy() const {
     Chats* np = new Chats(*this);
     np->id = id;
     np->type = type;
@@ -146,7 +146,7 @@ std::auto_ptr<Chats> Chats::upcastCopy() const {
     np->name = name;
     np->creationtime = creationtime;
     np->inDatabase = inDatabase;
-    return auto_ptr<Chats>(np);
+    return unique_ptr<Chats>(np);
 }
 std::ostream & operator<<(std::ostream& os, Chats o) {
     os << "-------------------------------------" << std::endl;
@@ -270,7 +270,7 @@ void ChatUsers::update() {
 }
 void ChatUsers::del() {
     if (!typeIsCorrect()) {
-        std::auto_ptr<ChatUsers> p(upcastCopy());
+        std::unique_ptr<ChatUsers> p(upcastCopy());
         p->delRelations();
         p->onDelete();
         p->delRecord();
@@ -284,17 +284,17 @@ void ChatUsers::del() {
 bool ChatUsers::typeIsCorrect() const {
     return type == type__;
 }
-std::auto_ptr<ChatUsers> ChatUsers::upcast() const {
-    return auto_ptr<ChatUsers>(new ChatUsers(*this));
+std::unique_ptr<ChatUsers> ChatUsers::upcast() const {
+    return unique_ptr<ChatUsers>(new ChatUsers(*this));
 }
-std::auto_ptr<ChatUsers> ChatUsers::upcastCopy() const {
+std::unique_ptr<ChatUsers> ChatUsers::upcastCopy() const {
     ChatUsers* np = new ChatUsers(*this);
     np->id = id;
     np->type = type;
     np->user_id = user_id;
     np->chat_id = chat_id;
     np->inDatabase = inDatabase;
-    return auto_ptr<ChatUsers>(np);
+    return unique_ptr<ChatUsers>(np);
 }
 std::ostream & operator<<(std::ostream& os, ChatUsers o) {
     os << "-------------------------------------" << std::endl;
@@ -407,7 +407,7 @@ void info::update() {
 }
 void info::del() {
     if (!typeIsCorrect()) {
-        std::auto_ptr<info> p(upcastCopy());
+        std::unique_ptr<info> p(upcastCopy());
         p->delRelations();
         p->onDelete();
         p->delRecord();
@@ -421,16 +421,16 @@ void info::del() {
 bool info::typeIsCorrect() const {
     return type == type__;
 }
-std::auto_ptr<info> info::upcast() const {
-    return auto_ptr<info>(new info(*this));
+std::unique_ptr<info> info::upcast() const {
+    return unique_ptr<info>(new info(*this));
 }
-std::auto_ptr<info> info::upcastCopy() const {
+std::unique_ptr<info> info::upcastCopy() const {
     info* np = new info(*this);
     np->id = id;
     np->type = type;
     np->dbversion = dbversion;
     np->inDatabase = inDatabase;
-    return auto_ptr<info>(np);
+    return unique_ptr<info>(np);
 }
 std::ostream & operator<<(std::ostream& os, info o) {
     os << "-------------------------------------" << std::endl;
@@ -591,7 +591,7 @@ void Messages::update() {
 }
 void Messages::del() {
     if (!typeIsCorrect()) {
-        std::auto_ptr<Messages> p(upcastCopy());
+        std::unique_ptr<Messages> p(upcastCopy());
         p->delRelations();
         p->onDelete();
         p->delRecord();
@@ -605,10 +605,10 @@ void Messages::del() {
 bool Messages::typeIsCorrect() const {
     return type == type__;
 }
-std::auto_ptr<Messages> Messages::upcast() const {
-    return auto_ptr<Messages>(new Messages(*this));
+std::unique_ptr<Messages> Messages::upcast() const {
+    return unique_ptr<Messages>(new Messages(*this));
 }
-std::auto_ptr<Messages> Messages::upcastCopy() const {
+std::unique_ptr<Messages> Messages::upcastCopy() const {
     Messages* np = new Messages(*this);
     np->id = id;
     np->type = type;
@@ -619,7 +619,7 @@ std::auto_ptr<Messages> Messages::upcastCopy() const {
     np->skype_id = skype_id;
     np->skype_timestamp = skype_timestamp;
     np->inDatabase = inDatabase;
-    return auto_ptr<Messages>(np);
+    return unique_ptr<Messages>(np);
 }
 std::ostream & operator<<(std::ostream& os, Messages o) {
     os << "-------------------------------------" << std::endl;
@@ -754,7 +754,7 @@ void Users::update() {
 }
 void Users::del() {
     if (!typeIsCorrect()) {
-        std::auto_ptr<Users> p(upcastCopy());
+        std::unique_ptr<Users> p(upcastCopy());
         p->delRelations();
         p->onDelete();
         p->delRecord();
@@ -768,10 +768,10 @@ void Users::del() {
 bool Users::typeIsCorrect() const {
     return type == type__;
 }
-std::auto_ptr<Users> Users::upcast() const {
-    return auto_ptr<Users>(new Users(*this));
+std::unique_ptr<Users> Users::upcast() const {
+    return unique_ptr<Users>(new Users(*this));
 }
-std::auto_ptr<Users> Users::upcastCopy() const {
+std::unique_ptr<Users> Users::upcastCopy() const {
     Users* np = new Users(*this);
     np->id = id;
     np->type = type;
@@ -779,7 +779,7 @@ std::auto_ptr<Users> Users::upcastCopy() const {
     np->name = name;
     np->lastmessagetime = lastmessagetime;
     np->inDatabase = inDatabase;
-    return auto_ptr<Users>(np);
+    return unique_ptr<Users>(np);
 }
 std::ostream & operator<<(std::ostream& os, Users o) {
     os << "-------------------------------------" << std::endl;

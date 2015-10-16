@@ -20,7 +20,7 @@
 	<field name="dbversion" type="integer" />
 </object>
 
-<object name="Messages" db_name="Messages">
+<object name="Messages" db_name="Messages"> 
 	<!--  <field name="id" type="integer" /> -->
 	<!--  <field name="type" type="integer" />  -->
 	<field name="body" type="string"/>
