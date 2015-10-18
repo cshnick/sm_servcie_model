@@ -341,6 +341,7 @@ public:
     static const char* TAG;
 
     string name, db_name, inherits;
+    bool m_has_type_field;
     Field::sequence fields;
     Method::sequence methods;
     Index::sequence indices;
@@ -349,23 +350,24 @@ public:
     ObjectPtr parentObject;
     ObjectSequence children;
 
-    Object(const string& n, const string &a, const string& i, bool has_type_field = true)
+    Object(const string& n, const string &a, const string& i, bool has_type_field)
       : name(n),
 		db_name(a),
         inherits(i),
+		m_has_type_field(has_type_field),
         parentObject(NULL) {
         if (i.size() == 0) {
             inherits = "litesql::Persistent";
             fields.push_back(ID_FIELD);
-            if (has_type_field) {
-            	std::cout << "No type field" << std::endl;
+            if (m_has_type_field) {
+            	std::cout << "Have type field" << std::endl;
             	fields.push_back(TYPE_FIELD);
             }
         }
     }
 
     Object(const string &n, const string &i)
-    	: Object(n, n, i)
+    	: Object(n, n, i, true)
     {}
 
     bool inheritsFromDefault() const

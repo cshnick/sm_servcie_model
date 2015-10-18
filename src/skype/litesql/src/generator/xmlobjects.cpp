@@ -21,7 +21,7 @@ const char* Method::TAG="method";
 ObjectPtr Object::DEFAULT_BASE(new Object("litesql::Persistent",""));
 
 Field::Ptr Object::ID_FIELD(new Field("id", A_field_type_integer, "", A_field_indexed_true, A_field_unique_true));
-Field::Ptr Object::TYPE_FIELD(new Field("type","type__",A_field_type_string, "", A_field_indexed_false, A_field_unique_false));
+Field::Ptr Object::TYPE_FIELD(new Field("type","type",A_field_type_string, "", A_field_indexed_false, A_field_unique_false));
 
    
 string validID(const string& s, const string& type="field") {

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE database SYSTEM "litesql.dtd"> 
-<database name="main" db_name="main" namespace="SkypeDB" output_filename="skype_main_db" generate_types="true"> 
+<database name="main" db_name="main" namespace="SkypeDB" output_filename="skype_main_db" generate_types="false"> 
   <object name="Messages" db_name="Messages">
     <field name="is_permanent" db_name="is_permanent" type="integer" />
     <field name="convo_id" db_name="convo_id" type="integer"/>
@@ -9,7 +9,7 @@
     <field name="from_dispname" db_name="from_dispname" type="string"/>
     <field name="author_was_live" db_name="author_was_live" type="integer"/>
     <field name="guid" db_name="guid" type="blob"/>
-    <field name="dialog_partner" db_name="dialog_partner" type="string"/>
+    <field name="dialog_partner" db_name="dialog_partner" type="string"/> 
     <field name="timestamp" db_name="timestamp" type="integer"/>
     <!-- <field name="type" db_name="type" type="integer"/> -->
     <field name="sending_status" db_name="sending_status" type="integer"/>

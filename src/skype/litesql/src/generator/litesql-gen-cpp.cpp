@@ -694,11 +694,16 @@ void writeObjBaseMethods(Class& cl, const xml::Object& o) {
     create.protected_();
     create.body("litesql::Record tables;")
         .body("litesql::Records fieldRecs;")
-        .body("litesql::Records valueRecs;")
-        .body("type = type__;")
-        .body("std::string newID = insert(tables, fieldRecs, valueRecs);")
-        .body("if (id == 0)")
-        .body("    id = newID;");
+        .body("litesql::Records valueRecs;");
+    if (!o.m_has_type_field) { //Disable type processing (readonly database)
+		create.body("//Type processing disabled")
+              .body("//type = type__;");
+    } else {
+    	create.body("type = type__;");
+    }
+    create.body("std::string newID = insert(tables, fieldRecs, valueRecs);")
+          .body("if (id == 0)")
+		  .body("    id = newID;");
 
 
     gen::Method addUpdates("addUpdates", "void");
@@ -788,7 +793,12 @@ void writeObjBaseMethods(Class& cl, const xml::Object& o) {
 
     gen::Method typeIsCorrect("typeIsCorrect", "bool");
     typeIsCorrect.isConst = true;
-    typeIsCorrect.body("return type == type__;").virtual_();
+    if (o.m_has_type_field) { //Process type database field
+    	typeIsCorrect.body("return type == type__;").virtual_();
+    } else { //Don't process type database field (readonly database
+    	typeIsCorrect.body("return true;").virtual_();
+    }
+
     
     gen::Method upcast("upcast", "std::unique_ptr<" + o.name + ">");
     upcast.isConst = true;

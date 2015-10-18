@@ -150,8 +150,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static const litesql::FieldType Name;
     litesql::Field<std::string> name;
     static const litesql::FieldType Passwd;
@@ -250,8 +248,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static const litesql::FieldType Name;
     litesql::Field<std::string> name;
     static const litesql::FieldType Age;
@@ -317,8 +313,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static void initValues();
 protected:
     void defaults();
@@ -446,8 +440,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static const litesql::FieldType Name;
     litesql::Field<std::string> name;
     static void initValues();
@@ -497,8 +489,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static void initValues();
 protected:
     void defaults();
@@ -537,8 +527,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static void initValues();
 protected:
     void defaults();

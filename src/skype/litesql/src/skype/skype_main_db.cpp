@@ -6,7 +6,6 @@ const std::string Messages::type__("Messages");
 const std::string Messages::table__("Messages");
 const std::string Messages::sequence__("Messages_seq");
 const litesql::FieldType Messages::Id("id",A_field_type_integer,table__);
-const litesql::FieldType Messages::Type("type__",A_field_type_string,table__);
 const litesql::FieldType Messages::Is_permanent("is_permanent",A_field_type_integer,table__);
 const litesql::FieldType Messages::Convo_id("convo_id",A_field_type_integer,table__);
 const litesql::FieldType Messages::Chatname("chatname",A_field_type_string,table__);
@@ -66,89 +65,86 @@ void Messages::defaults() {
     remote_id = 0;
 }
 Messages::Messages(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), type(Type), is_permanent(Is_permanent), convo_id(Convo_id), chatname(Chatname), author(Author), from_dispname(From_dispname), author_was_live(Author_was_live), guid(Guid), dialog_partner(Dialog_partner), timestamp(Timestamp), sending_status(Sending_status), consumption_status(Consumption_status), edited_by(Edited_by), edited_timestamp(Edited_timestamp), param_key(Param_key), param_value(Param_value), body_xml(Body_xml), identities(Identities), reason(Reason), leavereason(Leavereason), participant_count(Participant_count), error_code(Error_code), chatmsg_type(Chatmsg_type), chatmsg_status(Chatmsg_status), body_is_rawxml(Body_is_rawxml), oldoptions(Oldoptions), newoptions(Newoptions), newrole(Newrole), pk_id(Pk_id), crc(Crc), remote_id(Remote_id), call_guid(Call_guid) {
+     : litesql::Persistent(db), id(Id), is_permanent(Is_permanent), convo_id(Convo_id), chatname(Chatname), author(Author), from_dispname(From_dispname), author_was_live(Author_was_live), guid(Guid), dialog_partner(Dialog_partner), timestamp(Timestamp), sending_status(Sending_status), consumption_status(Consumption_status), edited_by(Edited_by), edited_timestamp(Edited_timestamp), param_key(Param_key), param_value(Param_value), body_xml(Body_xml), identities(Identities), reason(Reason), leavereason(Leavereason), participant_count(Participant_count), error_code(Error_code), chatmsg_type(Chatmsg_type), chatmsg_status(Chatmsg_status), body_is_rawxml(Body_is_rawxml), oldoptions(Oldoptions), newoptions(Newoptions), newrole(Newrole), pk_id(Pk_id), crc(Crc), remote_id(Remote_id), call_guid(Call_guid) {
     defaults();
 }
 Messages::Messages(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), type(Type), is_permanent(Is_permanent), convo_id(Convo_id), chatname(Chatname), author(Author), from_dispname(From_dispname), author_was_live(Author_was_live), guid(Guid), dialog_partner(Dialog_partner), timestamp(Timestamp), sending_status(Sending_status), consumption_status(Consumption_status), edited_by(Edited_by), edited_timestamp(Edited_timestamp), param_key(Param_key), param_value(Param_value), body_xml(Body_xml), identities(Identities), reason(Reason), leavereason(Leavereason), participant_count(Participant_count), error_code(Error_code), chatmsg_type(Chatmsg_type), chatmsg_status(Chatmsg_status), body_is_rawxml(Body_is_rawxml), oldoptions(Oldoptions), newoptions(Newoptions), newrole(Newrole), pk_id(Pk_id), crc(Crc), remote_id(Remote_id), call_guid(Call_guid) {
+     : litesql::Persistent(db, rec), id(Id), is_permanent(Is_permanent), convo_id(Convo_id), chatname(Chatname), author(Author), from_dispname(From_dispname), author_was_live(Author_was_live), guid(Guid), dialog_partner(Dialog_partner), timestamp(Timestamp), sending_status(Sending_status), consumption_status(Consumption_status), edited_by(Edited_by), edited_timestamp(Edited_timestamp), param_key(Param_key), param_value(Param_value), body_xml(Body_xml), identities(Identities), reason(Reason), leavereason(Leavereason), participant_count(Participant_count), error_code(Error_code), chatmsg_type(Chatmsg_type), chatmsg_status(Chatmsg_status), body_is_rawxml(Body_is_rawxml), oldoptions(Oldoptions), newoptions(Newoptions), newrole(Newrole), pk_id(Pk_id), crc(Crc), remote_id(Remote_id), call_guid(Call_guid) {
     defaults();
-    size_t size = (rec.size() > 33) ? 33 : rec.size();
+    size_t size = (rec.size() > 32) ? 32 : rec.size();
     switch(size) {
-    case 33: call_guid = convert<const std::string&, std::string>(rec[32]);
+    case 32: call_guid = convert<const std::string&, std::string>(rec[31]);
         call_guid.setModified(false);
-    case 32: remote_id = convert<const std::string&, int>(rec[31]);
+    case 31: remote_id = convert<const std::string&, int>(rec[30]);
         remote_id.setModified(false);
-    case 31: crc = convert<const std::string&, int>(rec[30]);
+    case 30: crc = convert<const std::string&, int>(rec[29]);
         crc.setModified(false);
-    case 30: pk_id = convert<const std::string&, int>(rec[29]);
+    case 29: pk_id = convert<const std::string&, int>(rec[28]);
         pk_id.setModified(false);
-    case 29: newrole = convert<const std::string&, int>(rec[28]);
+    case 28: newrole = convert<const std::string&, int>(rec[27]);
         newrole.setModified(false);
-    case 28: newoptions = convert<const std::string&, int>(rec[27]);
+    case 27: newoptions = convert<const std::string&, int>(rec[26]);
         newoptions.setModified(false);
-    case 27: oldoptions = convert<const std::string&, int>(rec[26]);
+    case 26: oldoptions = convert<const std::string&, int>(rec[25]);
         oldoptions.setModified(false);
-    case 26: body_is_rawxml = convert<const std::string&, int>(rec[25]);
+    case 25: body_is_rawxml = convert<const std::string&, int>(rec[24]);
         body_is_rawxml.setModified(false);
-    case 25: chatmsg_status = convert<const std::string&, int>(rec[24]);
+    case 24: chatmsg_status = convert<const std::string&, int>(rec[23]);
         chatmsg_status.setModified(false);
-    case 24: chatmsg_type = convert<const std::string&, int>(rec[23]);
+    case 23: chatmsg_type = convert<const std::string&, int>(rec[22]);
         chatmsg_type.setModified(false);
-    case 23: error_code = convert<const std::string&, int>(rec[22]);
+    case 22: error_code = convert<const std::string&, int>(rec[21]);
         error_code.setModified(false);
-    case 22: participant_count = convert<const std::string&, int>(rec[21]);
+    case 21: participant_count = convert<const std::string&, int>(rec[20]);
         participant_count.setModified(false);
-    case 21: leavereason = convert<const std::string&, int>(rec[20]);
+    case 20: leavereason = convert<const std::string&, int>(rec[19]);
         leavereason.setModified(false);
-    case 20: reason = convert<const std::string&, std::string>(rec[19]);
+    case 19: reason = convert<const std::string&, std::string>(rec[18]);
         reason.setModified(false);
-    case 19: identities = convert<const std::string&, std::string>(rec[18]);
+    case 18: identities = convert<const std::string&, std::string>(rec[17]);
         identities.setModified(false);
-    case 18: body_xml = convert<const std::string&, std::string>(rec[17]);
+    case 17: body_xml = convert<const std::string&, std::string>(rec[16]);
         body_xml.setModified(false);
-    case 17: param_value = convert<const std::string&, int>(rec[16]);
+    case 16: param_value = convert<const std::string&, int>(rec[15]);
         param_value.setModified(false);
-    case 16: param_key = convert<const std::string&, int>(rec[15]);
+    case 15: param_key = convert<const std::string&, int>(rec[14]);
         param_key.setModified(false);
-    case 15: edited_timestamp = convert<const std::string&, int>(rec[14]);
+    case 14: edited_timestamp = convert<const std::string&, int>(rec[13]);
         edited_timestamp.setModified(false);
-    case 14: edited_by = convert<const std::string&, std::string>(rec[13]);
+    case 13: edited_by = convert<const std::string&, std::string>(rec[12]);
         edited_by.setModified(false);
-    case 13: consumption_status = convert<const std::string&, int>(rec[12]);
+    case 12: consumption_status = convert<const std::string&, int>(rec[11]);
         consumption_status.setModified(false);
-    case 12: sending_status = convert<const std::string&, int>(rec[11]);
+    case 11: sending_status = convert<const std::string&, int>(rec[10]);
         sending_status.setModified(false);
-    case 11: timestamp = convert<const std::string&, int>(rec[10]);
+    case 10: timestamp = convert<const std::string&, int>(rec[9]);
         timestamp.setModified(false);
-    case 10: dialog_partner = convert<const std::string&, std::string>(rec[9]);
+    case 9: dialog_partner = convert<const std::string&, std::string>(rec[8]);
         dialog_partner.setModified(false);
-    case 9: guid = convert<const std::string&, litesql::Blob>(rec[8]);
+    case 8: guid = convert<const std::string&, litesql::Blob>(rec[7]);
         guid.setModified(false);
-    case 8: author_was_live = convert<const std::string&, int>(rec[7]);
+    case 7: author_was_live = convert<const std::string&, int>(rec[6]);
         author_was_live.setModified(false);
-    case 7: from_dispname = convert<const std::string&, std::string>(rec[6]);
+    case 6: from_dispname = convert<const std::string&, std::string>(rec[5]);
         from_dispname.setModified(false);
-    case 6: author = convert<const std::string&, std::string>(rec[5]);
+    case 5: author = convert<const std::string&, std::string>(rec[4]);
         author.setModified(false);
-    case 5: chatname = convert<const std::string&, std::string>(rec[4]);
+    case 4: chatname = convert<const std::string&, std::string>(rec[3]);
         chatname.setModified(false);
-    case 4: convo_id = convert<const std::string&, int>(rec[3]);
+    case 3: convo_id = convert<const std::string&, int>(rec[2]);
         convo_id.setModified(false);
-    case 3: is_permanent = convert<const std::string&, int>(rec[2]);
+    case 2: is_permanent = convert<const std::string&, int>(rec[1]);
         is_permanent.setModified(false);
-    case 2: type = convert<const std::string&, std::string>(rec[1]);
-        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 Messages::Messages(const Messages& obj)
-     : litesql::Persistent(obj), id(obj.id), type(obj.type), is_permanent(obj.is_permanent), convo_id(obj.convo_id), chatname(obj.chatname), author(obj.author), from_dispname(obj.from_dispname), author_was_live(obj.author_was_live), guid(obj.guid), dialog_partner(obj.dialog_partner), timestamp(obj.timestamp), sending_status(obj.sending_status), consumption_status(obj.consumption_status), edited_by(obj.edited_by), edited_timestamp(obj.edited_timestamp), param_key(obj.param_key), param_value(obj.param_value), body_xml(obj.body_xml), identities(obj.identities), reason(obj.reason), leavereason(obj.leavereason), participant_count(obj.participant_count), error_code(obj.error_code), chatmsg_type(obj.chatmsg_type), chatmsg_status(obj.chatmsg_status), body_is_rawxml(obj.body_is_rawxml), oldoptions(obj.oldoptions), newoptions(obj.newoptions), newrole(obj.newrole), pk_id(obj.pk_id), crc(obj.crc), remote_id(obj.remote_id), call_guid(obj.call_guid) {
+     : litesql::Persistent(obj), id(obj.id), is_permanent(obj.is_permanent), convo_id(obj.convo_id), chatname(obj.chatname), author(obj.author), from_dispname(obj.from_dispname), author_was_live(obj.author_was_live), guid(obj.guid), dialog_partner(obj.dialog_partner), timestamp(obj.timestamp), sending_status(obj.sending_status), consumption_status(obj.consumption_status), edited_by(obj.edited_by), edited_timestamp(obj.edited_timestamp), param_key(obj.param_key), param_value(obj.param_value), body_xml(obj.body_xml), identities(obj.identities), reason(obj.reason), leavereason(obj.leavereason), participant_count(obj.participant_count), error_code(obj.error_code), chatmsg_type(obj.chatmsg_type), chatmsg_status(obj.chatmsg_status), body_is_rawxml(obj.body_is_rawxml), oldoptions(obj.oldoptions), newoptions(obj.newoptions), newrole(obj.newrole), pk_id(obj.pk_id), crc(obj.crc), remote_id(obj.remote_id), call_guid(obj.call_guid) {
 }
 const Messages& Messages::operator=(const Messages& obj) {
     if (this != &obj) {
         id = obj.id;
-        type = obj.type;
         is_permanent = obj.is_permanent;
         convo_id = obj.convo_id;
         chatname = obj.chatname;
@@ -191,9 +187,6 @@ std::string Messages::insert(litesql::Record& tables, litesql::Records& fieldRec
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
-    fields.push_back(type.name());
-    values.push_back(type);
-    type.setModified(false);
     fields.push_back(is_permanent.name());
     values.push_back(is_permanent);
     is_permanent.setModified(false);
@@ -295,7 +288,8 @@ void Messages::create() {
     litesql::Record tables;
     litesql::Records fieldRecs;
     litesql::Records valueRecs;
-    type = type__;
+    //Type processing disabled
+    //type = type__;
     std::string newID = insert(tables, fieldRecs, valueRecs);
     if (id == 0)
         id = newID;
@@ -303,7 +297,6 @@ void Messages::create() {
 void Messages::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
-    updateField(updates, table__, type);
     updateField(updates, table__, is_permanent);
     updateField(updates, table__, convo_id);
     updateField(updates, table__, chatname);
@@ -340,7 +333,6 @@ void Messages::addIDUpdates(Updates& updates) {
 }
 void Messages::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
-    ftypes.push_back(Type);
     ftypes.push_back(Is_permanent);
     ftypes.push_back(Convo_id);
     ftypes.push_back(Chatname);
@@ -406,7 +398,7 @@ void Messages::del() {
     inDatabase = false;
 }
 bool Messages::typeIsCorrect() const {
-    return type == type__;
+    return true;
 }
 std::unique_ptr<Messages> Messages::upcast() const {
     return unique_ptr<Messages>(new Messages(*this));
@@ -414,7 +406,6 @@ std::unique_ptr<Messages> Messages::upcast() const {
 std::unique_ptr<Messages> Messages::upcastCopy() const {
     Messages* np = new Messages(*this);
     np->id = id;
-    np->type = type;
     np->is_permanent = is_permanent;
     np->convo_id = convo_id;
     np->chatname = chatname;
@@ -452,7 +443,6 @@ std::unique_ptr<Messages> Messages::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, Messages o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
-    os << o.type.name() << " = " << o.type << std::endl;
     os << o.is_permanent.name() << " = " << o.is_permanent << std::endl;
     os << o.convo_id.name() << " = " << o.convo_id << std::endl;
     os << o.chatname.name() << " = " << o.chatname << std::endl;
@@ -492,7 +482,6 @@ const std::string Chats::type__("Chats");
 const std::string Chats::table__("Chats");
 const std::string Chats::sequence__("Chats_seq");
 const litesql::FieldType Chats::Id("id",A_field_type_integer,table__);
-const litesql::FieldType Chats::Type("type__",A_field_type_string,table__);
 const litesql::FieldType Chats::Is_permanent("is_permanent",A_field_type_integer,table__);
 const litesql::FieldType Chats::Name("name",A_field_type_string,table__);
 const litesql::FieldType Chats::Options("options",A_field_type_integer,table__);
@@ -553,99 +542,96 @@ void Chats::defaults() {
     conv_dbid = 0;
 }
 Chats::Chats(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), type(Type), is_permanent(Is_permanent), name(Name), options(Options), friendlyname(Friendlyname), description(Description), timestamp(Timestamp), activity_timestamp(Activity_timestamp), dialog_partner(Dialog_partner), adder(Adder), mystatus(Mystatus), myrole(Myrole), posters(Posters), participants(Participants), applicants(Applicants), banned_users(Banned_users), name_text(Name_text), topic(Topic), topic_xml(Topic_xml), guidelines(Guidelines), picture(Picture), alertstring(Alertstring), is_bookmarked(Is_bookmarked), passwordhint(Passwordhint), unconsumed_suppressed_msg(Unconsumed_suppressed_msg), unconsumed_normal_msg(Unconsumed_normal_msg), unconsumed_elevated_msg(Unconsumed_elevated_msg), unconsumed_msg_voice(Unconsumed_msg_voice), activemembers(Activemembers), state_data(State_data), lifesigns(Lifesigns), last_change(Last_change), first_unread_message(First_unread_message), pk_type(Pk_type), dbpath(Dbpath), split_friendlyname(Split_friendlyname), conv_dbid(Conv_dbid) {
+     : litesql::Persistent(db), id(Id), is_permanent(Is_permanent), name(Name), options(Options), friendlyname(Friendlyname), description(Description), timestamp(Timestamp), activity_timestamp(Activity_timestamp), dialog_partner(Dialog_partner), adder(Adder), mystatus(Mystatus), myrole(Myrole), posters(Posters), participants(Participants), applicants(Applicants), banned_users(Banned_users), name_text(Name_text), topic(Topic), topic_xml(Topic_xml), guidelines(Guidelines), picture(Picture), alertstring(Alertstring), is_bookmarked(Is_bookmarked), passwordhint(Passwordhint), unconsumed_suppressed_msg(Unconsumed_suppressed_msg), unconsumed_normal_msg(Unconsumed_normal_msg), unconsumed_elevated_msg(Unconsumed_elevated_msg), unconsumed_msg_voice(Unconsumed_msg_voice), activemembers(Activemembers), state_data(State_data), lifesigns(Lifesigns), last_change(Last_change), first_unread_message(First_unread_message), pk_type(Pk_type), dbpath(Dbpath), split_friendlyname(Split_friendlyname), conv_dbid(Conv_dbid) {
     defaults();
 }
 Chats::Chats(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), type(Type), is_permanent(Is_permanent), name(Name), options(Options), friendlyname(Friendlyname), description(Description), timestamp(Timestamp), activity_timestamp(Activity_timestamp), dialog_partner(Dialog_partner), adder(Adder), mystatus(Mystatus), myrole(Myrole), posters(Posters), participants(Participants), applicants(Applicants), banned_users(Banned_users), name_text(Name_text), topic(Topic), topic_xml(Topic_xml), guidelines(Guidelines), picture(Picture), alertstring(Alertstring), is_bookmarked(Is_bookmarked), passwordhint(Passwordhint), unconsumed_suppressed_msg(Unconsumed_suppressed_msg), unconsumed_normal_msg(Unconsumed_normal_msg), unconsumed_elevated_msg(Unconsumed_elevated_msg), unconsumed_msg_voice(Unconsumed_msg_voice), activemembers(Activemembers), state_data(State_data), lifesigns(Lifesigns), last_change(Last_change), first_unread_message(First_unread_message), pk_type(Pk_type), dbpath(Dbpath), split_friendlyname(Split_friendlyname), conv_dbid(Conv_dbid) {
+     : litesql::Persistent(db, rec), id(Id), is_permanent(Is_permanent), name(Name), options(Options), friendlyname(Friendlyname), description(Description), timestamp(Timestamp), activity_timestamp(Activity_timestamp), dialog_partner(Dialog_partner), adder(Adder), mystatus(Mystatus), myrole(Myrole), posters(Posters), participants(Participants), applicants(Applicants), banned_users(Banned_users), name_text(Name_text), topic(Topic), topic_xml(Topic_xml), guidelines(Guidelines), picture(Picture), alertstring(Alertstring), is_bookmarked(Is_bookmarked), passwordhint(Passwordhint), unconsumed_suppressed_msg(Unconsumed_suppressed_msg), unconsumed_normal_msg(Unconsumed_normal_msg), unconsumed_elevated_msg(Unconsumed_elevated_msg), unconsumed_msg_voice(Unconsumed_msg_voice), activemembers(Activemembers), state_data(State_data), lifesigns(Lifesigns), last_change(Last_change), first_unread_message(First_unread_message), pk_type(Pk_type), dbpath(Dbpath), split_friendlyname(Split_friendlyname), conv_dbid(Conv_dbid) {
     defaults();
-    size_t size = (rec.size() > 38) ? 38 : rec.size();
+    size_t size = (rec.size() > 37) ? 37 : rec.size();
     switch(size) {
-    case 38: conv_dbid = convert<const std::string&, int>(rec[37]);
+    case 37: conv_dbid = convert<const std::string&, int>(rec[36]);
         conv_dbid.setModified(false);
-    case 37: split_friendlyname = convert<const std::string&, std::string>(rec[36]);
+    case 36: split_friendlyname = convert<const std::string&, std::string>(rec[35]);
         split_friendlyname.setModified(false);
-    case 36: dbpath = convert<const std::string&, std::string>(rec[35]);
+    case 35: dbpath = convert<const std::string&, std::string>(rec[34]);
         dbpath.setModified(false);
-    case 35: pk_type = convert<const std::string&, int>(rec[34]);
+    case 34: pk_type = convert<const std::string&, int>(rec[33]);
         pk_type.setModified(false);
-    case 34: first_unread_message = convert<const std::string&, int>(rec[33]);
+    case 33: first_unread_message = convert<const std::string&, int>(rec[32]);
         first_unread_message.setModified(false);
-    case 33: last_change = convert<const std::string&, int>(rec[32]);
+    case 32: last_change = convert<const std::string&, int>(rec[31]);
         last_change.setModified(false);
-    case 32: lifesigns = convert<const std::string&, int>(rec[31]);
+    case 31: lifesigns = convert<const std::string&, int>(rec[30]);
         lifesigns.setModified(false);
-    case 31: state_data = convert<const std::string&, litesql::Blob>(rec[30]);
+    case 30: state_data = convert<const std::string&, litesql::Blob>(rec[29]);
         state_data.setModified(false);
-    case 30: activemembers = convert<const std::string&, std::string>(rec[29]);
+    case 29: activemembers = convert<const std::string&, std::string>(rec[28]);
         activemembers.setModified(false);
-    case 29: unconsumed_msg_voice = convert<const std::string&, int>(rec[28]);
+    case 28: unconsumed_msg_voice = convert<const std::string&, int>(rec[27]);
         unconsumed_msg_voice.setModified(false);
-    case 28: unconsumed_elevated_msg = convert<const std::string&, int>(rec[27]);
+    case 27: unconsumed_elevated_msg = convert<const std::string&, int>(rec[26]);
         unconsumed_elevated_msg.setModified(false);
-    case 27: unconsumed_normal_msg = convert<const std::string&, int>(rec[26]);
+    case 26: unconsumed_normal_msg = convert<const std::string&, int>(rec[25]);
         unconsumed_normal_msg.setModified(false);
-    case 26: unconsumed_suppressed_msg = convert<const std::string&, int>(rec[25]);
+    case 25: unconsumed_suppressed_msg = convert<const std::string&, int>(rec[24]);
         unconsumed_suppressed_msg.setModified(false);
-    case 25: passwordhint = convert<const std::string&, std::string>(rec[24]);
+    case 24: passwordhint = convert<const std::string&, std::string>(rec[23]);
         passwordhint.setModified(false);
-    case 24: is_bookmarked = convert<const std::string&, int>(rec[23]);
+    case 23: is_bookmarked = convert<const std::string&, int>(rec[22]);
         is_bookmarked.setModified(false);
-    case 23: alertstring = convert<const std::string&, std::string>(rec[22]);
+    case 22: alertstring = convert<const std::string&, std::string>(rec[21]);
         alertstring.setModified(false);
-    case 22: picture = convert<const std::string&, litesql::Blob>(rec[21]);
+    case 21: picture = convert<const std::string&, litesql::Blob>(rec[20]);
         picture.setModified(false);
-    case 21: guidelines = convert<const std::string&, std::string>(rec[20]);
+    case 20: guidelines = convert<const std::string&, std::string>(rec[19]);
         guidelines.setModified(false);
-    case 20: topic_xml = convert<const std::string&, std::string>(rec[19]);
+    case 19: topic_xml = convert<const std::string&, std::string>(rec[18]);
         topic_xml.setModified(false);
-    case 19: topic = convert<const std::string&, std::string>(rec[18]);
+    case 18: topic = convert<const std::string&, std::string>(rec[17]);
         topic.setModified(false);
-    case 18: name_text = convert<const std::string&, std::string>(rec[17]);
+    case 17: name_text = convert<const std::string&, std::string>(rec[16]);
         name_text.setModified(false);
-    case 17: banned_users = convert<const std::string&, std::string>(rec[16]);
+    case 16: banned_users = convert<const std::string&, std::string>(rec[15]);
         banned_users.setModified(false);
-    case 16: applicants = convert<const std::string&, std::string>(rec[15]);
+    case 15: applicants = convert<const std::string&, std::string>(rec[14]);
         applicants.setModified(false);
-    case 15: participants = convert<const std::string&, std::string>(rec[14]);
+    case 14: participants = convert<const std::string&, std::string>(rec[13]);
         participants.setModified(false);
-    case 14: posters = convert<const std::string&, std::string>(rec[13]);
+    case 13: posters = convert<const std::string&, std::string>(rec[12]);
         posters.setModified(false);
-    case 13: myrole = convert<const std::string&, int>(rec[12]);
+    case 12: myrole = convert<const std::string&, int>(rec[11]);
         myrole.setModified(false);
-    case 12: mystatus = convert<const std::string&, int>(rec[11]);
+    case 11: mystatus = convert<const std::string&, int>(rec[10]);
         mystatus.setModified(false);
-    case 11: adder = convert<const std::string&, std::string>(rec[10]);
+    case 10: adder = convert<const std::string&, std::string>(rec[9]);
         adder.setModified(false);
-    case 10: dialog_partner = convert<const std::string&, std::string>(rec[9]);
+    case 9: dialog_partner = convert<const std::string&, std::string>(rec[8]);
         dialog_partner.setModified(false);
-    case 9: activity_timestamp = convert<const std::string&, int>(rec[8]);
+    case 8: activity_timestamp = convert<const std::string&, int>(rec[7]);
         activity_timestamp.setModified(false);
-    case 8: timestamp = convert<const std::string&, int>(rec[7]);
+    case 7: timestamp = convert<const std::string&, int>(rec[6]);
         timestamp.setModified(false);
-    case 7: description = convert<const std::string&, std::string>(rec[6]);
+    case 6: description = convert<const std::string&, std::string>(rec[5]);
         description.setModified(false);
-    case 6: friendlyname = convert<const std::string&, std::string>(rec[5]);
+    case 5: friendlyname = convert<const std::string&, std::string>(rec[4]);
         friendlyname.setModified(false);
-    case 5: options = convert<const std::string&, int>(rec[4]);
+    case 4: options = convert<const std::string&, int>(rec[3]);
         options.setModified(false);
-    case 4: name = convert<const std::string&, std::string>(rec[3]);
+    case 3: name = convert<const std::string&, std::string>(rec[2]);
         name.setModified(false);
-    case 3: is_permanent = convert<const std::string&, int>(rec[2]);
+    case 2: is_permanent = convert<const std::string&, int>(rec[1]);
         is_permanent.setModified(false);
-    case 2: type = convert<const std::string&, std::string>(rec[1]);
-        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 Chats::Chats(const Chats& obj)
-     : litesql::Persistent(obj), id(obj.id), type(obj.type), is_permanent(obj.is_permanent), name(obj.name), options(obj.options), friendlyname(obj.friendlyname), description(obj.description), timestamp(obj.timestamp), activity_timestamp(obj.activity_timestamp), dialog_partner(obj.dialog_partner), adder(obj.adder), mystatus(obj.mystatus), myrole(obj.myrole), posters(obj.posters), participants(obj.participants), applicants(obj.applicants), banned_users(obj.banned_users), name_text(obj.name_text), topic(obj.topic), topic_xml(obj.topic_xml), guidelines(obj.guidelines), picture(obj.picture), alertstring(obj.alertstring), is_bookmarked(obj.is_bookmarked), passwordhint(obj.passwordhint), unconsumed_suppressed_msg(obj.unconsumed_suppressed_msg), unconsumed_normal_msg(obj.unconsumed_normal_msg), unconsumed_elevated_msg(obj.unconsumed_elevated_msg), unconsumed_msg_voice(obj.unconsumed_msg_voice), activemembers(obj.activemembers), state_data(obj.state_data), lifesigns(obj.lifesigns), last_change(obj.last_change), first_unread_message(obj.first_unread_message), pk_type(obj.pk_type), dbpath(obj.dbpath), split_friendlyname(obj.split_friendlyname), conv_dbid(obj.conv_dbid) {
+     : litesql::Persistent(obj), id(obj.id), is_permanent(obj.is_permanent), name(obj.name), options(obj.options), friendlyname(obj.friendlyname), description(obj.description), timestamp(obj.timestamp), activity_timestamp(obj.activity_timestamp), dialog_partner(obj.dialog_partner), adder(obj.adder), mystatus(obj.mystatus), myrole(obj.myrole), posters(obj.posters), participants(obj.participants), applicants(obj.applicants), banned_users(obj.banned_users), name_text(obj.name_text), topic(obj.topic), topic_xml(obj.topic_xml), guidelines(obj.guidelines), picture(obj.picture), alertstring(obj.alertstring), is_bookmarked(obj.is_bookmarked), passwordhint(obj.passwordhint), unconsumed_suppressed_msg(obj.unconsumed_suppressed_msg), unconsumed_normal_msg(obj.unconsumed_normal_msg), unconsumed_elevated_msg(obj.unconsumed_elevated_msg), unconsumed_msg_voice(obj.unconsumed_msg_voice), activemembers(obj.activemembers), state_data(obj.state_data), lifesigns(obj.lifesigns), last_change(obj.last_change), first_unread_message(obj.first_unread_message), pk_type(obj.pk_type), dbpath(obj.dbpath), split_friendlyname(obj.split_friendlyname), conv_dbid(obj.conv_dbid) {
 }
 const Chats& Chats::operator=(const Chats& obj) {
     if (this != &obj) {
         id = obj.id;
-        type = obj.type;
         is_permanent = obj.is_permanent;
         name = obj.name;
         options = obj.options;
@@ -693,9 +679,6 @@ std::string Chats::insert(litesql::Record& tables, litesql::Records& fieldRecs, 
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
-    fields.push_back(type.name());
-    values.push_back(type);
-    type.setModified(false);
     fields.push_back(is_permanent.name());
     values.push_back(is_permanent);
     is_permanent.setModified(false);
@@ -812,7 +795,8 @@ void Chats::create() {
     litesql::Record tables;
     litesql::Records fieldRecs;
     litesql::Records valueRecs;
-    type = type__;
+    //Type processing disabled
+    //type = type__;
     std::string newID = insert(tables, fieldRecs, valueRecs);
     if (id == 0)
         id = newID;
@@ -820,7 +804,6 @@ void Chats::create() {
 void Chats::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
-    updateField(updates, table__, type);
     updateField(updates, table__, is_permanent);
     updateField(updates, table__, name);
     updateField(updates, table__, options);
@@ -862,7 +845,6 @@ void Chats::addIDUpdates(Updates& updates) {
 }
 void Chats::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
-    ftypes.push_back(Type);
     ftypes.push_back(Is_permanent);
     ftypes.push_back(Name);
     ftypes.push_back(Options);
@@ -933,7 +915,7 @@ void Chats::del() {
     inDatabase = false;
 }
 bool Chats::typeIsCorrect() const {
-    return type == type__;
+    return true;
 }
 std::unique_ptr<Chats> Chats::upcast() const {
     return unique_ptr<Chats>(new Chats(*this));
@@ -941,7 +923,6 @@ std::unique_ptr<Chats> Chats::upcast() const {
 std::unique_ptr<Chats> Chats::upcastCopy() const {
     Chats* np = new Chats(*this);
     np->id = id;
-    np->type = type;
     np->is_permanent = is_permanent;
     np->name = name;
     np->options = options;
@@ -984,7 +965,6 @@ std::unique_ptr<Chats> Chats::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, Chats o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
-    os << o.type.name() << " = " << o.type << std::endl;
     os << o.is_permanent.name() << " = " << o.is_permanent << std::endl;
     os << o.name.name() << " = " << o.name << std::endl;
     os << o.options.name() << " = " << o.options << std::endl;
@@ -1029,7 +1009,6 @@ const std::string Contacts::type__("Contacts");
 const std::string Contacts::table__("Contacts");
 const std::string Contacts::sequence__("Contacts_seq");
 const litesql::FieldType Contacts::Id("id",A_field_type_integer,table__);
-const litesql::FieldType Contacts::Type("type__",A_field_type_string,table__);
 const litesql::FieldType Contacts::Is_permanent("is_permanent",A_field_type_integer,table__);
 const litesql::FieldType Contacts::Skypename("skypename",A_field_type_string,table__);
 const litesql::FieldType Contacts::Pstnnumber("pstnnumber",A_field_type_string,table__);
@@ -1157,187 +1136,184 @@ void Contacts::defaults() {
     sent_authrequest_extrasbitmask = 0;
 }
 Contacts::Contacts(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), type(Type), is_permanent(Is_permanent), skypename(Skypename), pstnnumber(Pstnnumber), aliases(Aliases), fullname(Fullname), birthday(Birthday), gender(Gender), languages(Languages), country(Country), province(Province), city(City), phone_home(Phone_home), phone_office(Phone_office), phone_mobile(Phone_mobile), emails(Emails), hashed_emails(Hashed_emails), homepage(Homepage), about(About), mood_text(Mood_text), rich_mood_text(Rich_mood_text), timezone(Timezone), profile_timestamp(Profile_timestamp), nrof_authed_buddies(Nrof_authed_buddies), ipcountry(Ipcountry), avatar_timestamp(Avatar_timestamp), mood_timestamp(Mood_timestamp), received_authrequest(Received_authrequest), authreq_timestamp(Authreq_timestamp), lastonline_timestamp(Lastonline_timestamp), availability(Availability), displayname(Displayname), refreshing(Refreshing), given_authlevel(Given_authlevel), given_displayname(Given_displayname), assigned_speeddial(Assigned_speeddial), assigned_comment(Assigned_comment), alertstring(Alertstring), lastused_timestamp(Lastused_timestamp), authrequest_count(Authrequest_count), assigned_phone1(Assigned_phone1), assigned_phone1_label(Assigned_phone1_label), assigned_phone2(Assigned_phone2), assigned_phone2_label(Assigned_phone2_label), assigned_phone3(Assigned_phone3), assigned_phone3_label(Assigned_phone3_label), buddystatus(Buddystatus), isauthorized(Isauthorized), popularity_ord(Popularity_ord), external_id(External_id), external_system_id(External_system_id), isblocked(Isblocked), certificate_send_count(Certificate_send_count), account_modification_serial_nr(Account_modification_serial_nr), nr_of_buddies(Nr_of_buddies), server_synced(Server_synced), contactlist_track(Contactlist_track), last_used_networktime(Last_used_networktime), authorized_time(Authorized_time), sent_authrequest(Sent_authrequest), sent_authrequest_time(Sent_authrequest_time), sent_authrequest_serial(Sent_authrequest_serial), node_capabilities(Node_capabilities), revoked_auth(Revoked_auth), added_in_shared_group(Added_in_shared_group), in_shared_group(In_shared_group), stack_version(Stack_version), offline_authreq_id(Offline_authreq_id), node_capabilities_and(Node_capabilities_and), authreq_crc(Authreq_crc), authreq_src(Authreq_src), pop_score(Pop_score), main_phone(Main_phone), unified_servants(Unified_servants), phone_home_normalized(Phone_home_normalized), phone_office_normalized(Phone_office_normalized), phone_mobile_normalized(Phone_mobile_normalized), sent_authrequest_initmethod(Sent_authrequest_initmethod), authreq_initmethod(Authreq_initmethod), sent_authrequest_extrasbitmask(Sent_authrequest_extrasbitmask), liveid_cid(Liveid_cid) {
+     : litesql::Persistent(db), id(Id), is_permanent(Is_permanent), skypename(Skypename), pstnnumber(Pstnnumber), aliases(Aliases), fullname(Fullname), birthday(Birthday), gender(Gender), languages(Languages), country(Country), province(Province), city(City), phone_home(Phone_home), phone_office(Phone_office), phone_mobile(Phone_mobile), emails(Emails), hashed_emails(Hashed_emails), homepage(Homepage), about(About), mood_text(Mood_text), rich_mood_text(Rich_mood_text), timezone(Timezone), profile_timestamp(Profile_timestamp), nrof_authed_buddies(Nrof_authed_buddies), ipcountry(Ipcountry), avatar_timestamp(Avatar_timestamp), mood_timestamp(Mood_timestamp), received_authrequest(Received_authrequest), authreq_timestamp(Authreq_timestamp), lastonline_timestamp(Lastonline_timestamp), availability(Availability), displayname(Displayname), refreshing(Refreshing), given_authlevel(Given_authlevel), given_displayname(Given_displayname), assigned_speeddial(Assigned_speeddial), assigned_comment(Assigned_comment), alertstring(Alertstring), lastused_timestamp(Lastused_timestamp), authrequest_count(Authrequest_count), assigned_phone1(Assigned_phone1), assigned_phone1_label(Assigned_phone1_label), assigned_phone2(Assigned_phone2), assigned_phone2_label(Assigned_phone2_label), assigned_phone3(Assigned_phone3), assigned_phone3_label(Assigned_phone3_label), buddystatus(Buddystatus), isauthorized(Isauthorized), popularity_ord(Popularity_ord), external_id(External_id), external_system_id(External_system_id), isblocked(Isblocked), certificate_send_count(Certificate_send_count), account_modification_serial_nr(Account_modification_serial_nr), nr_of_buddies(Nr_of_buddies), server_synced(Server_synced), contactlist_track(Contactlist_track), last_used_networktime(Last_used_networktime), authorized_time(Authorized_time), sent_authrequest(Sent_authrequest), sent_authrequest_time(Sent_authrequest_time), sent_authrequest_serial(Sent_authrequest_serial), node_capabilities(Node_capabilities), revoked_auth(Revoked_auth), added_in_shared_group(Added_in_shared_group), in_shared_group(In_shared_group), stack_version(Stack_version), offline_authreq_id(Offline_authreq_id), node_capabilities_and(Node_capabilities_and), authreq_crc(Authreq_crc), authreq_src(Authreq_src), pop_score(Pop_score), main_phone(Main_phone), unified_servants(Unified_servants), phone_home_normalized(Phone_home_normalized), phone_office_normalized(Phone_office_normalized), phone_mobile_normalized(Phone_mobile_normalized), sent_authrequest_initmethod(Sent_authrequest_initmethod), authreq_initmethod(Authreq_initmethod), sent_authrequest_extrasbitmask(Sent_authrequest_extrasbitmask), liveid_cid(Liveid_cid) {
     defaults();
 }
 Contacts::Contacts(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), type(Type), is_permanent(Is_permanent), skypename(Skypename), pstnnumber(Pstnnumber), aliases(Aliases), fullname(Fullname), birthday(Birthday), gender(Gender), languages(Languages), country(Country), province(Province), city(City), phone_home(Phone_home), phone_office(Phone_office), phone_mobile(Phone_mobile), emails(Emails), hashed_emails(Hashed_emails), homepage(Homepage), about(About), mood_text(Mood_text), rich_mood_text(Rich_mood_text), timezone(Timezone), profile_timestamp(Profile_timestamp), nrof_authed_buddies(Nrof_authed_buddies), ipcountry(Ipcountry), avatar_timestamp(Avatar_timestamp), mood_timestamp(Mood_timestamp), received_authrequest(Received_authrequest), authreq_timestamp(Authreq_timestamp), lastonline_timestamp(Lastonline_timestamp), availability(Availability), displayname(Displayname), refreshing(Refreshing), given_authlevel(Given_authlevel), given_displayname(Given_displayname), assigned_speeddial(Assigned_speeddial), assigned_comment(Assigned_comment), alertstring(Alertstring), lastused_timestamp(Lastused_timestamp), authrequest_count(Authrequest_count), assigned_phone1(Assigned_phone1), assigned_phone1_label(Assigned_phone1_label), assigned_phone2(Assigned_phone2), assigned_phone2_label(Assigned_phone2_label), assigned_phone3(Assigned_phone3), assigned_phone3_label(Assigned_phone3_label), buddystatus(Buddystatus), isauthorized(Isauthorized), popularity_ord(Popularity_ord), external_id(External_id), external_system_id(External_system_id), isblocked(Isblocked), certificate_send_count(Certificate_send_count), account_modification_serial_nr(Account_modification_serial_nr), nr_of_buddies(Nr_of_buddies), server_synced(Server_synced), contactlist_track(Contactlist_track), last_used_networktime(Last_used_networktime), authorized_time(Authorized_time), sent_authrequest(Sent_authrequest), sent_authrequest_time(Sent_authrequest_time), sent_authrequest_serial(Sent_authrequest_serial), node_capabilities(Node_capabilities), revoked_auth(Revoked_auth), added_in_shared_group(Added_in_shared_group), in_shared_group(In_shared_group), stack_version(Stack_version), offline_authreq_id(Offline_authreq_id), node_capabilities_and(Node_capabilities_and), authreq_crc(Authreq_crc), authreq_src(Authreq_src), pop_score(Pop_score), main_phone(Main_phone), unified_servants(Unified_servants), phone_home_normalized(Phone_home_normalized), phone_office_normalized(Phone_office_normalized), phone_mobile_normalized(Phone_mobile_normalized), sent_authrequest_initmethod(Sent_authrequest_initmethod), authreq_initmethod(Authreq_initmethod), sent_authrequest_extrasbitmask(Sent_authrequest_extrasbitmask), liveid_cid(Liveid_cid) {
+     : litesql::Persistent(db, rec), id(Id), is_permanent(Is_permanent), skypename(Skypename), pstnnumber(Pstnnumber), aliases(Aliases), fullname(Fullname), birthday(Birthday), gender(Gender), languages(Languages), country(Country), province(Province), city(City), phone_home(Phone_home), phone_office(Phone_office), phone_mobile(Phone_mobile), emails(Emails), hashed_emails(Hashed_emails), homepage(Homepage), about(About), mood_text(Mood_text), rich_mood_text(Rich_mood_text), timezone(Timezone), profile_timestamp(Profile_timestamp), nrof_authed_buddies(Nrof_authed_buddies), ipcountry(Ipcountry), avatar_timestamp(Avatar_timestamp), mood_timestamp(Mood_timestamp), received_authrequest(Received_authrequest), authreq_timestamp(Authreq_timestamp), lastonline_timestamp(Lastonline_timestamp), availability(Availability), displayname(Displayname), refreshing(Refreshing), given_authlevel(Given_authlevel), given_displayname(Given_displayname), assigned_speeddial(Assigned_speeddial), assigned_comment(Assigned_comment), alertstring(Alertstring), lastused_timestamp(Lastused_timestamp), authrequest_count(Authrequest_count), assigned_phone1(Assigned_phone1), assigned_phone1_label(Assigned_phone1_label), assigned_phone2(Assigned_phone2), assigned_phone2_label(Assigned_phone2_label), assigned_phone3(Assigned_phone3), assigned_phone3_label(Assigned_phone3_label), buddystatus(Buddystatus), isauthorized(Isauthorized), popularity_ord(Popularity_ord), external_id(External_id), external_system_id(External_system_id), isblocked(Isblocked), certificate_send_count(Certificate_send_count), account_modification_serial_nr(Account_modification_serial_nr), nr_of_buddies(Nr_of_buddies), server_synced(Server_synced), contactlist_track(Contactlist_track), last_used_networktime(Last_used_networktime), authorized_time(Authorized_time), sent_authrequest(Sent_authrequest), sent_authrequest_time(Sent_authrequest_time), sent_authrequest_serial(Sent_authrequest_serial), node_capabilities(Node_capabilities), revoked_auth(Revoked_auth), added_in_shared_group(Added_in_shared_group), in_shared_group(In_shared_group), stack_version(Stack_version), offline_authreq_id(Offline_authreq_id), node_capabilities_and(Node_capabilities_and), authreq_crc(Authreq_crc), authreq_src(Authreq_src), pop_score(Pop_score), main_phone(Main_phone), unified_servants(Unified_servants), phone_home_normalized(Phone_home_normalized), phone_office_normalized(Phone_office_normalized), phone_mobile_normalized(Phone_mobile_normalized), sent_authrequest_initmethod(Sent_authrequest_initmethod), authreq_initmethod(Authreq_initmethod), sent_authrequest_extrasbitmask(Sent_authrequest_extrasbitmask), liveid_cid(Liveid_cid) {
     defaults();
-    size_t size = (rec.size() > 82) ? 82 : rec.size();
+    size_t size = (rec.size() > 81) ? 81 : rec.size();
     switch(size) {
-    case 82: liveid_cid = convert<const std::string&, std::string>(rec[81]);
+    case 81: liveid_cid = convert<const std::string&, std::string>(rec[80]);
         liveid_cid.setModified(false);
-    case 81: sent_authrequest_extrasbitmask = convert<const std::string&, int>(rec[80]);
+    case 80: sent_authrequest_extrasbitmask = convert<const std::string&, int>(rec[79]);
         sent_authrequest_extrasbitmask.setModified(false);
-    case 80: authreq_initmethod = convert<const std::string&, int>(rec[79]);
+    case 79: authreq_initmethod = convert<const std::string&, int>(rec[78]);
         authreq_initmethod.setModified(false);
-    case 79: sent_authrequest_initmethod = convert<const std::string&, int>(rec[78]);
+    case 78: sent_authrequest_initmethod = convert<const std::string&, int>(rec[77]);
         sent_authrequest_initmethod.setModified(false);
-    case 78: phone_mobile_normalized = convert<const std::string&, std::string>(rec[77]);
+    case 77: phone_mobile_normalized = convert<const std::string&, std::string>(rec[76]);
         phone_mobile_normalized.setModified(false);
-    case 77: phone_office_normalized = convert<const std::string&, std::string>(rec[76]);
+    case 76: phone_office_normalized = convert<const std::string&, std::string>(rec[75]);
         phone_office_normalized.setModified(false);
-    case 76: phone_home_normalized = convert<const std::string&, std::string>(rec[75]);
+    case 75: phone_home_normalized = convert<const std::string&, std::string>(rec[74]);
         phone_home_normalized.setModified(false);
-    case 75: unified_servants = convert<const std::string&, std::string>(rec[74]);
+    case 74: unified_servants = convert<const std::string&, std::string>(rec[73]);
         unified_servants.setModified(false);
-    case 74: main_phone = convert<const std::string&, std::string>(rec[73]);
+    case 73: main_phone = convert<const std::string&, std::string>(rec[72]);
         main_phone.setModified(false);
-    case 73: pop_score = convert<const std::string&, int>(rec[72]);
+    case 72: pop_score = convert<const std::string&, int>(rec[71]);
         pop_score.setModified(false);
-    case 72: authreq_src = convert<const std::string&, int>(rec[71]);
+    case 71: authreq_src = convert<const std::string&, int>(rec[70]);
         authreq_src.setModified(false);
-    case 71: authreq_crc = convert<const std::string&, int>(rec[70]);
+    case 70: authreq_crc = convert<const std::string&, int>(rec[69]);
         authreq_crc.setModified(false);
-    case 70: node_capabilities_and = convert<const std::string&, int>(rec[69]);
+    case 69: node_capabilities_and = convert<const std::string&, int>(rec[68]);
         node_capabilities_and.setModified(false);
-    case 69: offline_authreq_id = convert<const std::string&, int>(rec[68]);
+    case 68: offline_authreq_id = convert<const std::string&, int>(rec[67]);
         offline_authreq_id.setModified(false);
-    case 68: stack_version = convert<const std::string&, int>(rec[67]);
+    case 67: stack_version = convert<const std::string&, int>(rec[66]);
         stack_version.setModified(false);
-    case 67: in_shared_group = convert<const std::string&, int>(rec[66]);
+    case 66: in_shared_group = convert<const std::string&, int>(rec[65]);
         in_shared_group.setModified(false);
-    case 66: added_in_shared_group = convert<const std::string&, int>(rec[65]);
+    case 65: added_in_shared_group = convert<const std::string&, int>(rec[64]);
         added_in_shared_group.setModified(false);
-    case 65: revoked_auth = convert<const std::string&, int>(rec[64]);
+    case 64: revoked_auth = convert<const std::string&, int>(rec[63]);
         revoked_auth.setModified(false);
-    case 64: node_capabilities = convert<const std::string&, int>(rec[63]);
+    case 63: node_capabilities = convert<const std::string&, int>(rec[62]);
         node_capabilities.setModified(false);
-    case 63: sent_authrequest_serial = convert<const std::string&, int>(rec[62]);
+    case 62: sent_authrequest_serial = convert<const std::string&, int>(rec[61]);
         sent_authrequest_serial.setModified(false);
-    case 62: sent_authrequest_time = convert<const std::string&, int>(rec[61]);
+    case 61: sent_authrequest_time = convert<const std::string&, int>(rec[60]);
         sent_authrequest_time.setModified(false);
-    case 61: sent_authrequest = convert<const std::string&, std::string>(rec[60]);
+    case 60: sent_authrequest = convert<const std::string&, std::string>(rec[59]);
         sent_authrequest.setModified(false);
-    case 60: authorized_time = convert<const std::string&, int>(rec[59]);
+    case 59: authorized_time = convert<const std::string&, int>(rec[58]);
         authorized_time.setModified(false);
-    case 59: last_used_networktime = convert<const std::string&, int>(rec[58]);
+    case 58: last_used_networktime = convert<const std::string&, int>(rec[57]);
         last_used_networktime.setModified(false);
-    case 58: contactlist_track = convert<const std::string&, int>(rec[57]);
+    case 57: contactlist_track = convert<const std::string&, int>(rec[56]);
         contactlist_track.setModified(false);
-    case 57: server_synced = convert<const std::string&, int>(rec[56]);
+    case 56: server_synced = convert<const std::string&, int>(rec[55]);
         server_synced.setModified(false);
-    case 56: nr_of_buddies = convert<const std::string&, int>(rec[55]);
+    case 55: nr_of_buddies = convert<const std::string&, int>(rec[54]);
         nr_of_buddies.setModified(false);
-    case 55: account_modification_serial_nr = convert<const std::string&, int>(rec[54]);
+    case 54: account_modification_serial_nr = convert<const std::string&, int>(rec[53]);
         account_modification_serial_nr.setModified(false);
-    case 54: certificate_send_count = convert<const std::string&, int>(rec[53]);
+    case 53: certificate_send_count = convert<const std::string&, int>(rec[52]);
         certificate_send_count.setModified(false);
-    case 53: isblocked = convert<const std::string&, int>(rec[52]);
+    case 52: isblocked = convert<const std::string&, int>(rec[51]);
         isblocked.setModified(false);
-    case 52: external_system_id = convert<const std::string&, std::string>(rec[51]);
+    case 51: external_system_id = convert<const std::string&, std::string>(rec[50]);
         external_system_id.setModified(false);
-    case 51: external_id = convert<const std::string&, std::string>(rec[50]);
+    case 50: external_id = convert<const std::string&, std::string>(rec[49]);
         external_id.setModified(false);
-    case 50: popularity_ord = convert<const std::string&, int>(rec[49]);
+    case 49: popularity_ord = convert<const std::string&, int>(rec[48]);
         popularity_ord.setModified(false);
-    case 49: isauthorized = convert<const std::string&, int>(rec[48]);
+    case 48: isauthorized = convert<const std::string&, int>(rec[47]);
         isauthorized.setModified(false);
-    case 48: buddystatus = convert<const std::string&, int>(rec[47]);
+    case 47: buddystatus = convert<const std::string&, int>(rec[46]);
         buddystatus.setModified(false);
-    case 47: assigned_phone3_label = convert<const std::string&, std::string>(rec[46]);
+    case 46: assigned_phone3_label = convert<const std::string&, std::string>(rec[45]);
         assigned_phone3_label.setModified(false);
-    case 46: assigned_phone3 = convert<const std::string&, std::string>(rec[45]);
+    case 45: assigned_phone3 = convert<const std::string&, std::string>(rec[44]);
         assigned_phone3.setModified(false);
-    case 45: assigned_phone2_label = convert<const std::string&, std::string>(rec[44]);
+    case 44: assigned_phone2_label = convert<const std::string&, std::string>(rec[43]);
         assigned_phone2_label.setModified(false);
-    case 44: assigned_phone2 = convert<const std::string&, std::string>(rec[43]);
+    case 43: assigned_phone2 = convert<const std::string&, std::string>(rec[42]);
         assigned_phone2.setModified(false);
-    case 43: assigned_phone1_label = convert<const std::string&, std::string>(rec[42]);
+    case 42: assigned_phone1_label = convert<const std::string&, std::string>(rec[41]);
         assigned_phone1_label.setModified(false);
-    case 42: assigned_phone1 = convert<const std::string&, std::string>(rec[41]);
+    case 41: assigned_phone1 = convert<const std::string&, std::string>(rec[40]);
         assigned_phone1.setModified(false);
-    case 41: authrequest_count = convert<const std::string&, int>(rec[40]);
+    case 40: authrequest_count = convert<const std::string&, int>(rec[39]);
         authrequest_count.setModified(false);
-    case 40: lastused_timestamp = convert<const std::string&, int>(rec[39]);
+    case 39: lastused_timestamp = convert<const std::string&, int>(rec[38]);
         lastused_timestamp.setModified(false);
-    case 39: alertstring = convert<const std::string&, std::string>(rec[38]);
+    case 38: alertstring = convert<const std::string&, std::string>(rec[37]);
         alertstring.setModified(false);
-    case 38: assigned_comment = convert<const std::string&, std::string>(rec[37]);
+    case 37: assigned_comment = convert<const std::string&, std::string>(rec[36]);
         assigned_comment.setModified(false);
-    case 37: assigned_speeddial = convert<const std::string&, std::string>(rec[36]);
+    case 36: assigned_speeddial = convert<const std::string&, std::string>(rec[35]);
         assigned_speeddial.setModified(false);
-    case 36: given_displayname = convert<const std::string&, std::string>(rec[35]);
+    case 35: given_displayname = convert<const std::string&, std::string>(rec[34]);
         given_displayname.setModified(false);
-    case 35: given_authlevel = convert<const std::string&, int>(rec[34]);
+    case 34: given_authlevel = convert<const std::string&, int>(rec[33]);
         given_authlevel.setModified(false);
-    case 34: refreshing = convert<const std::string&, int>(rec[33]);
+    case 33: refreshing = convert<const std::string&, int>(rec[32]);
         refreshing.setModified(false);
-    case 33: displayname = convert<const std::string&, std::string>(rec[32]);
+    case 32: displayname = convert<const std::string&, std::string>(rec[31]);
         displayname.setModified(false);
-    case 32: availability = convert<const std::string&, int>(rec[31]);
+    case 31: availability = convert<const std::string&, int>(rec[30]);
         availability.setModified(false);
-    case 31: lastonline_timestamp = convert<const std::string&, int>(rec[30]);
+    case 30: lastonline_timestamp = convert<const std::string&, int>(rec[29]);
         lastonline_timestamp.setModified(false);
-    case 30: authreq_timestamp = convert<const std::string&, int>(rec[29]);
+    case 29: authreq_timestamp = convert<const std::string&, int>(rec[28]);
         authreq_timestamp.setModified(false);
-    case 29: received_authrequest = convert<const std::string&, std::string>(rec[28]);
+    case 28: received_authrequest = convert<const std::string&, std::string>(rec[27]);
         received_authrequest.setModified(false);
-    case 28: mood_timestamp = convert<const std::string&, int>(rec[27]);
+    case 27: mood_timestamp = convert<const std::string&, int>(rec[26]);
         mood_timestamp.setModified(false);
-    case 27: avatar_timestamp = convert<const std::string&, int>(rec[26]);
+    case 26: avatar_timestamp = convert<const std::string&, int>(rec[25]);
         avatar_timestamp.setModified(false);
-    case 26: ipcountry = convert<const std::string&, std::string>(rec[25]);
+    case 25: ipcountry = convert<const std::string&, std::string>(rec[24]);
         ipcountry.setModified(false);
-    case 25: nrof_authed_buddies = convert<const std::string&, int>(rec[24]);
+    case 24: nrof_authed_buddies = convert<const std::string&, int>(rec[23]);
         nrof_authed_buddies.setModified(false);
-    case 24: profile_timestamp = convert<const std::string&, int>(rec[23]);
+    case 23: profile_timestamp = convert<const std::string&, int>(rec[22]);
         profile_timestamp.setModified(false);
-    case 23: timezone = convert<const std::string&, int>(rec[22]);
+    case 22: timezone = convert<const std::string&, int>(rec[21]);
         timezone.setModified(false);
-    case 22: rich_mood_text = convert<const std::string&, std::string>(rec[21]);
+    case 21: rich_mood_text = convert<const std::string&, std::string>(rec[20]);
         rich_mood_text.setModified(false);
-    case 21: mood_text = convert<const std::string&, std::string>(rec[20]);
+    case 20: mood_text = convert<const std::string&, std::string>(rec[19]);
         mood_text.setModified(false);
-    case 20: about = convert<const std::string&, std::string>(rec[19]);
+    case 19: about = convert<const std::string&, std::string>(rec[18]);
         about.setModified(false);
-    case 19: homepage = convert<const std::string&, std::string>(rec[18]);
+    case 18: homepage = convert<const std::string&, std::string>(rec[17]);
         homepage.setModified(false);
-    case 18: hashed_emails = convert<const std::string&, std::string>(rec[17]);
+    case 17: hashed_emails = convert<const std::string&, std::string>(rec[16]);
         hashed_emails.setModified(false);
-    case 17: emails = convert<const std::string&, std::string>(rec[16]);
+    case 16: emails = convert<const std::string&, std::string>(rec[15]);
         emails.setModified(false);
-    case 16: phone_mobile = convert<const std::string&, std::string>(rec[15]);
+    case 15: phone_mobile = convert<const std::string&, std::string>(rec[14]);
         phone_mobile.setModified(false);
-    case 15: phone_office = convert<const std::string&, std::string>(rec[14]);
+    case 14: phone_office = convert<const std::string&, std::string>(rec[13]);
         phone_office.setModified(false);
-    case 14: phone_home = convert<const std::string&, std::string>(rec[13]);
+    case 13: phone_home = convert<const std::string&, std::string>(rec[12]);
         phone_home.setModified(false);
-    case 13: city = convert<const std::string&, std::string>(rec[12]);
+    case 12: city = convert<const std::string&, std::string>(rec[11]);
         city.setModified(false);
-    case 12: province = convert<const std::string&, std::string>(rec[11]);
+    case 11: province = convert<const std::string&, std::string>(rec[10]);
         province.setModified(false);
-    case 11: country = convert<const std::string&, std::string>(rec[10]);
+    case 10: country = convert<const std::string&, std::string>(rec[9]);
         country.setModified(false);
-    case 10: languages = convert<const std::string&, std::string>(rec[9]);
+    case 9: languages = convert<const std::string&, std::string>(rec[8]);
         languages.setModified(false);
-    case 9: gender = convert<const std::string&, int>(rec[8]);
+    case 8: gender = convert<const std::string&, int>(rec[7]);
         gender.setModified(false);
-    case 8: birthday = convert<const std::string&, int>(rec[7]);
+    case 7: birthday = convert<const std::string&, int>(rec[6]);
         birthday.setModified(false);
-    case 7: fullname = convert<const std::string&, std::string>(rec[6]);
+    case 6: fullname = convert<const std::string&, std::string>(rec[5]);
         fullname.setModified(false);
-    case 6: aliases = convert<const std::string&, std::string>(rec[5]);
+    case 5: aliases = convert<const std::string&, std::string>(rec[4]);
         aliases.setModified(false);
-    case 5: pstnnumber = convert<const std::string&, std::string>(rec[4]);
+    case 4: pstnnumber = convert<const std::string&, std::string>(rec[3]);
         pstnnumber.setModified(false);
-    case 4: skypename = convert<const std::string&, std::string>(rec[3]);
+    case 3: skypename = convert<const std::string&, std::string>(rec[2]);
         skypename.setModified(false);
-    case 3: is_permanent = convert<const std::string&, int>(rec[2]);
+    case 2: is_permanent = convert<const std::string&, int>(rec[1]);
         is_permanent.setModified(false);
-    case 2: type = convert<const std::string&, std::string>(rec[1]);
-        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 Contacts::Contacts(const Contacts& obj)
-     : litesql::Persistent(obj), id(obj.id), type(obj.type), is_permanent(obj.is_permanent), skypename(obj.skypename), pstnnumber(obj.pstnnumber), aliases(obj.aliases), fullname(obj.fullname), birthday(obj.birthday), gender(obj.gender), languages(obj.languages), country(obj.country), province(obj.province), city(obj.city), phone_home(obj.phone_home), phone_office(obj.phone_office), phone_mobile(obj.phone_mobile), emails(obj.emails), hashed_emails(obj.hashed_emails), homepage(obj.homepage), about(obj.about), mood_text(obj.mood_text), rich_mood_text(obj.rich_mood_text), timezone(obj.timezone), profile_timestamp(obj.profile_timestamp), nrof_authed_buddies(obj.nrof_authed_buddies), ipcountry(obj.ipcountry), avatar_timestamp(obj.avatar_timestamp), mood_timestamp(obj.mood_timestamp), received_authrequest(obj.received_authrequest), authreq_timestamp(obj.authreq_timestamp), lastonline_timestamp(obj.lastonline_timestamp), availability(obj.availability), displayname(obj.displayname), refreshing(obj.refreshing), given_authlevel(obj.given_authlevel), given_displayname(obj.given_displayname), assigned_speeddial(obj.assigned_speeddial), assigned_comment(obj.assigned_comment), alertstring(obj.alertstring), lastused_timestamp(obj.lastused_timestamp), authrequest_count(obj.authrequest_count), assigned_phone1(obj.assigned_phone1), assigned_phone1_label(obj.assigned_phone1_label), assigned_phone2(obj.assigned_phone2), assigned_phone2_label(obj.assigned_phone2_label), assigned_phone3(obj.assigned_phone3), assigned_phone3_label(obj.assigned_phone3_label), buddystatus(obj.buddystatus), isauthorized(obj.isauthorized), popularity_ord(obj.popularity_ord), external_id(obj.external_id), external_system_id(obj.external_system_id), isblocked(obj.isblocked), certificate_send_count(obj.certificate_send_count), account_modification_serial_nr(obj.account_modification_serial_nr), nr_of_buddies(obj.nr_of_buddies), server_synced(obj.server_synced), contactlist_track(obj.contactlist_track), last_used_networktime(obj.last_used_networktime), authorized_time(obj.authorized_time), sent_authrequest(obj.sent_authrequest), sent_authrequest_time(obj.sent_authrequest_time), sent_authrequest_serial(obj.sent_authrequest_serial), node_capabilities(obj.node_capabilities), revoked_auth(obj.revoked_auth), added_in_shared_group(obj.added_in_shared_group), in_shared_group(obj.in_shared_group), stack_version(obj.stack_version), offline_authreq_id(obj.offline_authreq_id), node_capabilities_and(obj.node_capabilities_and), authreq_crc(obj.authreq_crc), authreq_src(obj.authreq_src), pop_score(obj.pop_score), main_phone(obj.main_phone), unified_servants(obj.unified_servants), phone_home_normalized(obj.phone_home_normalized), phone_office_normalized(obj.phone_office_normalized), phone_mobile_normalized(obj.phone_mobile_normalized), sent_authrequest_initmethod(obj.sent_authrequest_initmethod), authreq_initmethod(obj.authreq_initmethod), sent_authrequest_extrasbitmask(obj.sent_authrequest_extrasbitmask), liveid_cid(obj.liveid_cid) {
+     : litesql::Persistent(obj), id(obj.id), is_permanent(obj.is_permanent), skypename(obj.skypename), pstnnumber(obj.pstnnumber), aliases(obj.aliases), fullname(obj.fullname), birthday(obj.birthday), gender(obj.gender), languages(obj.languages), country(obj.country), province(obj.province), city(obj.city), phone_home(obj.phone_home), phone_office(obj.phone_office), phone_mobile(obj.phone_mobile), emails(obj.emails), hashed_emails(obj.hashed_emails), homepage(obj.homepage), about(obj.about), mood_text(obj.mood_text), rich_mood_text(obj.rich_mood_text), timezone(obj.timezone), profile_timestamp(obj.profile_timestamp), nrof_authed_buddies(obj.nrof_authed_buddies), ipcountry(obj.ipcountry), avatar_timestamp(obj.avatar_timestamp), mood_timestamp(obj.mood_timestamp), received_authrequest(obj.received_authrequest), authreq_timestamp(obj.authreq_timestamp), lastonline_timestamp(obj.lastonline_timestamp), availability(obj.availability), displayname(obj.displayname), refreshing(obj.refreshing), given_authlevel(obj.given_authlevel), given_displayname(obj.given_displayname), assigned_speeddial(obj.assigned_speeddial), assigned_comment(obj.assigned_comment), alertstring(obj.alertstring), lastused_timestamp(obj.lastused_timestamp), authrequest_count(obj.authrequest_count), assigned_phone1(obj.assigned_phone1), assigned_phone1_label(obj.assigned_phone1_label), assigned_phone2(obj.assigned_phone2), assigned_phone2_label(obj.assigned_phone2_label), assigned_phone3(obj.assigned_phone3), assigned_phone3_label(obj.assigned_phone3_label), buddystatus(obj.buddystatus), isauthorized(obj.isauthorized), popularity_ord(obj.popularity_ord), external_id(obj.external_id), external_system_id(obj.external_system_id), isblocked(obj.isblocked), certificate_send_count(obj.certificate_send_count), account_modification_serial_nr(obj.account_modification_serial_nr), nr_of_buddies(obj.nr_of_buddies), server_synced(obj.server_synced), contactlist_track(obj.contactlist_track), last_used_networktime(obj.last_used_networktime), authorized_time(obj.authorized_time), sent_authrequest(obj.sent_authrequest), sent_authrequest_time(obj.sent_authrequest_time), sent_authrequest_serial(obj.sent_authrequest_serial), node_capabilities(obj.node_capabilities), revoked_auth(obj.revoked_auth), added_in_shared_group(obj.added_in_shared_group), in_shared_group(obj.in_shared_group), stack_version(obj.stack_version), offline_authreq_id(obj.offline_authreq_id), node_capabilities_and(obj.node_capabilities_and), authreq_crc(obj.authreq_crc), authreq_src(obj.authreq_src), pop_score(obj.pop_score), main_phone(obj.main_phone), unified_servants(obj.unified_servants), phone_home_normalized(obj.phone_home_normalized), phone_office_normalized(obj.phone_office_normalized), phone_mobile_normalized(obj.phone_mobile_normalized), sent_authrequest_initmethod(obj.sent_authrequest_initmethod), authreq_initmethod(obj.authreq_initmethod), sent_authrequest_extrasbitmask(obj.sent_authrequest_extrasbitmask), liveid_cid(obj.liveid_cid) {
 }
 const Contacts& Contacts::operator=(const Contacts& obj) {
     if (this != &obj) {
         id = obj.id;
-        type = obj.type;
         is_permanent = obj.is_permanent;
         skypename = obj.skypename;
         pstnnumber = obj.pstnnumber;
@@ -1429,9 +1405,6 @@ std::string Contacts::insert(litesql::Record& tables, litesql::Records& fieldRec
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
-    fields.push_back(type.name());
-    values.push_back(type);
-    type.setModified(false);
     fields.push_back(is_permanent.name());
     values.push_back(is_permanent);
     is_permanent.setModified(false);
@@ -1680,7 +1653,8 @@ void Contacts::create() {
     litesql::Record tables;
     litesql::Records fieldRecs;
     litesql::Records valueRecs;
-    type = type__;
+    //Type processing disabled
+    //type = type__;
     std::string newID = insert(tables, fieldRecs, valueRecs);
     if (id == 0)
         id = newID;
@@ -1688,7 +1662,6 @@ void Contacts::create() {
 void Contacts::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
-    updateField(updates, table__, type);
     updateField(updates, table__, is_permanent);
     updateField(updates, table__, skypename);
     updateField(updates, table__, pstnnumber);
@@ -1774,7 +1747,6 @@ void Contacts::addIDUpdates(Updates& updates) {
 }
 void Contacts::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
-    ftypes.push_back(Type);
     ftypes.push_back(Is_permanent);
     ftypes.push_back(Skypename);
     ftypes.push_back(Pstnnumber);
@@ -1889,7 +1861,7 @@ void Contacts::del() {
     inDatabase = false;
 }
 bool Contacts::typeIsCorrect() const {
-    return type == type__;
+    return true;
 }
 std::unique_ptr<Contacts> Contacts::upcast() const {
     return unique_ptr<Contacts>(new Contacts(*this));
@@ -1897,7 +1869,6 @@ std::unique_ptr<Contacts> Contacts::upcast() const {
 std::unique_ptr<Contacts> Contacts::upcastCopy() const {
     Contacts* np = new Contacts(*this);
     np->id = id;
-    np->type = type;
     np->is_permanent = is_permanent;
     np->skypename = skypename;
     np->pstnnumber = pstnnumber;
@@ -1984,7 +1955,6 @@ std::unique_ptr<Contacts> Contacts::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, Contacts o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
-    os << o.type.name() << " = " << o.type << std::endl;
     os << o.is_permanent.name() << " = " << o.is_permanent << std::endl;
     os << o.skypename.name() << " = " << o.skypename << std::endl;
     os << o.pstnnumber.name() << " = " << o.pstnnumber << std::endl;
@@ -2073,7 +2043,6 @@ const std::string Conversations::type__("Conversations");
 const std::string Conversations::table__("Conversations");
 const std::string Conversations::sequence__("Conversations_seq");
 const litesql::FieldType Conversations::Id("id",A_field_type_integer,table__);
-const litesql::FieldType Conversations::Type("type__",A_field_type_string,table__);
 const litesql::FieldType Conversations::Is_permanent("is_permanent",A_field_type_integer,table__);
 const litesql::FieldType Conversations::Identity("identity",A_field_type_string,table__);
 const litesql::FieldType Conversations::Live_host("live_host",A_field_type_string,table__);
@@ -2185,153 +2154,150 @@ void Conversations::defaults() {
     in_migrated_thread_since = 0;
 }
 Conversations::Conversations(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), type(Type), is_permanent(Is_permanent), identity(Identity), live_host(Live_host), live_start_timestamp(Live_start_timestamp), live_is_muted(Live_is_muted), alert_string(Alert_string), is_bookmarked(Is_bookmarked), given_displayname(Given_displayname), displayname(Displayname), local_livestatus(Local_livestatus), inbox_timestamp(Inbox_timestamp), inbox_message_id(Inbox_message_id), unconsumed_suppressed_messages(Unconsumed_suppressed_messages), unconsumed_normal_messages(Unconsumed_normal_messages), unconsumed_elevated_messages(Unconsumed_elevated_messages), unconsumed_messages_voice(Unconsumed_messages_voice), active_vm_id(Active_vm_id), context_horizon(Context_horizon), consumption_horizon(Consumption_horizon), last_activity_timestamp(Last_activity_timestamp), active_invoice_message(Active_invoice_message), spawned_from_convo_id(Spawned_from_convo_id), pinned_order(Pinned_order), creator(Creator), creation_timestamp(Creation_timestamp), my_status(My_status), opt_joining_enabled(Opt_joining_enabled), opt_access_token(Opt_access_token), opt_entry_level_rank(Opt_entry_level_rank), opt_disclose_history(Opt_disclose_history), opt_history_limit_in_days(Opt_history_limit_in_days), opt_admin_only_activities(Opt_admin_only_activities), passwordhint(Passwordhint), meta_name(Meta_name), meta_topic(Meta_topic), meta_guidelines(Meta_guidelines), meta_picture(Meta_picture), premium_video_status(Premium_video_status), premium_video_is_grace_period(Premium_video_is_grace_period), guid(Guid), dialog_partner(Dialog_partner), meta_description(Meta_description), premium_video_sponsor_list(Premium_video_sponsor_list), mcr_caller(Mcr_caller), chat_dbid(Chat_dbid), history_horizon(History_horizon), history_sync_state(History_sync_state), extprop_windowpos_x(Extprop_windowpos_x), extprop_windowpos_y(Extprop_windowpos_y), extprop_windowpos_w(Extprop_windowpos_w), extprop_windowpos_h(Extprop_windowpos_h), extprop_window_roster_visible(Extprop_window_roster_visible), extprop_window_splitter_layout(Extprop_window_splitter_layout), extprop_hide_from_history(Extprop_hide_from_history), extprop_window_detached(Extprop_window_detached), is_blocked(Is_blocked), last_message_id(Last_message_id), picture(Picture), is_p2p_migrated(Is_p2p_migrated), thread_version(Thread_version), consumption_horizon_set_at(Consumption_horizon_set_at), alt_identity(Alt_identity), in_migrated_thread_since(In_migrated_thread_since) {
+     : litesql::Persistent(db), id(Id), is_permanent(Is_permanent), identity(Identity), live_host(Live_host), live_start_timestamp(Live_start_timestamp), live_is_muted(Live_is_muted), alert_string(Alert_string), is_bookmarked(Is_bookmarked), given_displayname(Given_displayname), displayname(Displayname), local_livestatus(Local_livestatus), inbox_timestamp(Inbox_timestamp), inbox_message_id(Inbox_message_id), unconsumed_suppressed_messages(Unconsumed_suppressed_messages), unconsumed_normal_messages(Unconsumed_normal_messages), unconsumed_elevated_messages(Unconsumed_elevated_messages), unconsumed_messages_voice(Unconsumed_messages_voice), active_vm_id(Active_vm_id), context_horizon(Context_horizon), consumption_horizon(Consumption_horizon), last_activity_timestamp(Last_activity_timestamp), active_invoice_message(Active_invoice_message), spawned_from_convo_id(Spawned_from_convo_id), pinned_order(Pinned_order), creator(Creator), creation_timestamp(Creation_timestamp), my_status(My_status), opt_joining_enabled(Opt_joining_enabled), opt_access_token(Opt_access_token), opt_entry_level_rank(Opt_entry_level_rank), opt_disclose_history(Opt_disclose_history), opt_history_limit_in_days(Opt_history_limit_in_days), opt_admin_only_activities(Opt_admin_only_activities), passwordhint(Passwordhint), meta_name(Meta_name), meta_topic(Meta_topic), meta_guidelines(Meta_guidelines), meta_picture(Meta_picture), premium_video_status(Premium_video_status), premium_video_is_grace_period(Premium_video_is_grace_period), guid(Guid), dialog_partner(Dialog_partner), meta_description(Meta_description), premium_video_sponsor_list(Premium_video_sponsor_list), mcr_caller(Mcr_caller), chat_dbid(Chat_dbid), history_horizon(History_horizon), history_sync_state(History_sync_state), extprop_windowpos_x(Extprop_windowpos_x), extprop_windowpos_y(Extprop_windowpos_y), extprop_windowpos_w(Extprop_windowpos_w), extprop_windowpos_h(Extprop_windowpos_h), extprop_window_roster_visible(Extprop_window_roster_visible), extprop_window_splitter_layout(Extprop_window_splitter_layout), extprop_hide_from_history(Extprop_hide_from_history), extprop_window_detached(Extprop_window_detached), is_blocked(Is_blocked), last_message_id(Last_message_id), picture(Picture), is_p2p_migrated(Is_p2p_migrated), thread_version(Thread_version), consumption_horizon_set_at(Consumption_horizon_set_at), alt_identity(Alt_identity), in_migrated_thread_since(In_migrated_thread_since) {
     defaults();
 }
 Conversations::Conversations(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), type(Type), is_permanent(Is_permanent), identity(Identity), live_host(Live_host), live_start_timestamp(Live_start_timestamp), live_is_muted(Live_is_muted), alert_string(Alert_string), is_bookmarked(Is_bookmarked), given_displayname(Given_displayname), displayname(Displayname), local_livestatus(Local_livestatus), inbox_timestamp(Inbox_timestamp), inbox_message_id(Inbox_message_id), unconsumed_suppressed_messages(Unconsumed_suppressed_messages), unconsumed_normal_messages(Unconsumed_normal_messages), unconsumed_elevated_messages(Unconsumed_elevated_messages), unconsumed_messages_voice(Unconsumed_messages_voice), active_vm_id(Active_vm_id), context_horizon(Context_horizon), consumption_horizon(Consumption_horizon), last_activity_timestamp(Last_activity_timestamp), active_invoice_message(Active_invoice_message), spawned_from_convo_id(Spawned_from_convo_id), pinned_order(Pinned_order), creator(Creator), creation_timestamp(Creation_timestamp), my_status(My_status), opt_joining_enabled(Opt_joining_enabled), opt_access_token(Opt_access_token), opt_entry_level_rank(Opt_entry_level_rank), opt_disclose_history(Opt_disclose_history), opt_history_limit_in_days(Opt_history_limit_in_days), opt_admin_only_activities(Opt_admin_only_activities), passwordhint(Passwordhint), meta_name(Meta_name), meta_topic(Meta_topic), meta_guidelines(Meta_guidelines), meta_picture(Meta_picture), premium_video_status(Premium_video_status), premium_video_is_grace_period(Premium_video_is_grace_period), guid(Guid), dialog_partner(Dialog_partner), meta_description(Meta_description), premium_video_sponsor_list(Premium_video_sponsor_list), mcr_caller(Mcr_caller), chat_dbid(Chat_dbid), history_horizon(History_horizon), history_sync_state(History_sync_state), extprop_windowpos_x(Extprop_windowpos_x), extprop_windowpos_y(Extprop_windowpos_y), extprop_windowpos_w(Extprop_windowpos_w), extprop_windowpos_h(Extprop_windowpos_h), extprop_window_roster_visible(Extprop_window_roster_visible), extprop_window_splitter_layout(Extprop_window_splitter_layout), extprop_hide_from_history(Extprop_hide_from_history), extprop_window_detached(Extprop_window_detached), is_blocked(Is_blocked), last_message_id(Last_message_id), picture(Picture), is_p2p_migrated(Is_p2p_migrated), thread_version(Thread_version), consumption_horizon_set_at(Consumption_horizon_set_at), alt_identity(Alt_identity), in_migrated_thread_since(In_migrated_thread_since) {
+     : litesql::Persistent(db, rec), id(Id), is_permanent(Is_permanent), identity(Identity), live_host(Live_host), live_start_timestamp(Live_start_timestamp), live_is_muted(Live_is_muted), alert_string(Alert_string), is_bookmarked(Is_bookmarked), given_displayname(Given_displayname), displayname(Displayname), local_livestatus(Local_livestatus), inbox_timestamp(Inbox_timestamp), inbox_message_id(Inbox_message_id), unconsumed_suppressed_messages(Unconsumed_suppressed_messages), unconsumed_normal_messages(Unconsumed_normal_messages), unconsumed_elevated_messages(Unconsumed_elevated_messages), unconsumed_messages_voice(Unconsumed_messages_voice), active_vm_id(Active_vm_id), context_horizon(Context_horizon), consumption_horizon(Consumption_horizon), last_activity_timestamp(Last_activity_timestamp), active_invoice_message(Active_invoice_message), spawned_from_convo_id(Spawned_from_convo_id), pinned_order(Pinned_order), creator(Creator), creation_timestamp(Creation_timestamp), my_status(My_status), opt_joining_enabled(Opt_joining_enabled), opt_access_token(Opt_access_token), opt_entry_level_rank(Opt_entry_level_rank), opt_disclose_history(Opt_disclose_history), opt_history_limit_in_days(Opt_history_limit_in_days), opt_admin_only_activities(Opt_admin_only_activities), passwordhint(Passwordhint), meta_name(Meta_name), meta_topic(Meta_topic), meta_guidelines(Meta_guidelines), meta_picture(Meta_picture), premium_video_status(Premium_video_status), premium_video_is_grace_period(Premium_video_is_grace_period), guid(Guid), dialog_partner(Dialog_partner), meta_description(Meta_description), premium_video_sponsor_list(Premium_video_sponsor_list), mcr_caller(Mcr_caller), chat_dbid(Chat_dbid), history_horizon(History_horizon), history_sync_state(History_sync_state), extprop_windowpos_x(Extprop_windowpos_x), extprop_windowpos_y(Extprop_windowpos_y), extprop_windowpos_w(Extprop_windowpos_w), extprop_windowpos_h(Extprop_windowpos_h), extprop_window_roster_visible(Extprop_window_roster_visible), extprop_window_splitter_layout(Extprop_window_splitter_layout), extprop_hide_from_history(Extprop_hide_from_history), extprop_window_detached(Extprop_window_detached), is_blocked(Is_blocked), last_message_id(Last_message_id), picture(Picture), is_p2p_migrated(Is_p2p_migrated), thread_version(Thread_version), consumption_horizon_set_at(Consumption_horizon_set_at), alt_identity(Alt_identity), in_migrated_thread_since(In_migrated_thread_since) {
     defaults();
-    size_t size = (rec.size() > 65) ? 65 : rec.size();
+    size_t size = (rec.size() > 64) ? 64 : rec.size();
     switch(size) {
-    case 65: in_migrated_thread_since = convert<const std::string&, int>(rec[64]);
+    case 64: in_migrated_thread_since = convert<const std::string&, int>(rec[63]);
         in_migrated_thread_since.setModified(false);
-    case 64: alt_identity = convert<const std::string&, std::string>(rec[63]);
+    case 63: alt_identity = convert<const std::string&, std::string>(rec[62]);
         alt_identity.setModified(false);
-    case 63: consumption_horizon_set_at = convert<const std::string&, int>(rec[62]);
+    case 62: consumption_horizon_set_at = convert<const std::string&, int>(rec[61]);
         consumption_horizon_set_at.setModified(false);
-    case 62: thread_version = convert<const std::string&, std::string>(rec[61]);
+    case 61: thread_version = convert<const std::string&, std::string>(rec[60]);
         thread_version.setModified(false);
-    case 61: is_p2p_migrated = convert<const std::string&, int>(rec[60]);
+    case 60: is_p2p_migrated = convert<const std::string&, int>(rec[59]);
         is_p2p_migrated.setModified(false);
-    case 60: picture = convert<const std::string&, std::string>(rec[59]);
+    case 59: picture = convert<const std::string&, std::string>(rec[58]);
         picture.setModified(false);
-    case 59: last_message_id = convert<const std::string&, int>(rec[58]);
+    case 58: last_message_id = convert<const std::string&, int>(rec[57]);
         last_message_id.setModified(false);
-    case 58: is_blocked = convert<const std::string&, int>(rec[57]);
+    case 57: is_blocked = convert<const std::string&, int>(rec[56]);
         is_blocked.setModified(false);
-    case 57: extprop_window_detached = convert<const std::string&, int>(rec[56]);
+    case 56: extprop_window_detached = convert<const std::string&, int>(rec[55]);
         extprop_window_detached.setModified(false);
-    case 56: extprop_hide_from_history = convert<const std::string&, int>(rec[55]);
+    case 55: extprop_hide_from_history = convert<const std::string&, int>(rec[54]);
         extprop_hide_from_history.setModified(false);
-    case 55: extprop_window_splitter_layout = convert<const std::string&, std::string>(rec[54]);
+    case 54: extprop_window_splitter_layout = convert<const std::string&, std::string>(rec[53]);
         extprop_window_splitter_layout.setModified(false);
-    case 54: extprop_window_roster_visible = convert<const std::string&, int>(rec[53]);
+    case 53: extprop_window_roster_visible = convert<const std::string&, int>(rec[52]);
         extprop_window_roster_visible.setModified(false);
-    case 53: extprop_windowpos_h = convert<const std::string&, int>(rec[52]);
+    case 52: extprop_windowpos_h = convert<const std::string&, int>(rec[51]);
         extprop_windowpos_h.setModified(false);
-    case 52: extprop_windowpos_w = convert<const std::string&, int>(rec[51]);
+    case 51: extprop_windowpos_w = convert<const std::string&, int>(rec[50]);
         extprop_windowpos_w.setModified(false);
-    case 51: extprop_windowpos_y = convert<const std::string&, int>(rec[50]);
+    case 50: extprop_windowpos_y = convert<const std::string&, int>(rec[49]);
         extprop_windowpos_y.setModified(false);
-    case 50: extprop_windowpos_x = convert<const std::string&, int>(rec[49]);
+    case 49: extprop_windowpos_x = convert<const std::string&, int>(rec[48]);
         extprop_windowpos_x.setModified(false);
-    case 49: history_sync_state = convert<const std::string&, std::string>(rec[48]);
+    case 48: history_sync_state = convert<const std::string&, std::string>(rec[47]);
         history_sync_state.setModified(false);
-    case 48: history_horizon = convert<const std::string&, int>(rec[47]);
+    case 47: history_horizon = convert<const std::string&, int>(rec[46]);
         history_horizon.setModified(false);
-    case 47: chat_dbid = convert<const std::string&, int>(rec[46]);
+    case 46: chat_dbid = convert<const std::string&, int>(rec[45]);
         chat_dbid.setModified(false);
-    case 46: mcr_caller = convert<const std::string&, std::string>(rec[45]);
+    case 45: mcr_caller = convert<const std::string&, std::string>(rec[44]);
         mcr_caller.setModified(false);
-    case 45: premium_video_sponsor_list = convert<const std::string&, std::string>(rec[44]);
+    case 44: premium_video_sponsor_list = convert<const std::string&, std::string>(rec[43]);
         premium_video_sponsor_list.setModified(false);
-    case 44: meta_description = convert<const std::string&, std::string>(rec[43]);
+    case 43: meta_description = convert<const std::string&, std::string>(rec[42]);
         meta_description.setModified(false);
-    case 43: dialog_partner = convert<const std::string&, std::string>(rec[42]);
+    case 42: dialog_partner = convert<const std::string&, std::string>(rec[41]);
         dialog_partner.setModified(false);
-    case 42: guid = convert<const std::string&, std::string>(rec[41]);
+    case 41: guid = convert<const std::string&, std::string>(rec[40]);
         guid.setModified(false);
-    case 41: premium_video_is_grace_period = convert<const std::string&, int>(rec[40]);
+    case 40: premium_video_is_grace_period = convert<const std::string&, int>(rec[39]);
         premium_video_is_grace_period.setModified(false);
-    case 40: premium_video_status = convert<const std::string&, int>(rec[39]);
+    case 39: premium_video_status = convert<const std::string&, int>(rec[38]);
         premium_video_status.setModified(false);
-    case 39: meta_picture = convert<const std::string&, litesql::Blob>(rec[38]);
+    case 38: meta_picture = convert<const std::string&, litesql::Blob>(rec[37]);
         meta_picture.setModified(false);
-    case 38: meta_guidelines = convert<const std::string&, std::string>(rec[37]);
+    case 37: meta_guidelines = convert<const std::string&, std::string>(rec[36]);
         meta_guidelines.setModified(false);
-    case 37: meta_topic = convert<const std::string&, std::string>(rec[36]);
+    case 36: meta_topic = convert<const std::string&, std::string>(rec[35]);
         meta_topic.setModified(false);
-    case 36: meta_name = convert<const std::string&, std::string>(rec[35]);
+    case 35: meta_name = convert<const std::string&, std::string>(rec[34]);
         meta_name.setModified(false);
-    case 35: passwordhint = convert<const std::string&, std::string>(rec[34]);
+    case 34: passwordhint = convert<const std::string&, std::string>(rec[33]);
         passwordhint.setModified(false);
-    case 34: opt_admin_only_activities = convert<const std::string&, int>(rec[33]);
+    case 33: opt_admin_only_activities = convert<const std::string&, int>(rec[32]);
         opt_admin_only_activities.setModified(false);
-    case 33: opt_history_limit_in_days = convert<const std::string&, int>(rec[32]);
+    case 32: opt_history_limit_in_days = convert<const std::string&, int>(rec[31]);
         opt_history_limit_in_days.setModified(false);
-    case 32: opt_disclose_history = convert<const std::string&, int>(rec[31]);
+    case 31: opt_disclose_history = convert<const std::string&, int>(rec[30]);
         opt_disclose_history.setModified(false);
-    case 31: opt_entry_level_rank = convert<const std::string&, int>(rec[30]);
+    case 30: opt_entry_level_rank = convert<const std::string&, int>(rec[29]);
         opt_entry_level_rank.setModified(false);
-    case 30: opt_access_token = convert<const std::string&, std::string>(rec[29]);
+    case 29: opt_access_token = convert<const std::string&, std::string>(rec[28]);
         opt_access_token.setModified(false);
-    case 29: opt_joining_enabled = convert<const std::string&, int>(rec[28]);
+    case 28: opt_joining_enabled = convert<const std::string&, int>(rec[27]);
         opt_joining_enabled.setModified(false);
-    case 28: my_status = convert<const std::string&, int>(rec[27]);
+    case 27: my_status = convert<const std::string&, int>(rec[26]);
         my_status.setModified(false);
-    case 27: creation_timestamp = convert<const std::string&, int>(rec[26]);
+    case 26: creation_timestamp = convert<const std::string&, int>(rec[25]);
         creation_timestamp.setModified(false);
-    case 26: creator = convert<const std::string&, std::string>(rec[25]);
+    case 25: creator = convert<const std::string&, std::string>(rec[24]);
         creator.setModified(false);
-    case 25: pinned_order = convert<const std::string&, int>(rec[24]);
+    case 24: pinned_order = convert<const std::string&, int>(rec[23]);
         pinned_order.setModified(false);
-    case 24: spawned_from_convo_id = convert<const std::string&, int>(rec[23]);
+    case 23: spawned_from_convo_id = convert<const std::string&, int>(rec[22]);
         spawned_from_convo_id.setModified(false);
-    case 23: active_invoice_message = convert<const std::string&, int>(rec[22]);
+    case 22: active_invoice_message = convert<const std::string&, int>(rec[21]);
         active_invoice_message.setModified(false);
-    case 22: last_activity_timestamp = convert<const std::string&, int>(rec[21]);
+    case 21: last_activity_timestamp = convert<const std::string&, int>(rec[20]);
         last_activity_timestamp.setModified(false);
-    case 21: consumption_horizon = convert<const std::string&, int>(rec[20]);
+    case 20: consumption_horizon = convert<const std::string&, int>(rec[19]);
         consumption_horizon.setModified(false);
-    case 20: context_horizon = convert<const std::string&, int>(rec[19]);
+    case 19: context_horizon = convert<const std::string&, int>(rec[18]);
         context_horizon.setModified(false);
-    case 19: active_vm_id = convert<const std::string&, int>(rec[18]);
+    case 18: active_vm_id = convert<const std::string&, int>(rec[17]);
         active_vm_id.setModified(false);
-    case 18: unconsumed_messages_voice = convert<const std::string&, int>(rec[17]);
+    case 17: unconsumed_messages_voice = convert<const std::string&, int>(rec[16]);
         unconsumed_messages_voice.setModified(false);
-    case 17: unconsumed_elevated_messages = convert<const std::string&, int>(rec[16]);
+    case 16: unconsumed_elevated_messages = convert<const std::string&, int>(rec[15]);
         unconsumed_elevated_messages.setModified(false);
-    case 16: unconsumed_normal_messages = convert<const std::string&, int>(rec[15]);
+    case 15: unconsumed_normal_messages = convert<const std::string&, int>(rec[14]);
         unconsumed_normal_messages.setModified(false);
-    case 15: unconsumed_suppressed_messages = convert<const std::string&, int>(rec[14]);
+    case 14: unconsumed_suppressed_messages = convert<const std::string&, int>(rec[13]);
         unconsumed_suppressed_messages.setModified(false);
-    case 14: inbox_message_id = convert<const std::string&, int>(rec[13]);
+    case 13: inbox_message_id = convert<const std::string&, int>(rec[12]);
         inbox_message_id.setModified(false);
-    case 13: inbox_timestamp = convert<const std::string&, int>(rec[12]);
+    case 12: inbox_timestamp = convert<const std::string&, int>(rec[11]);
         inbox_timestamp.setModified(false);
-    case 12: local_livestatus = convert<const std::string&, int>(rec[11]);
+    case 11: local_livestatus = convert<const std::string&, int>(rec[10]);
         local_livestatus.setModified(false);
-    case 11: displayname = convert<const std::string&, std::string>(rec[10]);
+    case 10: displayname = convert<const std::string&, std::string>(rec[9]);
         displayname.setModified(false);
-    case 10: given_displayname = convert<const std::string&, std::string>(rec[9]);
+    case 9: given_displayname = convert<const std::string&, std::string>(rec[8]);
         given_displayname.setModified(false);
-    case 9: is_bookmarked = convert<const std::string&, int>(rec[8]);
+    case 8: is_bookmarked = convert<const std::string&, int>(rec[7]);
         is_bookmarked.setModified(false);
-    case 8: alert_string = convert<const std::string&, std::string>(rec[7]);
+    case 7: alert_string = convert<const std::string&, std::string>(rec[6]);
         alert_string.setModified(false);
-    case 7: live_is_muted = convert<const std::string&, int>(rec[6]);
+    case 6: live_is_muted = convert<const std::string&, int>(rec[5]);
         live_is_muted.setModified(false);
-    case 6: live_start_timestamp = convert<const std::string&, int>(rec[5]);
+    case 5: live_start_timestamp = convert<const std::string&, int>(rec[4]);
         live_start_timestamp.setModified(false);
-    case 5: live_host = convert<const std::string&, std::string>(rec[4]);
+    case 4: live_host = convert<const std::string&, std::string>(rec[3]);
         live_host.setModified(false);
-    case 4: identity = convert<const std::string&, std::string>(rec[3]);
+    case 3: identity = convert<const std::string&, std::string>(rec[2]);
         identity.setModified(false);
-    case 3: is_permanent = convert<const std::string&, int>(rec[2]);
+    case 2: is_permanent = convert<const std::string&, int>(rec[1]);
         is_permanent.setModified(false);
-    case 2: type = convert<const std::string&, std::string>(rec[1]);
-        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 Conversations::Conversations(const Conversations& obj)
-     : litesql::Persistent(obj), id(obj.id), type(obj.type), is_permanent(obj.is_permanent), identity(obj.identity), live_host(obj.live_host), live_start_timestamp(obj.live_start_timestamp), live_is_muted(obj.live_is_muted), alert_string(obj.alert_string), is_bookmarked(obj.is_bookmarked), given_displayname(obj.given_displayname), displayname(obj.displayname), local_livestatus(obj.local_livestatus), inbox_timestamp(obj.inbox_timestamp), inbox_message_id(obj.inbox_message_id), unconsumed_suppressed_messages(obj.unconsumed_suppressed_messages), unconsumed_normal_messages(obj.unconsumed_normal_messages), unconsumed_elevated_messages(obj.unconsumed_elevated_messages), unconsumed_messages_voice(obj.unconsumed_messages_voice), active_vm_id(obj.active_vm_id), context_horizon(obj.context_horizon), consumption_horizon(obj.consumption_horizon), last_activity_timestamp(obj.last_activity_timestamp), active_invoice_message(obj.active_invoice_message), spawned_from_convo_id(obj.spawned_from_convo_id), pinned_order(obj.pinned_order), creator(obj.creator), creation_timestamp(obj.creation_timestamp), my_status(obj.my_status), opt_joining_enabled(obj.opt_joining_enabled), opt_access_token(obj.opt_access_token), opt_entry_level_rank(obj.opt_entry_level_rank), opt_disclose_history(obj.opt_disclose_history), opt_history_limit_in_days(obj.opt_history_limit_in_days), opt_admin_only_activities(obj.opt_admin_only_activities), passwordhint(obj.passwordhint), meta_name(obj.meta_name), meta_topic(obj.meta_topic), meta_guidelines(obj.meta_guidelines), meta_picture(obj.meta_picture), premium_video_status(obj.premium_video_status), premium_video_is_grace_period(obj.premium_video_is_grace_period), guid(obj.guid), dialog_partner(obj.dialog_partner), meta_description(obj.meta_description), premium_video_sponsor_list(obj.premium_video_sponsor_list), mcr_caller(obj.mcr_caller), chat_dbid(obj.chat_dbid), history_horizon(obj.history_horizon), history_sync_state(obj.history_sync_state), extprop_windowpos_x(obj.extprop_windowpos_x), extprop_windowpos_y(obj.extprop_windowpos_y), extprop_windowpos_w(obj.extprop_windowpos_w), extprop_windowpos_h(obj.extprop_windowpos_h), extprop_window_roster_visible(obj.extprop_window_roster_visible), extprop_window_splitter_layout(obj.extprop_window_splitter_layout), extprop_hide_from_history(obj.extprop_hide_from_history), extprop_window_detached(obj.extprop_window_detached), is_blocked(obj.is_blocked), last_message_id(obj.last_message_id), picture(obj.picture), is_p2p_migrated(obj.is_p2p_migrated), thread_version(obj.thread_version), consumption_horizon_set_at(obj.consumption_horizon_set_at), alt_identity(obj.alt_identity), in_migrated_thread_since(obj.in_migrated_thread_since) {
+     : litesql::Persistent(obj), id(obj.id), is_permanent(obj.is_permanent), identity(obj.identity), live_host(obj.live_host), live_start_timestamp(obj.live_start_timestamp), live_is_muted(obj.live_is_muted), alert_string(obj.alert_string), is_bookmarked(obj.is_bookmarked), given_displayname(obj.given_displayname), displayname(obj.displayname), local_livestatus(obj.local_livestatus), inbox_timestamp(obj.inbox_timestamp), inbox_message_id(obj.inbox_message_id), unconsumed_suppressed_messages(obj.unconsumed_suppressed_messages), unconsumed_normal_messages(obj.unconsumed_normal_messages), unconsumed_elevated_messages(obj.unconsumed_elevated_messages), unconsumed_messages_voice(obj.unconsumed_messages_voice), active_vm_id(obj.active_vm_id), context_horizon(obj.context_horizon), consumption_horizon(obj.consumption_horizon), last_activity_timestamp(obj.last_activity_timestamp), active_invoice_message(obj.active_invoice_message), spawned_from_convo_id(obj.spawned_from_convo_id), pinned_order(obj.pinned_order), creator(obj.creator), creation_timestamp(obj.creation_timestamp), my_status(obj.my_status), opt_joining_enabled(obj.opt_joining_enabled), opt_access_token(obj.opt_access_token), opt_entry_level_rank(obj.opt_entry_level_rank), opt_disclose_history(obj.opt_disclose_history), opt_history_limit_in_days(obj.opt_history_limit_in_days), opt_admin_only_activities(obj.opt_admin_only_activities), passwordhint(obj.passwordhint), meta_name(obj.meta_name), meta_topic(obj.meta_topic), meta_guidelines(obj.meta_guidelines), meta_picture(obj.meta_picture), premium_video_status(obj.premium_video_status), premium_video_is_grace_period(obj.premium_video_is_grace_period), guid(obj.guid), dialog_partner(obj.dialog_partner), meta_description(obj.meta_description), premium_video_sponsor_list(obj.premium_video_sponsor_list), mcr_caller(obj.mcr_caller), chat_dbid(obj.chat_dbid), history_horizon(obj.history_horizon), history_sync_state(obj.history_sync_state), extprop_windowpos_x(obj.extprop_windowpos_x), extprop_windowpos_y(obj.extprop_windowpos_y), extprop_windowpos_w(obj.extprop_windowpos_w), extprop_windowpos_h(obj.extprop_windowpos_h), extprop_window_roster_visible(obj.extprop_window_roster_visible), extprop_window_splitter_layout(obj.extprop_window_splitter_layout), extprop_hide_from_history(obj.extprop_hide_from_history), extprop_window_detached(obj.extprop_window_detached), is_blocked(obj.is_blocked), last_message_id(obj.last_message_id), picture(obj.picture), is_p2p_migrated(obj.is_p2p_migrated), thread_version(obj.thread_version), consumption_horizon_set_at(obj.consumption_horizon_set_at), alt_identity(obj.alt_identity), in_migrated_thread_since(obj.in_migrated_thread_since) {
 }
 const Conversations& Conversations::operator=(const Conversations& obj) {
     if (this != &obj) {
         id = obj.id;
-        type = obj.type;
         is_permanent = obj.is_permanent;
         identity = obj.identity;
         live_host = obj.live_host;
@@ -2406,9 +2372,6 @@ std::string Conversations::insert(litesql::Record& tables, litesql::Records& fie
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
-    fields.push_back(type.name());
-    values.push_back(type);
-    type.setModified(false);
     fields.push_back(is_permanent.name());
     values.push_back(is_permanent);
     is_permanent.setModified(false);
@@ -2606,7 +2569,8 @@ void Conversations::create() {
     litesql::Record tables;
     litesql::Records fieldRecs;
     litesql::Records valueRecs;
-    type = type__;
+    //Type processing disabled
+    //type = type__;
     std::string newID = insert(tables, fieldRecs, valueRecs);
     if (id == 0)
         id = newID;
@@ -2614,7 +2578,6 @@ void Conversations::create() {
 void Conversations::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
-    updateField(updates, table__, type);
     updateField(updates, table__, is_permanent);
     updateField(updates, table__, identity);
     updateField(updates, table__, live_host);
@@ -2683,7 +2646,6 @@ void Conversations::addIDUpdates(Updates& updates) {
 }
 void Conversations::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
-    ftypes.push_back(Type);
     ftypes.push_back(Is_permanent);
     ftypes.push_back(Identity);
     ftypes.push_back(Live_host);
@@ -2781,7 +2743,7 @@ void Conversations::del() {
     inDatabase = false;
 }
 bool Conversations::typeIsCorrect() const {
-    return type == type__;
+    return true;
 }
 std::unique_ptr<Conversations> Conversations::upcast() const {
     return unique_ptr<Conversations>(new Conversations(*this));
@@ -2789,7 +2751,6 @@ std::unique_ptr<Conversations> Conversations::upcast() const {
 std::unique_ptr<Conversations> Conversations::upcastCopy() const {
     Conversations* np = new Conversations(*this);
     np->id = id;
-    np->type = type;
     np->is_permanent = is_permanent;
     np->identity = identity;
     np->live_host = live_host;
@@ -2859,7 +2820,6 @@ std::unique_ptr<Conversations> Conversations::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, Conversations o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
-    os << o.type.name() << " = " << o.type << std::endl;
     os << o.is_permanent.name() << " = " << o.is_permanent << std::endl;
     os << o.identity.name() << " = " << o.identity << std::endl;
     os << o.live_host.name() << " = " << o.live_host << std::endl;
@@ -2931,7 +2891,6 @@ const std::string Participants::type__("Participants");
 const std::string Participants::table__("Participants");
 const std::string Participants::sequence__("Participants_seq");
 const litesql::FieldType Participants::Id("id",A_field_type_integer,table__);
-const litesql::FieldType Participants::Type("type__",A_field_type_string,table__);
 const litesql::FieldType Participants::Is_permanent("is_permanent",A_field_type_integer,table__);
 const litesql::FieldType Participants::Convo_id("convo_id",A_field_type_integer,table__);
 const litesql::FieldType Participants::Identity("identity",A_field_type_string,table__);
@@ -2943,33 +2902,30 @@ void Participants::defaults() {
     convo_id = 0;
 }
 Participants::Participants(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), type(Type), is_permanent(Is_permanent), convo_id(Convo_id), identity(Identity) {
+     : litesql::Persistent(db), id(Id), is_permanent(Is_permanent), convo_id(Convo_id), identity(Identity) {
     defaults();
 }
 Participants::Participants(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), type(Type), is_permanent(Is_permanent), convo_id(Convo_id), identity(Identity) {
+     : litesql::Persistent(db, rec), id(Id), is_permanent(Is_permanent), convo_id(Convo_id), identity(Identity) {
     defaults();
-    size_t size = (rec.size() > 5) ? 5 : rec.size();
+    size_t size = (rec.size() > 4) ? 4 : rec.size();
     switch(size) {
-    case 5: identity = convert<const std::string&, std::string>(rec[4]);
+    case 4: identity = convert<const std::string&, std::string>(rec[3]);
         identity.setModified(false);
-    case 4: convo_id = convert<const std::string&, int>(rec[3]);
+    case 3: convo_id = convert<const std::string&, int>(rec[2]);
         convo_id.setModified(false);
-    case 3: is_permanent = convert<const std::string&, int>(rec[2]);
+    case 2: is_permanent = convert<const std::string&, int>(rec[1]);
         is_permanent.setModified(false);
-    case 2: type = convert<const std::string&, std::string>(rec[1]);
-        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 Participants::Participants(const Participants& obj)
-     : litesql::Persistent(obj), id(obj.id), type(obj.type), is_permanent(obj.is_permanent), convo_id(obj.convo_id), identity(obj.identity) {
+     : litesql::Persistent(obj), id(obj.id), is_permanent(obj.is_permanent), convo_id(obj.convo_id), identity(obj.identity) {
 }
 const Participants& Participants::operator=(const Participants& obj) {
     if (this != &obj) {
         id = obj.id;
-        type = obj.type;
         is_permanent = obj.is_permanent;
         convo_id = obj.convo_id;
         identity = obj.identity;
@@ -2984,9 +2940,6 @@ std::string Participants::insert(litesql::Record& tables, litesql::Records& fiel
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
-    fields.push_back(type.name());
-    values.push_back(type);
-    type.setModified(false);
     fields.push_back(is_permanent.name());
     values.push_back(is_permanent);
     is_permanent.setModified(false);
@@ -3004,7 +2957,8 @@ void Participants::create() {
     litesql::Record tables;
     litesql::Records fieldRecs;
     litesql::Records valueRecs;
-    type = type__;
+    //Type processing disabled
+    //type = type__;
     std::string newID = insert(tables, fieldRecs, valueRecs);
     if (id == 0)
         id = newID;
@@ -3012,7 +2966,6 @@ void Participants::create() {
 void Participants::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
-    updateField(updates, table__, type);
     updateField(updates, table__, is_permanent);
     updateField(updates, table__, convo_id);
     updateField(updates, table__, identity);
@@ -3021,7 +2974,6 @@ void Participants::addIDUpdates(Updates& updates) {
 }
 void Participants::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
-    ftypes.push_back(Type);
     ftypes.push_back(Is_permanent);
     ftypes.push_back(Convo_id);
     ftypes.push_back(Identity);
@@ -3059,7 +3011,7 @@ void Participants::del() {
     inDatabase = false;
 }
 bool Participants::typeIsCorrect() const {
-    return type == type__;
+    return true;
 }
 std::unique_ptr<Participants> Participants::upcast() const {
     return unique_ptr<Participants>(new Participants(*this));
@@ -3067,7 +3019,6 @@ std::unique_ptr<Participants> Participants::upcast() const {
 std::unique_ptr<Participants> Participants::upcastCopy() const {
     Participants* np = new Participants(*this);
     np->id = id;
-    np->type = type;
     np->is_permanent = is_permanent;
     np->convo_id = convo_id;
     np->identity = identity;
@@ -3077,7 +3028,6 @@ std::unique_ptr<Participants> Participants::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, Participants o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
-    os << o.type.name() << " = " << o.type << std::endl;
     os << o.is_permanent.name() << " = " << o.is_permanent << std::endl;
     os << o.convo_id.name() << " = " << o.convo_id << std::endl;
     os << o.identity.name() << " = " << o.identity << std::endl;
@@ -3100,11 +3050,11 @@ std::vector<litesql::Database::SchemaItem> main::getSchema() const {
         res.push_back(Database::SchemaItem("Conversations_seq","sequence",backend->getCreateSequenceSQL("Conversations_seq")));
         res.push_back(Database::SchemaItem("Participants_seq","sequence",backend->getCreateSequenceSQL("Participants_seq")));
     }
-    res.push_back(Database::SchemaItem("Messages","table","CREATE TABLE Messages (id " + rowIdType + ",type__ " + backend->getSQLType(A_field_type_string,"") + "" +",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",chatname " + backend->getSQLType(A_field_type_string,"") + "" +",author " + backend->getSQLType(A_field_type_string,"") + "" +",from_dispname " + backend->getSQLType(A_field_type_string,"") + "" +",author_was_live " + backend->getSQLType(A_field_type_integer,"") + "" +",guid " + backend->getSQLType(A_field_type_blob,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",sending_status " + backend->getSQLType(A_field_type_integer,"") + "" +",consumption_status " + backend->getSQLType(A_field_type_integer,"") + "" +",edited_by " + backend->getSQLType(A_field_type_string,"") + "" +",edited_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",param_key " + backend->getSQLType(A_field_type_integer,"") + "" +",param_value " + backend->getSQLType(A_field_type_integer,"") + "" +",body_xml " + backend->getSQLType(A_field_type_string,"") + "" +",identities " + backend->getSQLType(A_field_type_string,"") + "" +",reason " + backend->getSQLType(A_field_type_string,"") + "" +",leavereason " + backend->getSQLType(A_field_type_integer,"") + "" +",participant_count " + backend->getSQLType(A_field_type_integer,"") + "" +",error_code " + backend->getSQLType(A_field_type_integer,"") + "" +",chatmsg_type " + backend->getSQLType(A_field_type_integer,"") + "" +",chatmsg_status " + backend->getSQLType(A_field_type_integer,"") + "" +",body_is_rawxml " + backend->getSQLType(A_field_type_integer,"") + "" +",oldoptions " + backend->getSQLType(A_field_type_integer,"") + "" +",newoptions " + backend->getSQLType(A_field_type_integer,"") + "" +",newrole " + backend->getSQLType(A_field_type_integer,"") + "" +",pk_id " + backend->getSQLType(A_field_type_integer,"") + "" +",crc " + backend->getSQLType(A_field_type_integer,"") + "" +",remote_id " + backend->getSQLType(A_field_type_integer,"") + "" +",call_guid " + backend->getSQLType(A_field_type_string,"") + "" +")"));
-    res.push_back(Database::SchemaItem("Chats","table","CREATE TABLE Chats (id " + rowIdType + ",type__ " + backend->getSQLType(A_field_type_string,"") + "" +",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",name " + backend->getSQLType(A_field_type_string,"") + "" +",options " + backend->getSQLType(A_field_type_integer,"") + "" +",friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +",description " + backend->getSQLType(A_field_type_string,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",activity_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",adder " + backend->getSQLType(A_field_type_string,"") + "" +",mystatus " + backend->getSQLType(A_field_type_integer,"") + "" +",myrole " + backend->getSQLType(A_field_type_integer,"") + "" +",posters " + backend->getSQLType(A_field_type_string,"") + "" +",participants " + backend->getSQLType(A_field_type_string,"") + "" +",applicants " + backend->getSQLType(A_field_type_string,"") + "" +",banned_users " + backend->getSQLType(A_field_type_string,"") + "" +",name_text " + backend->getSQLType(A_field_type_string,"") + "" +",topic " + backend->getSQLType(A_field_type_string,"") + "" +",topic_xml " + backend->getSQLType(A_field_type_string,"") + "" +",guidelines " + backend->getSQLType(A_field_type_string,"") + "" +",picture " + backend->getSQLType(A_field_type_blob,"") + "" +",alertstring " + backend->getSQLType(A_field_type_string,"") + "" +",is_bookmarked " + backend->getSQLType(A_field_type_integer,"") + "" +",passwordhint " + backend->getSQLType(A_field_type_string,"") + "" +",unconsumed_suppressed_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_normal_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_elevated_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_msg_voice " + backend->getSQLType(A_field_type_integer,"") + "" +",activemembers " + backend->getSQLType(A_field_type_string,"") + "" +",state_data " + backend->getSQLType(A_field_type_blob,"") + "" +",lifesigns " + backend->getSQLType(A_field_type_integer,"") + "" +",last_change " + backend->getSQLType(A_field_type_integer,"") + "" +",first_unread_message " + backend->getSQLType(A_field_type_integer,"") + "" +",pk_type " + backend->getSQLType(A_field_type_integer,"") + "" +",dbpath " + backend->getSQLType(A_field_type_string,"") + "" +",split_friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +",conv_dbid " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
-    res.push_back(Database::SchemaItem("Contacts","table","CREATE TABLE Contacts (id " + rowIdType + ",type__ " + backend->getSQLType(A_field_type_string,"") + "" +",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",skypename " + backend->getSQLType(A_field_type_string,"") + "" +",pstnnumber " + backend->getSQLType(A_field_type_string,"") + "" +",aliases " + backend->getSQLType(A_field_type_string,"") + "" +",fullname " + backend->getSQLType(A_field_type_string,"") + "" +",birthday " + backend->getSQLType(A_field_type_integer,"") + "" +",gender " + backend->getSQLType(A_field_type_integer,"") + "" +",languages " + backend->getSQLType(A_field_type_string,"") + "" +",country " + backend->getSQLType(A_field_type_string,"") + "" +",province " + backend->getSQLType(A_field_type_string,"") + "" +",city " + backend->getSQLType(A_field_type_string,"") + "" +",phone_home " + backend->getSQLType(A_field_type_string,"") + "" +",phone_office " + backend->getSQLType(A_field_type_string,"") + "" +",phone_mobile " + backend->getSQLType(A_field_type_string,"") + "" +",emails " + backend->getSQLType(A_field_type_string,"") + "" +",hashed_emails " + backend->getSQLType(A_field_type_string,"") + "" +",homepage " + backend->getSQLType(A_field_type_string,"") + "" +",about " + backend->getSQLType(A_field_type_string,"") + "" +",mood_text " + backend->getSQLType(A_field_type_string,"") + "" +",rich_mood_text " + backend->getSQLType(A_field_type_string,"") + "" +",timezone " + backend->getSQLType(A_field_type_integer,"") + "" +",profile_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",nrof_authed_buddies " + backend->getSQLType(A_field_type_integer,"") + "" +",ipcountry " + backend->getSQLType(A_field_type_string,"") + "" +",avatar_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",mood_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",received_authrequest " + backend->getSQLType(A_field_type_string,"") + "" +",authreq_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",lastonline_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",availability " + backend->getSQLType(A_field_type_integer,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",refreshing " + backend->getSQLType(A_field_type_integer,"") + "" +",given_authlevel " + backend->getSQLType(A_field_type_integer,"") + "" +",given_displayname " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_speeddial " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_comment " + backend->getSQLType(A_field_type_string,"") + "" +",alertstring " + backend->getSQLType(A_field_type_string,"") + "" +",lastused_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",authrequest_count " + backend->getSQLType(A_field_type_integer,"") + "" +",assigned_phone1 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone1_label " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone2 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone2_label " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone3 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone3_label " + backend->getSQLType(A_field_type_string,"") + "" +",buddystatus " + backend->getSQLType(A_field_type_integer,"") + "" +",isauthorized " + backend->getSQLType(A_field_type_integer,"") + "" +",popularity_ord " + backend->getSQLType(A_field_type_integer,"") + "" +",external_id " + backend->getSQLType(A_field_type_string,"") + "" +",external_system_id " + backend->getSQLType(A_field_type_string,"") + "" +",isblocked " + backend->getSQLType(A_field_type_integer,"") + "" +",certificate_send_count " + backend->getSQLType(A_field_type_integer,"") + "" +",account_modification_serial_nr " + backend->getSQLType(A_field_type_integer,"") + "" +",nr_of_buddies " + backend->getSQLType(A_field_type_integer,"") + "" +",server_synced " + backend->getSQLType(A_field_type_integer,"") + "" +",contactlist_track " + backend->getSQLType(A_field_type_integer,"") + "" +",last_used_networktime " + backend->getSQLType(A_field_type_integer,"") + "" +",authorized_time " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest " + backend->getSQLType(A_field_type_string,"") + "" +",sent_authrequest_time " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest_serial " + backend->getSQLType(A_field_type_integer,"") + "" +",node_capabilities " + backend->getSQLType(A_field_type_integer,"") + "" +",revoked_auth " + backend->getSQLType(A_field_type_integer,"") + "" +",added_in_shared_group " + backend->getSQLType(A_field_type_integer,"") + "" +",in_shared_group " + backend->getSQLType(A_field_type_integer,"") + "" +",stack_version " + backend->getSQLType(A_field_type_integer,"") + "" +",offline_authreq_id " + backend->getSQLType(A_field_type_integer,"") + "" +",node_capabilities_and " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_crc " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_src " + backend->getSQLType(A_field_type_integer,"") + "" +",pop_score " + backend->getSQLType(A_field_type_integer,"") + "" +",main_phone " + backend->getSQLType(A_field_type_string,"") + "" +",unified_servants " + backend->getSQLType(A_field_type_string,"") + "" +",phone_home_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",phone_office_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",phone_mobile_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",sent_authrequest_initmethod " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_initmethod " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest_extrasbitmask " + backend->getSQLType(A_field_type_integer,"") + "" +",liveid_cid " + backend->getSQLType(A_field_type_string,"") + "" +")"));
-    res.push_back(Database::SchemaItem("Conversations","table","CREATE TABLE Conversations (id " + rowIdType + ",type__ " + backend->getSQLType(A_field_type_string,"") + "" +",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",identity " + backend->getSQLType(A_field_type_string,"") + "" +",live_host " + backend->getSQLType(A_field_type_string,"") + "" +",live_start_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",live_is_muted " + backend->getSQLType(A_field_type_integer,"") + "" +",alert_string " + backend->getSQLType(A_field_type_string,"") + "" +",is_bookmarked " + backend->getSQLType(A_field_type_integer,"") + "" +",given_displayname " + backend->getSQLType(A_field_type_string,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",local_livestatus " + backend->getSQLType(A_field_type_integer,"") + "" +",inbox_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",inbox_message_id " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_suppressed_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_normal_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_elevated_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_messages_voice " + backend->getSQLType(A_field_type_integer,"") + "" +",active_vm_id " + backend->getSQLType(A_field_type_integer,"") + "" +",context_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",consumption_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",last_activity_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",active_invoice_message " + backend->getSQLType(A_field_type_integer,"") + "" +",spawned_from_convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",pinned_order " + backend->getSQLType(A_field_type_integer,"") + "" +",creator " + backend->getSQLType(A_field_type_string,"") + "" +",creation_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",my_status " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_joining_enabled " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_access_token " + backend->getSQLType(A_field_type_string,"") + "" +",opt_entry_level_rank " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_disclose_history " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_history_limit_in_days " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_admin_only_activities " + backend->getSQLType(A_field_type_integer,"") + "" +",passwordhint " + backend->getSQLType(A_field_type_string,"") + "" +",meta_name " + backend->getSQLType(A_field_type_string,"") + "" +",meta_topic " + backend->getSQLType(A_field_type_string,"") + "" +",meta_guidelines " + backend->getSQLType(A_field_type_string,"") + "" +",meta_picture " + backend->getSQLType(A_field_type_blob,"") + "" +",premium_video_status " + backend->getSQLType(A_field_type_integer,"") + "" +",premium_video_is_grace_period " + backend->getSQLType(A_field_type_integer,"") + "" +",guid " + backend->getSQLType(A_field_type_string,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",meta_description " + backend->getSQLType(A_field_type_string,"") + "" +",premium_video_sponsor_list " + backend->getSQLType(A_field_type_string,"") + "" +",mcr_caller " + backend->getSQLType(A_field_type_string,"") + "" +",chat_dbid " + backend->getSQLType(A_field_type_integer,"") + "" +",history_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",history_sync_state " + backend->getSQLType(A_field_type_string,"") + "" +",extprop_windowpos_x " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_y " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_w " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_h " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_roster_visible " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_splitter_layout " + backend->getSQLType(A_field_type_string,"") + "" +",extprop_hide_from_history " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_detached " + backend->getSQLType(A_field_type_integer,"") + "" +",is_blocked " + backend->getSQLType(A_field_type_integer,"") + "" +",last_message_id " + backend->getSQLType(A_field_type_integer,"") + "" +",picture " + backend->getSQLType(A_field_type_string,"") + "" +",is_p2p_migrated " + backend->getSQLType(A_field_type_integer,"") + "" +",thread_version " + backend->getSQLType(A_field_type_string,"") + "" +",consumption_horizon_set_at " + backend->getSQLType(A_field_type_integer,"") + "" +",alt_identity " + backend->getSQLType(A_field_type_string,"") + "" +",in_migrated_thread_since " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
-    res.push_back(Database::SchemaItem("Participants","table","CREATE TABLE Participants (id " + rowIdType + ",type__ " + backend->getSQLType(A_field_type_string,"") + "" +",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",identity " + backend->getSQLType(A_field_type_string,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Messages","table","CREATE TABLE Messages (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",chatname " + backend->getSQLType(A_field_type_string,"") + "" +",author " + backend->getSQLType(A_field_type_string,"") + "" +",from_dispname " + backend->getSQLType(A_field_type_string,"") + "" +",author_was_live " + backend->getSQLType(A_field_type_integer,"") + "" +",guid " + backend->getSQLType(A_field_type_blob,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",sending_status " + backend->getSQLType(A_field_type_integer,"") + "" +",consumption_status " + backend->getSQLType(A_field_type_integer,"") + "" +",edited_by " + backend->getSQLType(A_field_type_string,"") + "" +",edited_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",param_key " + backend->getSQLType(A_field_type_integer,"") + "" +",param_value " + backend->getSQLType(A_field_type_integer,"") + "" +",body_xml " + backend->getSQLType(A_field_type_string,"") + "" +",identities " + backend->getSQLType(A_field_type_string,"") + "" +",reason " + backend->getSQLType(A_field_type_string,"") + "" +",leavereason " + backend->getSQLType(A_field_type_integer,"") + "" +",participant_count " + backend->getSQLType(A_field_type_integer,"") + "" +",error_code " + backend->getSQLType(A_field_type_integer,"") + "" +",chatmsg_type " + backend->getSQLType(A_field_type_integer,"") + "" +",chatmsg_status " + backend->getSQLType(A_field_type_integer,"") + "" +",body_is_rawxml " + backend->getSQLType(A_field_type_integer,"") + "" +",oldoptions " + backend->getSQLType(A_field_type_integer,"") + "" +",newoptions " + backend->getSQLType(A_field_type_integer,"") + "" +",newrole " + backend->getSQLType(A_field_type_integer,"") + "" +",pk_id " + backend->getSQLType(A_field_type_integer,"") + "" +",crc " + backend->getSQLType(A_field_type_integer,"") + "" +",remote_id " + backend->getSQLType(A_field_type_integer,"") + "" +",call_guid " + backend->getSQLType(A_field_type_string,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Chats","table","CREATE TABLE Chats (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",name " + backend->getSQLType(A_field_type_string,"") + "" +",options " + backend->getSQLType(A_field_type_integer,"") + "" +",friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +",description " + backend->getSQLType(A_field_type_string,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",activity_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",adder " + backend->getSQLType(A_field_type_string,"") + "" +",mystatus " + backend->getSQLType(A_field_type_integer,"") + "" +",myrole " + backend->getSQLType(A_field_type_integer,"") + "" +",posters " + backend->getSQLType(A_field_type_string,"") + "" +",participants " + backend->getSQLType(A_field_type_string,"") + "" +",applicants " + backend->getSQLType(A_field_type_string,"") + "" +",banned_users " + backend->getSQLType(A_field_type_string,"") + "" +",name_text " + backend->getSQLType(A_field_type_string,"") + "" +",topic " + backend->getSQLType(A_field_type_string,"") + "" +",topic_xml " + backend->getSQLType(A_field_type_string,"") + "" +",guidelines " + backend->getSQLType(A_field_type_string,"") + "" +",picture " + backend->getSQLType(A_field_type_blob,"") + "" +",alertstring " + backend->getSQLType(A_field_type_string,"") + "" +",is_bookmarked " + backend->getSQLType(A_field_type_integer,"") + "" +",passwordhint " + backend->getSQLType(A_field_type_string,"") + "" +",unconsumed_suppressed_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_normal_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_elevated_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_msg_voice " + backend->getSQLType(A_field_type_integer,"") + "" +",activemembers " + backend->getSQLType(A_field_type_string,"") + "" +",state_data " + backend->getSQLType(A_field_type_blob,"") + "" +",lifesigns " + backend->getSQLType(A_field_type_integer,"") + "" +",last_change " + backend->getSQLType(A_field_type_integer,"") + "" +",first_unread_message " + backend->getSQLType(A_field_type_integer,"") + "" +",pk_type " + backend->getSQLType(A_field_type_integer,"") + "" +",dbpath " + backend->getSQLType(A_field_type_string,"") + "" +",split_friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +",conv_dbid " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Contacts","table","CREATE TABLE Contacts (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",skypename " + backend->getSQLType(A_field_type_string,"") + "" +",pstnnumber " + backend->getSQLType(A_field_type_string,"") + "" +",aliases " + backend->getSQLType(A_field_type_string,"") + "" +",fullname " + backend->getSQLType(A_field_type_string,"") + "" +",birthday " + backend->getSQLType(A_field_type_integer,"") + "" +",gender " + backend->getSQLType(A_field_type_integer,"") + "" +",languages " + backend->getSQLType(A_field_type_string,"") + "" +",country " + backend->getSQLType(A_field_type_string,"") + "" +",province " + backend->getSQLType(A_field_type_string,"") + "" +",city " + backend->getSQLType(A_field_type_string,"") + "" +",phone_home " + backend->getSQLType(A_field_type_string,"") + "" +",phone_office " + backend->getSQLType(A_field_type_string,"") + "" +",phone_mobile " + backend->getSQLType(A_field_type_string,"") + "" +",emails " + backend->getSQLType(A_field_type_string,"") + "" +",hashed_emails " + backend->getSQLType(A_field_type_string,"") + "" +",homepage " + backend->getSQLType(A_field_type_string,"") + "" +",about " + backend->getSQLType(A_field_type_string,"") + "" +",mood_text " + backend->getSQLType(A_field_type_string,"") + "" +",rich_mood_text " + backend->getSQLType(A_field_type_string,"") + "" +",timezone " + backend->getSQLType(A_field_type_integer,"") + "" +",profile_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",nrof_authed_buddies " + backend->getSQLType(A_field_type_integer,"") + "" +",ipcountry " + backend->getSQLType(A_field_type_string,"") + "" +",avatar_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",mood_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",received_authrequest " + backend->getSQLType(A_field_type_string,"") + "" +",authreq_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",lastonline_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",availability " + backend->getSQLType(A_field_type_integer,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",refreshing " + backend->getSQLType(A_field_type_integer,"") + "" +",given_authlevel " + backend->getSQLType(A_field_type_integer,"") + "" +",given_displayname " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_speeddial " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_comment " + backend->getSQLType(A_field_type_string,"") + "" +",alertstring " + backend->getSQLType(A_field_type_string,"") + "" +",lastused_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",authrequest_count " + backend->getSQLType(A_field_type_integer,"") + "" +",assigned_phone1 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone1_label " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone2 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone2_label " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone3 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone3_label " + backend->getSQLType(A_field_type_string,"") + "" +",buddystatus " + backend->getSQLType(A_field_type_integer,"") + "" +",isauthorized " + backend->getSQLType(A_field_type_integer,"") + "" +",popularity_ord " + backend->getSQLType(A_field_type_integer,"") + "" +",external_id " + backend->getSQLType(A_field_type_string,"") + "" +",external_system_id " + backend->getSQLType(A_field_type_string,"") + "" +",isblocked " + backend->getSQLType(A_field_type_integer,"") + "" +",certificate_send_count " + backend->getSQLType(A_field_type_integer,"") + "" +",account_modification_serial_nr " + backend->getSQLType(A_field_type_integer,"") + "" +",nr_of_buddies " + backend->getSQLType(A_field_type_integer,"") + "" +",server_synced " + backend->getSQLType(A_field_type_integer,"") + "" +",contactlist_track " + backend->getSQLType(A_field_type_integer,"") + "" +",last_used_networktime " + backend->getSQLType(A_field_type_integer,"") + "" +",authorized_time " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest " + backend->getSQLType(A_field_type_string,"") + "" +",sent_authrequest_time " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest_serial " + backend->getSQLType(A_field_type_integer,"") + "" +",node_capabilities " + backend->getSQLType(A_field_type_integer,"") + "" +",revoked_auth " + backend->getSQLType(A_field_type_integer,"") + "" +",added_in_shared_group " + backend->getSQLType(A_field_type_integer,"") + "" +",in_shared_group " + backend->getSQLType(A_field_type_integer,"") + "" +",stack_version " + backend->getSQLType(A_field_type_integer,"") + "" +",offline_authreq_id " + backend->getSQLType(A_field_type_integer,"") + "" +",node_capabilities_and " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_crc " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_src " + backend->getSQLType(A_field_type_integer,"") + "" +",pop_score " + backend->getSQLType(A_field_type_integer,"") + "" +",main_phone " + backend->getSQLType(A_field_type_string,"") + "" +",unified_servants " + backend->getSQLType(A_field_type_string,"") + "" +",phone_home_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",phone_office_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",phone_mobile_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",sent_authrequest_initmethod " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_initmethod " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest_extrasbitmask " + backend->getSQLType(A_field_type_integer,"") + "" +",liveid_cid " + backend->getSQLType(A_field_type_string,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Conversations","table","CREATE TABLE Conversations (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",identity " + backend->getSQLType(A_field_type_string,"") + "" +",live_host " + backend->getSQLType(A_field_type_string,"") + "" +",live_start_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",live_is_muted " + backend->getSQLType(A_field_type_integer,"") + "" +",alert_string " + backend->getSQLType(A_field_type_string,"") + "" +",is_bookmarked " + backend->getSQLType(A_field_type_integer,"") + "" +",given_displayname " + backend->getSQLType(A_field_type_string,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",local_livestatus " + backend->getSQLType(A_field_type_integer,"") + "" +",inbox_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",inbox_message_id " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_suppressed_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_normal_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_elevated_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_messages_voice " + backend->getSQLType(A_field_type_integer,"") + "" +",active_vm_id " + backend->getSQLType(A_field_type_integer,"") + "" +",context_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",consumption_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",last_activity_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",active_invoice_message " + backend->getSQLType(A_field_type_integer,"") + "" +",spawned_from_convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",pinned_order " + backend->getSQLType(A_field_type_integer,"") + "" +",creator " + backend->getSQLType(A_field_type_string,"") + "" +",creation_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",my_status " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_joining_enabled " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_access_token " + backend->getSQLType(A_field_type_string,"") + "" +",opt_entry_level_rank " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_disclose_history " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_history_limit_in_days " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_admin_only_activities " + backend->getSQLType(A_field_type_integer,"") + "" +",passwordhint " + backend->getSQLType(A_field_type_string,"") + "" +",meta_name " + backend->getSQLType(A_field_type_string,"") + "" +",meta_topic " + backend->getSQLType(A_field_type_string,"") + "" +",meta_guidelines " + backend->getSQLType(A_field_type_string,"") + "" +",meta_picture " + backend->getSQLType(A_field_type_blob,"") + "" +",premium_video_status " + backend->getSQLType(A_field_type_integer,"") + "" +",premium_video_is_grace_period " + backend->getSQLType(A_field_type_integer,"") + "" +",guid " + backend->getSQLType(A_field_type_string,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",meta_description " + backend->getSQLType(A_field_type_string,"") + "" +",premium_video_sponsor_list " + backend->getSQLType(A_field_type_string,"") + "" +",mcr_caller " + backend->getSQLType(A_field_type_string,"") + "" +",chat_dbid " + backend->getSQLType(A_field_type_integer,"") + "" +",history_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",history_sync_state " + backend->getSQLType(A_field_type_string,"") + "" +",extprop_windowpos_x " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_y " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_w " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_h " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_roster_visible " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_splitter_layout " + backend->getSQLType(A_field_type_string,"") + "" +",extprop_hide_from_history " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_detached " + backend->getSQLType(A_field_type_integer,"") + "" +",is_blocked " + backend->getSQLType(A_field_type_integer,"") + "" +",last_message_id " + backend->getSQLType(A_field_type_integer,"") + "" +",picture " + backend->getSQLType(A_field_type_string,"") + "" +",is_p2p_migrated " + backend->getSQLType(A_field_type_integer,"") + "" +",thread_version " + backend->getSQLType(A_field_type_string,"") + "" +",consumption_horizon_set_at " + backend->getSQLType(A_field_type_integer,"") + "" +",alt_identity " + backend->getSQLType(A_field_type_string,"") + "" +",in_migrated_thread_since " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Participants","table","CREATE TABLE Participants (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",identity " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("Messagesididx","index","CREATE INDEX Messagesididx ON Messages (id)"));
     res.push_back(Database::SchemaItem("Chatsididx","index","CREATE INDEX Chatsididx ON Chats (id)"));
     res.push_back(Database::SchemaItem("Contactsididx","index","CREATE INDEX Contactsididx ON Contacts (id)"));

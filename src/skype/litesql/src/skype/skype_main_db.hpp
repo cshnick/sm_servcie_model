@@ -18,8 +18,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static const litesql::FieldType Is_permanent;
     litesql::Field<int> is_permanent;
     static const litesql::FieldType Convo_id;
@@ -119,8 +117,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static const litesql::FieldType Is_permanent;
     litesql::Field<int> is_permanent;
     static const litesql::FieldType Name;
@@ -231,8 +227,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static const litesql::FieldType Is_permanent;
     litesql::Field<int> is_permanent;
     static const litesql::FieldType Skypename;
@@ -431,8 +425,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static const litesql::FieldType Is_permanent;
     litesql::Field<int> is_permanent;
     static const litesql::FieldType Identity;
@@ -596,8 +588,6 @@ public:
     static const std::string sequence__;
     static const litesql::FieldType Id;
     litesql::Field<int> id;
-    static const litesql::FieldType Type;
-    litesql::Field<std::string> type;
     static const litesql::FieldType Is_permanent;
     litesql::Field<int> is_permanent;
     static const litesql::FieldType Convo_id;

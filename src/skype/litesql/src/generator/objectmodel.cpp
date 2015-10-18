@@ -289,6 +289,7 @@ void LitesqlParser::onStartElement(const XML_Char *fullname,
       pDb->nspace = safe((char*)xmlGetAttrValue(atts,"namespace"));
       pDb->output_filename = safe((char*)xmlGetAttrValue(atts,"output_filename"));
       string gen_t = safe((char*)xmlGetAttrValue(atts,"generate_types"));
+
       if (!gen_t.empty()) {
     	  pDb->generate_types = (gen_t == "false" ? false : true);
       }
@@ -307,7 +308,7 @@ void LitesqlParser::onStartElement(const XML_Char *fullname,
     {
       bool process_types = true;
       if (m_pObjectModel->db.get()) {
-    	  m_pObjectModel->db->generate_types;
+    	  process_types = m_pObjectModel->db->generate_types;
       }
       ObjectPtr pObj(obj = new Object((char*)xmlGetAttrValue(atts,"name"),
     		  safe((char*)xmlGetAttrValue(atts,"db_name")),
