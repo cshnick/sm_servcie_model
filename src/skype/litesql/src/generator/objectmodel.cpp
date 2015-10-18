@@ -288,7 +288,11 @@ void LitesqlParser::onStartElement(const XML_Char *fullname,
       pDb->include = safe((char*)xmlGetAttrValue(atts,"include"));
       pDb->nspace = safe((char*)xmlGetAttrValue(atts,"namespace"));
       pDb->output_filename = safe((char*)xmlGetAttrValue(atts,"output_filename"));
-      
+      string gen_t = safe((char*)xmlGetAttrValue(atts,"generate_types"));
+      if (!gen_t.empty()) {
+    	  pDb->generate_types = (gen_t == "false" ? false : true);
+      }
+
       m_pObjectModel->db = pDb;
       Logger::report("database = " , m_pObjectModel->db->name);
     }
@@ -301,9 +305,15 @@ void LitesqlParser::onStartElement(const XML_Char *fullname,
     }
     else
     {
+      bool process_types = true;
+      if (m_pObjectModel->db.get()) {
+    	  m_pObjectModel->db->generate_types;
+      }
       ObjectPtr pObj(obj = new Object((char*)xmlGetAttrValue(atts,"name"),
     		  safe((char*)xmlGetAttrValue(atts,"db_name")),
-			  safe((char*)xmlGetAttrValue(atts,"inherits"))));
+			  safe((char*)xmlGetAttrValue(atts,"inherits")),
+			  process_types
+			  ));
       m_pObjectModel->objects.push_back(pObj);
       Logger::report("object = ",obj->name);
       m_parseState = OBJECT; 

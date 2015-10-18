@@ -76,7 +76,7 @@ public:
     AT_field_unique unique;
     vector<Value> values;
 	string length;
-    Field(const string& n, const string &a, AT_field_type t, const string& d, AT_field_indexed i, AT_field_unique u, const string& l="")
+    Field(const string &n, const string &a, AT_field_type t, const string& d, AT_field_indexed i, AT_field_unique u, const string& l="")
         : name(n), db_name(a), fieldTypeName(capitalize(n)), type(t), default_(d), indexed(i), unique(u),length(l) {
     }
     //Names are equal
@@ -349,7 +349,7 @@ public:
     ObjectPtr parentObject;
     ObjectSequence children;
 
-    Object(const string& n, const string &a, const string& i)
+    Object(const string& n, const string &a, const string& i, bool has_type_field = true)
       : name(n),
 		db_name(a),
         inherits(i),
@@ -357,7 +357,10 @@ public:
         if (i.size() == 0) {
             inherits = "litesql::Persistent";
             fields.push_back(ID_FIELD);
-            fields.push_back(TYPE_FIELD);
+            if (has_type_field) {
+            	std::cout << "No type field" << std::endl;
+            	fields.push_back(TYPE_FIELD);
+            }
         }
     }
 
@@ -421,6 +424,7 @@ public:
       typedef std::vector<Ptr> sequence;
 
       string name() const {return field->name; };
+      string db_name() const {return field->db_name.empty() ? field->name : field->db_name; };
       void name(const string& fieldname) {field->name=fieldname;};
         bool primaryKey;
         Field::Ptr field;
@@ -441,7 +445,7 @@ public:
         string getSQL() {
             litesql::Split flds;
             for (size_t i = 0; i < fields.size(); i++)
-                flds.push_back(fields[i]->name());
+                flds.push_back(fields[i]->db_name());
             string uniqueS;
             if (unique)
                 uniqueS = " UNIQUE";
@@ -463,7 +467,7 @@ public:
               if (fields[i]->primaryKey)
                 flds.push_back(fields[i]->name() + " " + rowIDType);
               else
-                flds.push_back(fields[i]->name() 
+                flds.push_back(fields[i]->db_name()
                               + " \" + backend->getSQLType(" + "A_field_type_"+toAttributeString(fields[i]->field->type) +",\""+fields[i]->field->length+ "\")" + " + \""
                               +(fields[i]->field->isUnique() ? " UNIQUE" : "") + + "\" +"
                               +"\"");
@@ -480,6 +484,7 @@ public:
     string include;
     string nspace;
     string output_filename;
+    bool   generate_types = true;
 
     bool hasNamespace() const { return !nspace.empty(); }
 };

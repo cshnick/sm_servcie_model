@@ -6,6 +6,7 @@ class Messages;
 class Chats;
 class Contacts;
 class Conversations;
+class Participants;
 class Messages : public litesql::Persistent {
 public:
     class Own {
@@ -584,6 +585,51 @@ public:
     std::unique_ptr<Conversations> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, Conversations o);
+class Participants : public litesql::Persistent {
+public:
+    class Own {
+    public:
+        static const litesql::FieldType Id;
+    };
+    static const std::string type__;
+    static const std::string table__;
+    static const std::string sequence__;
+    static const litesql::FieldType Id;
+    litesql::Field<int> id;
+    static const litesql::FieldType Type;
+    litesql::Field<std::string> type;
+    static const litesql::FieldType Is_permanent;
+    litesql::Field<int> is_permanent;
+    static const litesql::FieldType Convo_id;
+    litesql::Field<int> convo_id;
+    static const litesql::FieldType Identity;
+    litesql::Field<std::string> identity;
+    static void initValues();
+protected:
+    void defaults();
+public:
+    Participants(const litesql::Database& db);
+    Participants(const litesql::Database& db, const litesql::Record& rec);
+    Participants(const Participants& obj);
+    const Participants& operator=(const Participants& obj);
+protected:
+    std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
+    void create();
+    virtual void addUpdates(Updates& updates);
+    virtual void addIDUpdates(Updates& updates);
+public:
+    static void getFieldTypes(std::vector<litesql::FieldType>& ftypes);
+protected:
+    virtual void delRecord();
+    virtual void delRelations();
+public:
+    virtual void update();
+    virtual void del();
+    virtual bool typeIsCorrect() const;
+    std::unique_ptr<Participants> upcast() const;
+    std::unique_ptr<Participants> upcastCopy() const;
+};
+std::ostream & operator<<(std::ostream& os, Participants o);
 class main : public litesql::Database {
 public:
     main(std::string backendType, std::string connInfo);

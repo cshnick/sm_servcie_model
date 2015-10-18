@@ -205,7 +205,7 @@ Database::Database(const string& backend, const string& conn)
         for (size_t i = 0; i < cs.size(); i++) {
             items[cs[i].name] = i;
         }
-        begin();
+        //begin();
         for (size_t i = 0; i < s.size(); i++) {
             if (items.find(s[i].name) == items.end()) {
                 query(s[i].sql);
@@ -217,7 +217,7 @@ Database::Database(const string& backend, const string& conn)
                 storeSchemaItem(s[i]);
             }
         }
-        commit();
+        //commit();
     }
     Records Database::query(const string &q) const {
         if (verbose)

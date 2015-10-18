@@ -81,6 +81,9 @@ int main(int argc, char **argv) {
     		jess = e.one();
     	}
 
+    	db.commit();
+    	db.begin();
+
         // build up relationships between Persons 
     	cout << "Jeff children count: " << jeff.children().get(Person::Name == "Jack").count() << endl;
 //    	cout << "His(her) name is: " << jeff.children().get(Person::Name == "Jack").one().name << endl;

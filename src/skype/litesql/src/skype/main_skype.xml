@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <!DOCTYPE database SYSTEM "litesql.dtd"> 
-<database name="main" db_name="main" namespace="SkypeDB" output_filename="skype_main_db"> 
+<database name="main" db_name="main" namespace="SkypeDB" output_filename="skype_main_db" generate_types="true"> 
   <object name="Messages" db_name="Messages">
     <field name="is_permanent" db_name="is_permanent" type="integer" />
     <field name="convo_id" db_name="convo_id" type="integer"/>
@@ -175,7 +175,7 @@
    <method name="cache_field" returntype="litesql::Field&lt;std::string&gt; Contacts::*" />
   </object>
     
-  <object name="Conversations" db_name="Conversations">
+  <object name="Conversations" db_name="Conversations"> 
   	<!--  <field name="id" type="integer" /> -->
     <field name="is_permanent" type="integer" />
     <field name="identity" type="string"/>
@@ -241,5 +241,12 @@
     <field name="consumption_horizon_set_at" type="integer" />
     <field name="alt_identity" type="string"/>
     <field name="in_migrated_thread_since" type="integer" />
+  </object>
+  
+  <object name="Participants" db_name="Participants"> 
+  	<!--  <field name="id" type="integer" /> -->
+    <field name="is_permanent" type="integer" />
+    <field name="convo_id" db_name="convo_id" type="integer"/>
+    <field name="identity" type="string"/>
   </object>
 </database>

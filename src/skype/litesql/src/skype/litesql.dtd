@@ -4,6 +4,7 @@
           namespace NMTOKEN #REQUIRED
           db_name NMTOKEN #IMPLIED
           output_filename NMTOKEN #IMPLIED
+          generate_types (true|false) #IMPLIED
           include CDATA #IMPLIED>
 
 <!ELEMENT object ((field)*,(method)*,(index)*)>

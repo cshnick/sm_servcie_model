@@ -53,7 +53,7 @@ class DBControllerImplPrivate {
 		if (!skype_main.get()) {
 			try {
 				skype_main.reset(new SkypeDB::main("sqlite3", std::string("database=") + m_filename));
-				skype_main->verbose = false;
+				skype_main->verbose = true;
 			} catch (const std::exception &e) {
 				throw runtime_error(e.what());
 			}
@@ -147,32 +147,32 @@ class DBControllerImplPrivate {
 		auto i = cnt;
 		int percent = 0;
 		int cut = 20;
-		int package = 2;
+		int package = 100;
 		cout << "Importing skype messages" << endl;
-		auto messages_cursor = select<SkypeDB::Messages>(*skype_main).orderBy(SkypeDB::Messages::Timestamp, false).cursor();
-		for (;messages_cursor.rowsLeft();messages_cursor++) {
+		auto messages_vec = select<SkypeDB::Messages>(*skype_main).orderBy(SkypeDB::Messages::Timestamp, false).all();
+		history_db->begin();
+		for (auto sky_mes : messages_vec) {
 			int asc_cnt = cnt - i;
-			int test1 = (asc_cnt % package);
-			if (!test1) {
-				history_db->begin();
-				cout << "Transactioin start" << endl;
-			}
-			SkypeDB::Messages sky_mes = *messages_cursor;
+//			if (!(asc_cnt % package)) {
+//				history_db->begin();
+//				cout << "Transactioin start" << endl;
+//			}
 			percent = calcPercent(cnt, i);
-			cout << "\r" << percent << "%" << flush;
+			cout << "\r" << asc_cnt << " - " << percent << "%" << flush;
 			HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
 			hm.update();
 
 			int tst2 = asc_cnt % (package);
-			if (!(tst2 - 1) && asc_cnt) {
-				history_db->commit();
-				cout << "Commit" << endl;
-			}
+//			if ((asc_cnt % package) == package - 1 || asc_cnt == cnt - 1) {
+//				history_db->commit();
+//				cout << "Commit" << endl;
+//			}
 			--i;
 			if (!--cut) {
 //				break;
 			}
 		}
+		history_db->commit();
 		cout << endl << "Succeeded!" << endl;
 	}
 
@@ -245,8 +245,15 @@ HistoryDB::Messages DBControllerImplPrivate::convert(const SkypeDB::Messages &so
 	dest.timestamp = (int)time(nullptr);
 	dest.skype_timestamp = (int)source.timestamp;
 	dest.body = conv_body(source.body_xml);
-	dest.chat_id = static_cast<int>(getOrCreate<HistoryDB::Chats, SkypeDB::Chats>
-							       (source.chatname, SkypeDB::Chats::Name == source.chatname).id);
+//	dest.chat_id = static_cast<int>(getOrCreate<HistoryDB::Chats, SkypeDB::Chats>
+//							       (source.chatname, SkypeDB::Chats::Name == source.chatname).id);
+	auto skype_conv = select<SkypeDB::Conversations>(*skype_main, SkypeDB::Conversations::Id == source.convo_id).all().at(0);
+//	auto skype_participants = select<SkypeDB::Participants>(*skype_main, SkypeDB::Participants::Convo_id == source.convo_id).all();
+	auto skype_participants = select<SkypeDB::Participants>(*skype_main).all();
+
+	assert(skype_participants.size());
+
+//	auto history_conv =
 
 	return std::move(dest);
 }
@@ -266,6 +273,14 @@ HistoryDB::Users DBControllerImplPrivate::convert(const SkypeDB::Contacts &sourc
 	HistoryDB::Users dest(*history_db);
 	dest.name = static_cast<std::string>(source.skypename);
 	dest.lastmessagetime = static_cast<int>(source.lastused_timestamp);
+
+	return std::move(dest);
+}
+
+template<>
+HistoryDB::Conversations DBControllerImplPrivate::convert(const SkypeDB::Conversations &source) {
+	HistoryDB::Conversations dest(*history_db);
+	dest.friendlyname = static_cast<std::string>(source.displayname);
 
 	return std::move(dest);
 }

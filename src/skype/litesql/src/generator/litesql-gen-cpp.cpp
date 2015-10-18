@@ -412,7 +412,7 @@ void writeObjFields(Class & cl, const xml::Object & o)
 
    for (size_t i = 0; i < o.fields.size(); i++) {
       const xml::Field& fld = *o.fields[i];
-      string data = quote(fld.name) + "," +
+      string data = quote(fld.db_name.empty() ? fld.name : fld.db_name) + "," +
          "A_field_type_"+ toAttributeString(fld.type) + "," +
          "table__";
 

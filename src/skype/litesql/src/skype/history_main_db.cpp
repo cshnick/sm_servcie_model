@@ -1,6 +1,104 @@
 #include "history_main_db.hpp"
 namespace HistoryDB {
 using namespace litesql;
+ConversationsUsersRelationConvUsers::Row::Row(const litesql::Database& db, const litesql::Record& rec)
+         : users(ConversationsUsersRelationConvUsers::Users), conversations(ConversationsUsersRelationConvUsers::Conversations) {
+    switch(rec.size()) {
+    case 2:
+        users = rec[1];
+    case 1:
+        conversations = rec[0];
+    }
+}
+const std::string ConversationsUsersRelationConvUsers::table__("Conversations_Users_ConvUsers");
+const litesql::FieldType ConversationsUsersRelationConvUsers::Conversations("Conversations1",A_field_type_integer,table__);
+const litesql::FieldType ConversationsUsersRelationConvUsers::Users("Users2",A_field_type_integer,table__);
+void ConversationsUsersRelationConvUsers::link(const litesql::Database& db, const HistoryDB::Conversations& o0, const HistoryDB::Users& o1) {
+    Record values;
+    Split fields;
+    fields.push_back(Conversations.name());
+    values.push_back(o0.id);
+    fields.push_back(Users.name());
+    values.push_back(o1.id);
+    db.insert(table__, values, fields);
+}
+void ConversationsUsersRelationConvUsers::unlink(const litesql::Database& db, const HistoryDB::Conversations& o0, const HistoryDB::Users& o1) {
+    db.delete_(table__, (Conversations == o0.id && Users == o1.id));
+}
+void ConversationsUsersRelationConvUsers::del(const litesql::Database& db, const litesql::Expr& expr) {
+    db.delete_(table__, expr);
+}
+litesql::DataSource<ConversationsUsersRelationConvUsers::Row> ConversationsUsersRelationConvUsers::getRows(const litesql::Database& db, const litesql::Expr& expr) {
+    SelectQuery sel;
+    sel.result(Conversations.fullName());
+    sel.result(Users.fullName());
+    sel.source(table__);
+    sel.where(expr);
+    return DataSource<ConversationsUsersRelationConvUsers::Row>(db, sel);
+}
+template <> litesql::DataSource<HistoryDB::Conversations> ConversationsUsersRelationConvUsers::get(const litesql::Database& db, const litesql::Expr& expr, const litesql::Expr& srcExpr) {
+    SelectQuery sel;
+    sel.source(table__);
+    sel.result(Conversations.fullName());
+    sel.where(srcExpr);
+    return DataSource<HistoryDB::Conversations>(db, HistoryDB::Conversations::Id.in(sel) && expr);
+}
+template <> litesql::DataSource<HistoryDB::Users> ConversationsUsersRelationConvUsers::get(const litesql::Database& db, const litesql::Expr& expr, const litesql::Expr& srcExpr) {
+    SelectQuery sel;
+    sel.source(table__);
+    sel.result(Users.fullName());
+    sel.where(srcExpr);
+    return DataSource<HistoryDB::Users>(db, HistoryDB::Users::Id.in(sel) && expr);
+}
+ConversationsMessagesRelationConvMessages::Row::Row(const litesql::Database& db, const litesql::Record& rec)
+         : messages(ConversationsMessagesRelationConvMessages::Messages), conversations(ConversationsMessagesRelationConvMessages::Conversations) {
+    switch(rec.size()) {
+    case 2:
+        messages = rec[1];
+    case 1:
+        conversations = rec[0];
+    }
+}
+const std::string ConversationsMessagesRelationConvMessages::table__("O7c896dc7077d9154b921f4d3004b5");
+const litesql::FieldType ConversationsMessagesRelationConvMessages::Conversations("Conversations1",A_field_type_integer,table__);
+const litesql::FieldType ConversationsMessagesRelationConvMessages::Messages("Messages2",A_field_type_integer,table__);
+void ConversationsMessagesRelationConvMessages::link(const litesql::Database& db, const HistoryDB::Conversations& o0, const HistoryDB::Messages& o1) {
+    Record values;
+    Split fields;
+    fields.push_back(Conversations.name());
+    values.push_back(o0.id);
+    fields.push_back(Messages.name());
+    values.push_back(o1.id);
+    db.insert(table__, values, fields);
+}
+void ConversationsMessagesRelationConvMessages::unlink(const litesql::Database& db, const HistoryDB::Conversations& o0, const HistoryDB::Messages& o1) {
+    db.delete_(table__, (Conversations == o0.id && Messages == o1.id));
+}
+void ConversationsMessagesRelationConvMessages::del(const litesql::Database& db, const litesql::Expr& expr) {
+    db.delete_(table__, expr);
+}
+litesql::DataSource<ConversationsMessagesRelationConvMessages::Row> ConversationsMessagesRelationConvMessages::getRows(const litesql::Database& db, const litesql::Expr& expr) {
+    SelectQuery sel;
+    sel.result(Conversations.fullName());
+    sel.result(Messages.fullName());
+    sel.source(table__);
+    sel.where(expr);
+    return DataSource<ConversationsMessagesRelationConvMessages::Row>(db, sel);
+}
+template <> litesql::DataSource<HistoryDB::Conversations> ConversationsMessagesRelationConvMessages::get(const litesql::Database& db, const litesql::Expr& expr, const litesql::Expr& srcExpr) {
+    SelectQuery sel;
+    sel.source(table__);
+    sel.result(Conversations.fullName());
+    sel.where(srcExpr);
+    return DataSource<HistoryDB::Conversations>(db, HistoryDB::Conversations::Id.in(sel) && expr);
+}
+template <> litesql::DataSource<HistoryDB::Messages> ConversationsMessagesRelationConvMessages::get(const litesql::Database& db, const litesql::Expr& expr, const litesql::Expr& srcExpr) {
+    SelectQuery sel;
+    sel.source(table__);
+    sel.result(Messages.fullName());
+    sel.where(srcExpr);
+    return DataSource<HistoryDB::Messages>(db, HistoryDB::Messages::Id.in(sel) && expr);
+}
 const litesql::FieldType Chats::Own::Id("id",A_field_type_integer,"Chats");
 const std::string Chats::type__("Chats");
 const std::string Chats::table__("Chats");
@@ -155,6 +253,184 @@ std::ostream & operator<<(std::ostream& os, Chats o) {
     os << o.owner.name() << " = " << o.owner << std::endl;
     os << o.name.name() << " = " << o.name << std::endl;
     os << o.creationtime.name() << " = " << o.creationtime << std::endl;
+    os << "-------------------------------------" << std::endl;
+    return os;
+}
+const litesql::FieldType Conversations::Own::Id("id",A_field_type_integer,"Conversations");
+Conversations::UsersHandle::UsersHandle(const Conversations& owner)
+         : litesql::RelationHandle<Conversations>(owner) {
+}
+void Conversations::UsersHandle::link(const Users& o0) {
+    ConversationsUsersRelationConvUsers::link(owner->getDatabase(), *owner, o0);
+}
+void Conversations::UsersHandle::unlink(const Users& o0) {
+    ConversationsUsersRelationConvUsers::unlink(owner->getDatabase(), *owner, o0);
+}
+void Conversations::UsersHandle::del(const litesql::Expr& expr) {
+    ConversationsUsersRelationConvUsers::del(owner->getDatabase(), expr && ConversationsUsersRelationConvUsers::Conversations == owner->id);
+}
+litesql::DataSource<Users> Conversations::UsersHandle::get(const litesql::Expr& expr, const litesql::Expr& srcExpr) {
+    return ConversationsUsersRelationConvUsers::get<Users>(owner->getDatabase(), expr, (ConversationsUsersRelationConvUsers::Conversations == owner->id) && srcExpr);
+}
+litesql::DataSource<ConversationsUsersRelationConvUsers::Row> Conversations::UsersHandle::getRows(const litesql::Expr& expr) {
+    return ConversationsUsersRelationConvUsers::getRows(owner->getDatabase(), expr && (ConversationsUsersRelationConvUsers::Conversations == owner->id));
+}
+Conversations::MessagesHandle::MessagesHandle(const Conversations& owner)
+         : litesql::RelationHandle<Conversations>(owner) {
+}
+void Conversations::MessagesHandle::link(const Messages& o0) {
+    ConversationsMessagesRelationConvMessages::link(owner->getDatabase(), *owner, o0);
+}
+void Conversations::MessagesHandle::unlink(const Messages& o0) {
+    ConversationsMessagesRelationConvMessages::unlink(owner->getDatabase(), *owner, o0);
+}
+void Conversations::MessagesHandle::del(const litesql::Expr& expr) {
+    ConversationsMessagesRelationConvMessages::del(owner->getDatabase(), expr && ConversationsMessagesRelationConvMessages::Conversations == owner->id);
+}
+litesql::DataSource<Messages> Conversations::MessagesHandle::get(const litesql::Expr& expr, const litesql::Expr& srcExpr) {
+    return ConversationsMessagesRelationConvMessages::get<Messages>(owner->getDatabase(), expr, (ConversationsMessagesRelationConvMessages::Conversations == owner->id) && srcExpr);
+}
+litesql::DataSource<ConversationsMessagesRelationConvMessages::Row> Conversations::MessagesHandle::getRows(const litesql::Expr& expr) {
+    return ConversationsMessagesRelationConvMessages::getRows(owner->getDatabase(), expr && (ConversationsMessagesRelationConvMessages::Conversations == owner->id));
+}
+const std::string Conversations::type__("Conversations");
+const std::string Conversations::table__("Conversations");
+const std::string Conversations::sequence__("Conversations_seq");
+const litesql::FieldType Conversations::Id("id",A_field_type_integer,table__);
+const litesql::FieldType Conversations::Type("type",A_field_type_string,table__);
+const litesql::FieldType Conversations::Friendlyname("friendlyname",A_field_type_string,table__);
+void Conversations::initValues() {
+}
+void Conversations::defaults() {
+    id = 0;
+}
+Conversations::Conversations(const litesql::Database& db)
+     : litesql::Persistent(db), id(Id), type(Type), friendlyname(Friendlyname) {
+    defaults();
+}
+Conversations::Conversations(const litesql::Database& db, const litesql::Record& rec)
+     : litesql::Persistent(db, rec), id(Id), type(Type), friendlyname(Friendlyname) {
+    defaults();
+    size_t size = (rec.size() > 3) ? 3 : rec.size();
+    switch(size) {
+    case 3: friendlyname = convert<const std::string&, std::string>(rec[2]);
+        friendlyname.setModified(false);
+    case 2: type = convert<const std::string&, std::string>(rec[1]);
+        type.setModified(false);
+    case 1: id = convert<const std::string&, int>(rec[0]);
+        id.setModified(false);
+    }
+}
+Conversations::Conversations(const Conversations& obj)
+     : litesql::Persistent(obj), id(obj.id), type(obj.type), friendlyname(obj.friendlyname) {
+}
+const Conversations& Conversations::operator=(const Conversations& obj) {
+    if (this != &obj) {
+        id = obj.id;
+        type = obj.type;
+        friendlyname = obj.friendlyname;
+    }
+    litesql::Persistent::operator=(obj);
+    return *this;
+}
+Conversations::UsersHandle Conversations::users() {
+    return Conversations::UsersHandle(*this);
+}
+Conversations::MessagesHandle Conversations::messages() {
+    return Conversations::MessagesHandle(*this);
+}
+std::string Conversations::insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs) {
+    tables.push_back(table__);
+    litesql::Record fields;
+    litesql::Record values;
+    fields.push_back(id.name());
+    values.push_back(id);
+    id.setModified(false);
+    fields.push_back(type.name());
+    values.push_back(type);
+    type.setModified(false);
+    fields.push_back(friendlyname.name());
+    values.push_back(friendlyname);
+    friendlyname.setModified(false);
+    fieldRecs.push_back(fields);
+    valueRecs.push_back(values);
+    return litesql::Persistent::insert(tables, fieldRecs, valueRecs, sequence__);
+}
+void Conversations::create() {
+    litesql::Record tables;
+    litesql::Records fieldRecs;
+    litesql::Records valueRecs;
+    type = type__;
+    std::string newID = insert(tables, fieldRecs, valueRecs);
+    if (id == 0)
+        id = newID;
+}
+void Conversations::addUpdates(Updates& updates) {
+    prepareUpdate(updates, table__);
+    updateField(updates, table__, id);
+    updateField(updates, table__, type);
+    updateField(updates, table__, friendlyname);
+}
+void Conversations::addIDUpdates(Updates& updates) {
+}
+void Conversations::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
+    ftypes.push_back(Id);
+    ftypes.push_back(Type);
+    ftypes.push_back(Friendlyname);
+}
+void Conversations::delRecord() {
+    deleteFromTable(table__, id);
+}
+void Conversations::delRelations() {
+    ConversationsUsersRelationConvUsers::del(*db, (ConversationsUsersRelationConvUsers::Conversations == id));
+    ConversationsMessagesRelationConvMessages::del(*db, (ConversationsMessagesRelationConvMessages::Conversations == id));
+}
+void Conversations::update() {
+    if (!inDatabase) {
+        create();
+        return;
+    }
+    Updates updates;
+    addUpdates(updates);
+    if (id != oldKey) {
+        if (!typeIsCorrect()) 
+            upcastCopy()->addIDUpdates(updates);
+    }
+    litesql::Persistent::update(updates);
+    oldKey = id;
+}
+void Conversations::del() {
+    if (!typeIsCorrect()) {
+        std::unique_ptr<Conversations> p(upcastCopy());
+        p->delRelations();
+        p->onDelete();
+        p->delRecord();
+    } else {
+        delRelations();
+        onDelete();
+        delRecord();
+    }
+    inDatabase = false;
+}
+bool Conversations::typeIsCorrect() const {
+    return type == type__;
+}
+std::unique_ptr<Conversations> Conversations::upcast() const {
+    return unique_ptr<Conversations>(new Conversations(*this));
+}
+std::unique_ptr<Conversations> Conversations::upcastCopy() const {
+    Conversations* np = new Conversations(*this);
+    np->id = id;
+    np->type = type;
+    np->friendlyname = friendlyname;
+    np->inDatabase = inDatabase;
+    return unique_ptr<Conversations>(np);
+}
+std::ostream & operator<<(std::ostream& os, Conversations o) {
+    os << "-------------------------------------" << std::endl;
+    os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
+    os << o.friendlyname.name() << " = " << o.friendlyname << std::endl;
     os << "-------------------------------------" << std::endl;
     return os;
 }
@@ -441,6 +717,24 @@ std::ostream & operator<<(std::ostream& os, info o) {
     return os;
 }
 const litesql::FieldType Messages::Own::Id("id",A_field_type_integer,"Messages");
+Messages::ConversationHandle::ConversationHandle(const Messages& owner)
+         : litesql::RelationHandle<Messages>(owner) {
+}
+void Messages::ConversationHandle::link(const Conversations& o0) {
+    ConversationsMessagesRelationConvMessages::link(owner->getDatabase(), o0, *owner);
+}
+void Messages::ConversationHandle::unlink(const Conversations& o0) {
+    ConversationsMessagesRelationConvMessages::unlink(owner->getDatabase(), o0, *owner);
+}
+void Messages::ConversationHandle::del(const litesql::Expr& expr) {
+    ConversationsMessagesRelationConvMessages::del(owner->getDatabase(), expr && ConversationsMessagesRelationConvMessages::Messages == owner->id);
+}
+litesql::DataSource<Conversations> Messages::ConversationHandle::get(const litesql::Expr& expr, const litesql::Expr& srcExpr) {
+    return ConversationsMessagesRelationConvMessages::get<Conversations>(owner->getDatabase(), expr, (ConversationsMessagesRelationConvMessages::Messages == owner->id) && srcExpr);
+}
+litesql::DataSource<ConversationsMessagesRelationConvMessages::Row> Messages::ConversationHandle::getRows(const litesql::Expr& expr) {
+    return ConversationsMessagesRelationConvMessages::getRows(owner->getDatabase(), expr && (ConversationsMessagesRelationConvMessages::Messages == owner->id));
+}
 const std::string Messages::type__("Messages");
 const std::string Messages::table__("Messages");
 const std::string Messages::sequence__("Messages_seq");
@@ -505,6 +799,9 @@ const Messages& Messages::operator=(const Messages& obj) {
     }
     litesql::Persistent::operator=(obj);
     return *this;
+}
+Messages::ConversationHandle Messages::conversation() {
+    return Messages::ConversationHandle(*this);
 }
 std::string Messages::insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs) {
     tables.push_back(table__);
@@ -574,6 +871,7 @@ void Messages::delRecord() {
     deleteFromTable(table__, id);
 }
 void Messages::delRelations() {
+    ConversationsMessagesRelationConvMessages::del(*db, (ConversationsMessagesRelationConvMessages::Messages == id));
 }
 void Messages::update() {
     if (!inDatabase) {
@@ -635,6 +933,24 @@ std::ostream & operator<<(std::ostream& os, Messages o) {
     return os;
 }
 const litesql::FieldType Users::Own::Id("id",A_field_type_integer,"Users");
+Users::ConversationHandle::ConversationHandle(const Users& owner)
+         : litesql::RelationHandle<Users>(owner) {
+}
+void Users::ConversationHandle::link(const Conversations& o0) {
+    ConversationsUsersRelationConvUsers::link(owner->getDatabase(), o0, *owner);
+}
+void Users::ConversationHandle::unlink(const Conversations& o0) {
+    ConversationsUsersRelationConvUsers::unlink(owner->getDatabase(), o0, *owner);
+}
+void Users::ConversationHandle::del(const litesql::Expr& expr) {
+    ConversationsUsersRelationConvUsers::del(owner->getDatabase(), expr && ConversationsUsersRelationConvUsers::Users == owner->id);
+}
+litesql::DataSource<Conversations> Users::ConversationHandle::get(const litesql::Expr& expr, const litesql::Expr& srcExpr) {
+    return ConversationsUsersRelationConvUsers::get<Conversations>(owner->getDatabase(), expr, (ConversationsUsersRelationConvUsers::Users == owner->id) && srcExpr);
+}
+litesql::DataSource<ConversationsUsersRelationConvUsers::Row> Users::ConversationHandle::getRows(const litesql::Expr& expr) {
+    return ConversationsUsersRelationConvUsers::getRows(owner->getDatabase(), expr && (ConversationsUsersRelationConvUsers::Users == owner->id));
+}
 const std::string Users::type__("Users");
 const std::string Users::table__("Users");
 const std::string Users::sequence__("Users_seq");
@@ -683,6 +999,9 @@ const Users& Users::operator=(const Users& obj) {
     }
     litesql::Persistent::operator=(obj);
     return *this;
+}
+Users::ConversationHandle Users::conversation() {
+    return Users::ConversationHandle(*this);
 }
 std::string Users::insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs) {
     tables.push_back(table__);
@@ -737,6 +1056,7 @@ void Users::delRecord() {
     deleteFromTable(table__, id);
 }
 void Users::delRelations() {
+    ConversationsUsersRelationConvUsers::del(*db, (ConversationsUsersRelationConvUsers::Users == id));
 }
 void Users::update() {
     if (!inDatabase) {
@@ -802,21 +1122,32 @@ std::vector<litesql::Database::SchemaItem> history::getSchema() const {
     res.push_back(Database::SchemaItem("schema_","table","CREATE TABLE schema_ (name_ "+TEXT+", type_ "+TEXT+", sql_ "+TEXT+")"));
     if (backend->supportsSequences()) {
         res.push_back(Database::SchemaItem("Chats_seq","sequence",backend->getCreateSequenceSQL("Chats_seq")));
+        res.push_back(Database::SchemaItem("Conversations_seq","sequence",backend->getCreateSequenceSQL("Conversations_seq")));
         res.push_back(Database::SchemaItem("ChatUsers_seq","sequence",backend->getCreateSequenceSQL("ChatUsers_seq")));
         res.push_back(Database::SchemaItem("info_seq","sequence",backend->getCreateSequenceSQL("info_seq")));
         res.push_back(Database::SchemaItem("Messages_seq","sequence",backend->getCreateSequenceSQL("Messages_seq")));
         res.push_back(Database::SchemaItem("Users_seq","sequence",backend->getCreateSequenceSQL("Users_seq")));
     }
     res.push_back(Database::SchemaItem("Chats","table","CREATE TABLE Chats (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",owner " + backend->getSQLType(A_field_type_string,"") + "" +",name " + backend->getSQLType(A_field_type_string,"") + "" +",creationtime " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Conversations","table","CREATE TABLE Conversations (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("ChatUsers","table","CREATE TABLE ChatUsers (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",user_id " + backend->getSQLType(A_field_type_integer,"") + "" +",chat_id " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("info","table","CREATE TABLE info (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",dbversion " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Messages","table","CREATE TABLE Messages (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",body " + backend->getSQLType(A_field_type_string,"") + "" +",chat_id " + backend->getSQLType(A_field_type_integer,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",sender_id " + backend->getSQLType(A_field_type_integer,"") + "" +",skype_id " + backend->getSQLType(A_field_type_integer,"") + "" +",skype_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Users","table","CREATE TABLE Users (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",name " + backend->getSQLType(A_field_type_string,"") + "" +",lastmessagetime " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Conversations_Users_ConvUsers","table","CREATE TABLE Conversations_Users_ConvUsers (Conversations1 " + backend->getSQLType(A_field_type_integer,"") + "" +",Users2 " + backend->getSQLType(A_field_type_integer,"") + " UNIQUE" +")"));
+    res.push_back(Database::SchemaItem("O7c896dc7077d9154b921f4d3004b5","table","CREATE TABLE O7c896dc7077d9154b921f4d3004b5 (Conversations1 " + backend->getSQLType(A_field_type_integer,"") + "" +",Messages2 " + backend->getSQLType(A_field_type_integer,"") + " UNIQUE" +")"));
     res.push_back(Database::SchemaItem("Chatsididx","index","CREATE INDEX Chatsididx ON Chats (id)"));
+    res.push_back(Database::SchemaItem("Conversationsididx","index","CREATE INDEX Conversationsididx ON Conversations (id)"));
     res.push_back(Database::SchemaItem("ChatUsersididx","index","CREATE INDEX ChatUsersididx ON ChatUsers (id)"));
     res.push_back(Database::SchemaItem("infoididx","index","CREATE INDEX infoididx ON info (id)"));
     res.push_back(Database::SchemaItem("Messagesididx","index","CREATE INDEX Messagesididx ON Messages (id)"));
     res.push_back(Database::SchemaItem("Usersididx","index","CREATE INDEX Usersididx ON Users (id)"));
+    res.push_back(Database::SchemaItem("Oe612685034171ce5288e89b71f6ca","index","CREATE INDEX Oe612685034171ce5288e89b71f6ca ON Conversations_Users_ConvUsers (Conversations1)"));
+    res.push_back(Database::SchemaItem("Oc5dbfb5ff83170a0427faaf32d429","index","CREATE INDEX Oc5dbfb5ff83170a0427faaf32d429 ON Conversations_Users_ConvUsers (Users2)"));
+    res.push_back(Database::SchemaItem("O2b78447bad7217d76077f2972704c","index","CREATE INDEX O2b78447bad7217d76077f2972704c ON Conversations_Users_ConvUsers (Conversations1,Users2)"));
+    res.push_back(Database::SchemaItem("O3bb020e5d1dd8015cd86e881b40de","index","CREATE INDEX O3bb020e5d1dd8015cd86e881b40de ON O7c896dc7077d9154b921f4d3004b5 (Conversations1)"));
+    res.push_back(Database::SchemaItem("O2332cfff1ff0db8f9a52f200958ae","index","CREATE INDEX O2332cfff1ff0db8f9a52f200958ae ON O7c896dc7077d9154b921f4d3004b5 (Messages2)"));
+    res.push_back(Database::SchemaItem("O7a00bd74aa795d0f4a29b46d7229a","index","CREATE INDEX O7a00bd74aa795d0f4a29b46d7229a ON O7c896dc7077d9154b921f4d3004b5 (Conversations1,Messages2)"));
     return res;
 }
 void history::initialize() {

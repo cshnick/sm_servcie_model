@@ -10,6 +10,14 @@
 	<method name="cache_field" returntype="litesql::Field&lt;std::string&gt; Chats::*" />
 </object>
 
+<object name="Conversations" db_name="Conversations" >
+	<field name="friendlyname" type="string" />
+</object>
+<relation id="ConvUsers" >
+	<relate object="Conversations" handle="users" limit="one" />
+	<relate object="Users" handle="conversation"/>
+</relation>
+
 <object name="ChatUsers" db_name="ChatUsers">
 	<field name="user_id" type="integer" />
 	<field name="chat_id" type="integer" />
@@ -30,6 +38,10 @@
 	<field name="skype_id" type="integer" />
 	<field name="skype_timestamp" type="integer" />
 </object>
+<relation id="ConvMessages" >
+	<relate object="Conversations" handle="messages" limit="one" />
+	<relate object="Messages" handle="conversation"/>
+</relation>
 
 <object name="Users" db_name="Users">
 	<!-- <field name="id" type="integer" /> -->

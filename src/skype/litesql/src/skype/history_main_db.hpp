@@ -3,10 +3,49 @@
 #include "litesql.hpp"
 namespace HistoryDB {
 class Chats;
+class Conversations;
 class ChatUsers;
 class info;
 class Messages;
 class Users;
+class ConversationsUsersRelationConvUsers {
+public:
+    class Row {
+    public:
+        litesql::Field<int> users;
+        litesql::Field<int> conversations;
+        Row(const litesql::Database& db, const litesql::Record& rec=litesql::Record());
+    };
+    static const std::string table__;
+    static const litesql::FieldType Conversations;
+    static const litesql::FieldType Users;
+    static void link(const litesql::Database& db, const HistoryDB::Conversations& o0, const HistoryDB::Users& o1);
+    static void unlink(const litesql::Database& db, const HistoryDB::Conversations& o0, const HistoryDB::Users& o1);
+    static void del(const litesql::Database& db, const litesql::Expr& expr=litesql::Expr());
+    static litesql::DataSource<ConversationsUsersRelationConvUsers::Row> getRows(const litesql::Database& db, const litesql::Expr& expr=litesql::Expr());
+    template <class T> static litesql::DataSource<T> get(const litesql::Database& db, const litesql::Expr& expr=litesql::Expr(), const litesql::Expr& srcExpr=litesql::Expr());
+;
+;
+};
+class ConversationsMessagesRelationConvMessages {
+public:
+    class Row {
+    public:
+        litesql::Field<int> messages;
+        litesql::Field<int> conversations;
+        Row(const litesql::Database& db, const litesql::Record& rec=litesql::Record());
+    };
+    static const std::string table__;
+    static const litesql::FieldType Conversations;
+    static const litesql::FieldType Messages;
+    static void link(const litesql::Database& db, const HistoryDB::Conversations& o0, const HistoryDB::Messages& o1);
+    static void unlink(const litesql::Database& db, const HistoryDB::Conversations& o0, const HistoryDB::Messages& o1);
+    static void del(const litesql::Database& db, const litesql::Expr& expr=litesql::Expr());
+    static litesql::DataSource<ConversationsMessagesRelationConvMessages::Row> getRows(const litesql::Database& db, const litesql::Expr& expr=litesql::Expr());
+    template <class T> static litesql::DataSource<T> get(const litesql::Database& db, const litesql::Expr& expr=litesql::Expr(), const litesql::Expr& srcExpr=litesql::Expr());
+;
+;
+};
 class Chats : public litesql::Persistent {
 public:
     class Own {
@@ -53,6 +92,67 @@ public:
     std::unique_ptr<Chats> upcastCopy() const;
 };
 std::ostream & operator<<(std::ostream& os, Chats o);
+class Conversations : public litesql::Persistent {
+public:
+    class Own {
+    public:
+        static const litesql::FieldType Id;
+    };
+    class UsersHandle : public litesql::RelationHandle<Conversations> {
+    public:
+        UsersHandle(const Conversations& owner);
+        void link(const Users& o0);
+        void unlink(const Users& o0);
+        void del(const litesql::Expr& expr=litesql::Expr());
+        litesql::DataSource<Users> get(const litesql::Expr& expr=litesql::Expr(), const litesql::Expr& srcExpr=litesql::Expr());
+        litesql::DataSource<ConversationsUsersRelationConvUsers::Row> getRows(const litesql::Expr& expr=litesql::Expr());
+    };
+    class MessagesHandle : public litesql::RelationHandle<Conversations> {
+    public:
+        MessagesHandle(const Conversations& owner);
+        void link(const Messages& o0);
+        void unlink(const Messages& o0);
+        void del(const litesql::Expr& expr=litesql::Expr());
+        litesql::DataSource<Messages> get(const litesql::Expr& expr=litesql::Expr(), const litesql::Expr& srcExpr=litesql::Expr());
+        litesql::DataSource<ConversationsMessagesRelationConvMessages::Row> getRows(const litesql::Expr& expr=litesql::Expr());
+    };
+    static const std::string type__;
+    static const std::string table__;
+    static const std::string sequence__;
+    static const litesql::FieldType Id;
+    litesql::Field<int> id;
+    static const litesql::FieldType Type;
+    litesql::Field<std::string> type;
+    static const litesql::FieldType Friendlyname;
+    litesql::Field<std::string> friendlyname;
+    static void initValues();
+protected:
+    void defaults();
+public:
+    Conversations(const litesql::Database& db);
+    Conversations(const litesql::Database& db, const litesql::Record& rec);
+    Conversations(const Conversations& obj);
+    const Conversations& operator=(const Conversations& obj);
+    Conversations::UsersHandle users();
+    Conversations::MessagesHandle messages();
+protected:
+    std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
+    void create();
+    virtual void addUpdates(Updates& updates);
+    virtual void addIDUpdates(Updates& updates);
+public:
+    static void getFieldTypes(std::vector<litesql::FieldType>& ftypes);
+protected:
+    virtual void delRecord();
+    virtual void delRelations();
+public:
+    virtual void update();
+    virtual void del();
+    virtual bool typeIsCorrect() const;
+    std::unique_ptr<Conversations> upcast() const;
+    std::unique_ptr<Conversations> upcastCopy() const;
+};
+std::ostream & operator<<(std::ostream& os, Conversations o);
 class ChatUsers : public litesql::Persistent {
 public:
     class Own {
@@ -143,6 +243,15 @@ public:
     public:
         static const litesql::FieldType Id;
     };
+    class ConversationHandle : public litesql::RelationHandle<Messages> {
+    public:
+        ConversationHandle(const Messages& owner);
+        void link(const Conversations& o0);
+        void unlink(const Conversations& o0);
+        void del(const litesql::Expr& expr=litesql::Expr());
+        litesql::DataSource<Conversations> get(const litesql::Expr& expr=litesql::Expr(), const litesql::Expr& srcExpr=litesql::Expr());
+        litesql::DataSource<ConversationsMessagesRelationConvMessages::Row> getRows(const litesql::Expr& expr=litesql::Expr());
+    };
     static const std::string type__;
     static const std::string table__;
     static const std::string sequence__;
@@ -170,6 +279,7 @@ public:
     Messages(const litesql::Database& db, const litesql::Record& rec);
     Messages(const Messages& obj);
     const Messages& operator=(const Messages& obj);
+    Messages::ConversationHandle conversation();
 protected:
     std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
     void create();
@@ -194,6 +304,15 @@ public:
     public:
         static const litesql::FieldType Id;
     };
+    class ConversationHandle : public litesql::RelationHandle<Users> {
+    public:
+        ConversationHandle(const Users& owner);
+        void link(const Conversations& o0);
+        void unlink(const Conversations& o0);
+        void del(const litesql::Expr& expr=litesql::Expr());
+        litesql::DataSource<Conversations> get(const litesql::Expr& expr=litesql::Expr(), const litesql::Expr& srcExpr=litesql::Expr());
+        litesql::DataSource<ConversationsUsersRelationConvUsers::Row> getRows(const litesql::Expr& expr=litesql::Expr());
+    };
     static const std::string type__;
     static const std::string table__;
     static const std::string sequence__;
@@ -215,6 +334,7 @@ public:
     Users(const litesql::Database& db, const litesql::Record& rec);
     Users(const Users& obj);
     const Users& operator=(const Users& obj);
+    Users::ConversationHandle conversation();
     virtual litesql::Field<std::string> Users::* cache_field();
 protected:
     std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
