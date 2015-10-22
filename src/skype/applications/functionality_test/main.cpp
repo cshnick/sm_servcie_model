@@ -22,7 +22,7 @@ int main()
     auto ctrl = Boss::CreateObject<skype_sc::IDBController>(skype_sc::service::id::DBControler);
     RefObjQIPtr<skype_sc::IDBWatcher> watcher(ctrl);
 
-    watcher->SetWatchFile(Base<String>::Create("/home/ilia/.Skype/luxa_ryabic/main.db").Get());
+    watcher->SetWatchFile(Base<String>::Create("/home/ilia/.Skype/sc.ryabokon.ilia/main.db").Get());
 
     Boss::RefObjQIPtr<skype_sc::IService> service(watcher);
     service->Start();

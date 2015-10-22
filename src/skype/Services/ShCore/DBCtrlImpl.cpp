@@ -40,11 +40,13 @@ class DBControllerImplPrivate {
 			if (history_db->needsUpgrade()) {
 				history_db->upgrade();
 			}
+			history_db->verbose = false;
 		} catch (const std::exception &e) {
 			cout << "Error in constructor DBControllerImplPrivate" << endl;
 			throw std::runtime_error(e.what());
 		}
 	}
+	template<typename T = void>
 	void start() {
 		if (m_filename.empty()) {
 			std::cout << "Filename is empty, nothing to start" << std::endl;
@@ -53,7 +55,12 @@ class DBControllerImplPrivate {
 		if (!skype_main.get()) {
 			try {
 				skype_main.reset(new SkypeDB::main("sqlite3", std::string("database=") + m_filename));
-				skype_main->verbose = true;
+				skype_main->verbose = false;
+				auto accs = select<SkypeDB::Accounts>(*skype_main).all();
+				assert(accs.size() == 1);
+				auto usr = convert<SkypeDB::Accounts, HistoryDB::Users> (accs.at(0));
+				me = usr.name;
+				cache_element(usr);
 			} catch (const std::exception &e) {
 				throw runtime_error(e.what());
 			}
@@ -127,6 +134,13 @@ class DBControllerImplPrivate {
 
 	template<typename T = void>
 	void import() {
+		int test;
+		decltype(test) t;
+		HistoryDB::Users db_users(*history_db);
+		auto field = db_users.cache_field();
+//				decltype(field) field1;
+
+
 		std::unordered_map<std::string, std::string> chats_hash, contacts_hash;
 		auto contacts_cursor = select<SkypeDB::Contacts>(*skype_main).cursor();
 		cout << "Create users base" << endl;
@@ -135,8 +149,7 @@ class DBControllerImplPrivate {
 			SkypeDB::Contacts ctc = *contacts_cursor;
 			contacts_hash.emplace(ctc.skypename, ctc.fullname);
 			HistoryDB::Users hu = convert<SkypeDB::Contacts, HistoryDB::Users>(ctc);
-			hu.update();
-			cache_element<HistoryDB::Users>(std::move(hu));
+			cache_element<HistoryDB::Users>(hu);
 		}
 		history_db->commit();
 
@@ -146,30 +159,34 @@ class DBControllerImplPrivate {
 		auto cnt = atoi(skype_main->query(q)[0][0]);
 		auto i = cnt;
 		int percent = 0;
-		int cut = 20;
-		int package = 100;
+		int cut = 0;
+		int package = 1000;
 		cout << "Importing skype messages" << endl;
 		auto messages_vec = select<SkypeDB::Messages>(*skype_main).orderBy(SkypeDB::Messages::Timestamp, false).all();
 		history_db->begin();
 		for (auto sky_mes : messages_vec) {
 			int asc_cnt = cnt - i;
-//			if (!(asc_cnt % package)) {
-//				history_db->begin();
-//				cout << "Transactioin start" << endl;
-//			}
+			if (!(asc_cnt % package)) {
+				history_db->begin();
+				cout << "Historydb begin" << endl;
+			}
+
 			percent = calcPercent(cnt, i);
 			cout << "\r" << asc_cnt << " - " << percent << "%" << flush;
-			HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
-			hm.update();
+			try {
+				HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
+			} catch (const std::exception &e) {
+				std::cout << e.what() << std::endl;
+				break;
+			}
 
-			int tst2 = asc_cnt % (package);
-//			if ((asc_cnt % package) == package - 1 || asc_cnt == cnt - 1) {
-//				history_db->commit();
-//				cout << "Commit" << endl;
-//			}
-			--i;
+			if ((asc_cnt % package) == package - 1) {
+				history_db->commit();
+				cout << "Historydb commit" << endl;
+			}
+      		--i;
 			if (!--cut) {
-//				break;
+				break;
 			}
 		}
 		history_db->commit();
@@ -219,7 +236,7 @@ class DBControllerImplPrivate {
 	}
 
 	template<typename T>
-	void cache_element(T &&element) {
+	void cache_element(T &element) {
 		auto method = element.cache_field();
 		std::get<DBCache<T>>(m_hash).emplace(element.*method, element);
 	}
@@ -235,44 +252,28 @@ private:
 	std::unique_ptr<SkypeDB::main> skype_main;
 	std::unique_ptr<HistoryDB::history> history_db;
 	std::tuple< DBCache<HistoryDB::Chats>,
-			    DBCache<HistoryDB::Users> > m_hash;
+			    DBCache<HistoryDB::Users>,
+				DBCache<HistoryDB::Messages>,
+				DBCache<SkypeDB::Contacts>
+	          > m_hash;
+	std::string me;
 }; //class DBControllerImplPrivate
 
 template<>
-HistoryDB::Messages DBControllerImplPrivate::convert(const SkypeDB::Messages &source) {
-	HistoryDB::Messages dest(*history_db);
-	dest.skype_id = (int)source.id;
-	dest.timestamp = (int)time(nullptr);
-	dest.skype_timestamp = (int)source.timestamp;
-	dest.body = conv_body(source.body_xml);
-//	dest.chat_id = static_cast<int>(getOrCreate<HistoryDB::Chats, SkypeDB::Chats>
-//							       (source.chatname, SkypeDB::Chats::Name == source.chatname).id);
-	auto skype_conv = select<SkypeDB::Conversations>(*skype_main, SkypeDB::Conversations::Id == source.convo_id).all().at(0);
-//	auto skype_participants = select<SkypeDB::Participants>(*skype_main, SkypeDB::Participants::Convo_id == source.convo_id).all();
-	auto skype_participants = select<SkypeDB::Participants>(*skype_main).all();
-
-	assert(skype_participants.size());
-
-//	auto history_conv =
+HistoryDB::Users DBControllerImplPrivate::convert(const SkypeDB::Accounts &source) {
+	HistoryDB::Users dest(*history_db);
+	dest.name        = static_cast<std::string>(source.skypename);
+	dest.displayname = static_cast<std::string>(source.fullname);
+	dest.update();
 
 	return std::move(dest);
 }
-
-template<>
-HistoryDB::Chats DBControllerImplPrivate::convert(const SkypeDB::Chats &source) {
-	HistoryDB::Chats dest(*history_db);
-	dest.name = static_cast<std::string>(source.name);
-	dest.owner= static_cast<std::string>(source.friendlyname);
-	dest.creationtime = static_cast<int>(source.timestamp);
-
-	return std::move(dest);
-}
-
 template<>
 HistoryDB::Users DBControllerImplPrivate::convert(const SkypeDB::Contacts &source) {
 	HistoryDB::Users dest(*history_db);
-	dest.name = static_cast<std::string>(source.skypename);
+	dest.name            = static_cast<std::string>(source.skypename);
 	dest.lastmessagetime = static_cast<int>(source.lastused_timestamp);
+	dest.update();
 
 	return std::move(dest);
 }
@@ -281,6 +282,54 @@ template<>
 HistoryDB::Conversations DBControllerImplPrivate::convert(const SkypeDB::Conversations &source) {
 	HistoryDB::Conversations dest(*history_db);
 	dest.friendlyname = static_cast<std::string>(source.displayname);
+	dest.update();
+	auto skype_participants = select<SkypeDB::Participants>(*skype_main, SkypeDB::Participants::Convo_id == source.id).all();
+	auto usr_cache = std::get<DBCache<HistoryDB::Users>>(m_hash);
+	for (SkypeDB::Participants sk_part : skype_participants) {
+		if (sk_part.identity == me) {
+			assert(usr_cache.count(me));
+			if (usr_cache.count(me)) {
+				auto usr_me = usr_cache.at(me);
+				dest.users().link(usr_me);
+			}
+		} else {
+			auto contact_vec = select<SkypeDB::Contacts>(*skype_main, SkypeDB::Contacts::Skypename == sk_part.identity).all();
+			if (contact_vec.size() == 1) {//User is in contact list
+				SkypeDB::Contacts contact = contact_vec.at(0);
+				if (usr_cache.count(contact.skypename)) {
+					dest.users().link(usr_cache.at(contact.skypename));
+				} else {
+					HistoryDB::Users nuser = convert<SkypeDB::Contacts, HistoryDB::Users>(contact);
+					dest.users().link(nuser);
+					cache_element<HistoryDB::Users>(nuser);
+				}
+			}
+		}
+	}
+	return std::move(dest);
+}
+
+template<>
+HistoryDB::Messages DBControllerImplPrivate::convert(const SkypeDB::Messages &source) {
+	HistoryDB::Messages dest(*history_db);
+	dest.skype_id = (int)source.id;
+	dest.timestamp = (int)time(nullptr);
+	dest.skype_timestamp = (int)source.timestamp;
+	dest.body = conv_body(source.body_xml);
+	auto skype_conv   = select<SkypeDB::Conversations>(*skype_main, SkypeDB::Conversations::Id == source.convo_id).all().at(0);
+	dest.update();
+	auto history_conv = convert<SkypeDB::Conversations, HistoryDB::Conversations>(skype_conv);
+	dest.conversation().link(history_conv);
+
+	return std::move(dest);
+}
+
+template<>
+HistoryDB::Chats DBControllerImplPrivate::convert(const SkypeDB::Chats &source) {
+	HistoryDB::Chats dest(*history_db);
+	dest.name         = static_cast<std::string>(source.name);
+	dest.owner        = static_cast<std::string>(source.friendlyname);
+	dest.creationtime = static_cast<int>(source.timestamp);
 
 	return std::move(dest);
 }

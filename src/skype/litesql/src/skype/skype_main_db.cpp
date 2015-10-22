@@ -1,6 +1,141 @@
 #include "skype_main_db.hpp"
 namespace SkypeDB {
 using namespace litesql;
+const litesql::FieldType Accounts::Own::Id("id",A_field_type_integer,"Accounts");
+const std::string Accounts::type__("Accounts");
+const std::string Accounts::table__("Accounts");
+const std::string Accounts::sequence__("Accounts_seq");
+const litesql::FieldType Accounts::Id("id",A_field_type_integer,table__);
+const litesql::FieldType Accounts::Skypename("skypename",A_field_type_string,table__);
+const litesql::FieldType Accounts::Fullname("fullname",A_field_type_string,table__);
+void Accounts::initValues() {
+}
+void Accounts::defaults() {
+    id = 0;
+}
+Accounts::Accounts(const litesql::Database& db)
+     : litesql::Persistent(db), id(Id), skypename(Skypename), fullname(Fullname) {
+    defaults();
+}
+Accounts::Accounts(const litesql::Database& db, const litesql::Record& rec)
+     : litesql::Persistent(db, rec), id(Id), skypename(Skypename), fullname(Fullname) {
+    defaults();
+    size_t size = (rec.size() > 3) ? 3 : rec.size();
+    switch(size) {
+    case 3: fullname = convert<const std::string&, std::string>(rec[2]);
+        fullname.setModified(false);
+    case 2: skypename = convert<const std::string&, std::string>(rec[1]);
+        skypename.setModified(false);
+    case 1: id = convert<const std::string&, int>(rec[0]);
+        id.setModified(false);
+    }
+}
+Accounts::Accounts(const Accounts& obj)
+     : litesql::Persistent(obj), id(obj.id), skypename(obj.skypename), fullname(obj.fullname) {
+}
+const Accounts& Accounts::operator=(const Accounts& obj) {
+    if (this != &obj) {
+        id = obj.id;
+        skypename = obj.skypename;
+        fullname = obj.fullname;
+    }
+    litesql::Persistent::operator=(obj);
+    return *this;
+}
+std::string Accounts::insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs) {
+    tables.push_back(table__);
+    litesql::Record fields;
+    litesql::Record values;
+    fields.push_back(id.name());
+    values.push_back(id);
+    id.setModified(false);
+    fields.push_back(skypename.name());
+    values.push_back(skypename);
+    skypename.setModified(false);
+    fields.push_back(fullname.name());
+    values.push_back(fullname);
+    fullname.setModified(false);
+    fieldRecs.push_back(fields);
+    valueRecs.push_back(values);
+    return litesql::Persistent::insert(tables, fieldRecs, valueRecs, sequence__);
+}
+void Accounts::create() {
+    litesql::Record tables;
+    litesql::Records fieldRecs;
+    litesql::Records valueRecs;
+    //Type processing disabled
+    //type = type__;
+    std::string newID = insert(tables, fieldRecs, valueRecs);
+    if (id == 0)
+        id = newID;
+}
+void Accounts::addUpdates(Updates& updates) {
+    prepareUpdate(updates, table__);
+    updateField(updates, table__, id);
+    updateField(updates, table__, skypename);
+    updateField(updates, table__, fullname);
+}
+void Accounts::addIDUpdates(Updates& updates) {
+}
+void Accounts::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
+    ftypes.push_back(Id);
+    ftypes.push_back(Skypename);
+    ftypes.push_back(Fullname);
+}
+void Accounts::delRecord() {
+    deleteFromTable(table__, id);
+}
+void Accounts::delRelations() {
+}
+void Accounts::update() {
+    if (!inDatabase) {
+        create();
+        return;
+    }
+    Updates updates;
+    addUpdates(updates);
+    if (id != oldKey) {
+        if (!typeIsCorrect()) 
+            upcastCopy()->addIDUpdates(updates);
+    }
+    litesql::Persistent::update(updates);
+    oldKey = id;
+}
+void Accounts::del() {
+    if (!typeIsCorrect()) {
+        std::unique_ptr<Accounts> p(upcastCopy());
+        p->delRelations();
+        p->onDelete();
+        p->delRecord();
+    } else {
+        delRelations();
+        onDelete();
+        delRecord();
+    }
+    inDatabase = false;
+}
+bool Accounts::typeIsCorrect() const {
+    return true;
+}
+std::unique_ptr<Accounts> Accounts::upcast() const {
+    return unique_ptr<Accounts>(new Accounts(*this));
+}
+std::unique_ptr<Accounts> Accounts::upcastCopy() const {
+    Accounts* np = new Accounts(*this);
+    np->id = id;
+    np->skypename = skypename;
+    np->fullname = fullname;
+    np->inDatabase = inDatabase;
+    return unique_ptr<Accounts>(np);
+}
+std::ostream & operator<<(std::ostream& os, Accounts o) {
+    os << "-------------------------------------" << std::endl;
+    os << o.id.name() << " = " << o.id << std::endl;
+    os << o.skypename.name() << " = " << o.skypename << std::endl;
+    os << o.fullname.name() << " = " << o.fullname << std::endl;
+    os << "-------------------------------------" << std::endl;
+    return os;
+}
 const litesql::FieldType Messages::Own::Id("id",A_field_type_integer,"Messages");
 const std::string Messages::type__("Messages");
 const std::string Messages::table__("Messages");
@@ -3044,17 +3179,20 @@ std::vector<litesql::Database::SchemaItem> main::getSchema() const {
     string rowIdType = backend->getRowIDType();
     res.push_back(Database::SchemaItem("schema_","table","CREATE TABLE schema_ (name_ "+TEXT+", type_ "+TEXT+", sql_ "+TEXT+")"));
     if (backend->supportsSequences()) {
+        res.push_back(Database::SchemaItem("Accounts_seq","sequence",backend->getCreateSequenceSQL("Accounts_seq")));
         res.push_back(Database::SchemaItem("Messages_seq","sequence",backend->getCreateSequenceSQL("Messages_seq")));
         res.push_back(Database::SchemaItem("Chats_seq","sequence",backend->getCreateSequenceSQL("Chats_seq")));
         res.push_back(Database::SchemaItem("Contacts_seq","sequence",backend->getCreateSequenceSQL("Contacts_seq")));
         res.push_back(Database::SchemaItem("Conversations_seq","sequence",backend->getCreateSequenceSQL("Conversations_seq")));
         res.push_back(Database::SchemaItem("Participants_seq","sequence",backend->getCreateSequenceSQL("Participants_seq")));
     }
+    res.push_back(Database::SchemaItem("Accounts","table","CREATE TABLE Accounts (id " + rowIdType + ",skypename " + backend->getSQLType(A_field_type_string,"") + "" +",fullname " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("Messages","table","CREATE TABLE Messages (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",chatname " + backend->getSQLType(A_field_type_string,"") + "" +",author " + backend->getSQLType(A_field_type_string,"") + "" +",from_dispname " + backend->getSQLType(A_field_type_string,"") + "" +",author_was_live " + backend->getSQLType(A_field_type_integer,"") + "" +",guid " + backend->getSQLType(A_field_type_blob,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",sending_status " + backend->getSQLType(A_field_type_integer,"") + "" +",consumption_status " + backend->getSQLType(A_field_type_integer,"") + "" +",edited_by " + backend->getSQLType(A_field_type_string,"") + "" +",edited_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",param_key " + backend->getSQLType(A_field_type_integer,"") + "" +",param_value " + backend->getSQLType(A_field_type_integer,"") + "" +",body_xml " + backend->getSQLType(A_field_type_string,"") + "" +",identities " + backend->getSQLType(A_field_type_string,"") + "" +",reason " + backend->getSQLType(A_field_type_string,"") + "" +",leavereason " + backend->getSQLType(A_field_type_integer,"") + "" +",participant_count " + backend->getSQLType(A_field_type_integer,"") + "" +",error_code " + backend->getSQLType(A_field_type_integer,"") + "" +",chatmsg_type " + backend->getSQLType(A_field_type_integer,"") + "" +",chatmsg_status " + backend->getSQLType(A_field_type_integer,"") + "" +",body_is_rawxml " + backend->getSQLType(A_field_type_integer,"") + "" +",oldoptions " + backend->getSQLType(A_field_type_integer,"") + "" +",newoptions " + backend->getSQLType(A_field_type_integer,"") + "" +",newrole " + backend->getSQLType(A_field_type_integer,"") + "" +",pk_id " + backend->getSQLType(A_field_type_integer,"") + "" +",crc " + backend->getSQLType(A_field_type_integer,"") + "" +",remote_id " + backend->getSQLType(A_field_type_integer,"") + "" +",call_guid " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("Chats","table","CREATE TABLE Chats (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",name " + backend->getSQLType(A_field_type_string,"") + "" +",options " + backend->getSQLType(A_field_type_integer,"") + "" +",friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +",description " + backend->getSQLType(A_field_type_string,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",activity_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",adder " + backend->getSQLType(A_field_type_string,"") + "" +",mystatus " + backend->getSQLType(A_field_type_integer,"") + "" +",myrole " + backend->getSQLType(A_field_type_integer,"") + "" +",posters " + backend->getSQLType(A_field_type_string,"") + "" +",participants " + backend->getSQLType(A_field_type_string,"") + "" +",applicants " + backend->getSQLType(A_field_type_string,"") + "" +",banned_users " + backend->getSQLType(A_field_type_string,"") + "" +",name_text " + backend->getSQLType(A_field_type_string,"") + "" +",topic " + backend->getSQLType(A_field_type_string,"") + "" +",topic_xml " + backend->getSQLType(A_field_type_string,"") + "" +",guidelines " + backend->getSQLType(A_field_type_string,"") + "" +",picture " + backend->getSQLType(A_field_type_blob,"") + "" +",alertstring " + backend->getSQLType(A_field_type_string,"") + "" +",is_bookmarked " + backend->getSQLType(A_field_type_integer,"") + "" +",passwordhint " + backend->getSQLType(A_field_type_string,"") + "" +",unconsumed_suppressed_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_normal_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_elevated_msg " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_msg_voice " + backend->getSQLType(A_field_type_integer,"") + "" +",activemembers " + backend->getSQLType(A_field_type_string,"") + "" +",state_data " + backend->getSQLType(A_field_type_blob,"") + "" +",lifesigns " + backend->getSQLType(A_field_type_integer,"") + "" +",last_change " + backend->getSQLType(A_field_type_integer,"") + "" +",first_unread_message " + backend->getSQLType(A_field_type_integer,"") + "" +",pk_type " + backend->getSQLType(A_field_type_integer,"") + "" +",dbpath " + backend->getSQLType(A_field_type_string,"") + "" +",split_friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +",conv_dbid " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Contacts","table","CREATE TABLE Contacts (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",skypename " + backend->getSQLType(A_field_type_string,"") + "" +",pstnnumber " + backend->getSQLType(A_field_type_string,"") + "" +",aliases " + backend->getSQLType(A_field_type_string,"") + "" +",fullname " + backend->getSQLType(A_field_type_string,"") + "" +",birthday " + backend->getSQLType(A_field_type_integer,"") + "" +",gender " + backend->getSQLType(A_field_type_integer,"") + "" +",languages " + backend->getSQLType(A_field_type_string,"") + "" +",country " + backend->getSQLType(A_field_type_string,"") + "" +",province " + backend->getSQLType(A_field_type_string,"") + "" +",city " + backend->getSQLType(A_field_type_string,"") + "" +",phone_home " + backend->getSQLType(A_field_type_string,"") + "" +",phone_office " + backend->getSQLType(A_field_type_string,"") + "" +",phone_mobile " + backend->getSQLType(A_field_type_string,"") + "" +",emails " + backend->getSQLType(A_field_type_string,"") + "" +",hashed_emails " + backend->getSQLType(A_field_type_string,"") + "" +",homepage " + backend->getSQLType(A_field_type_string,"") + "" +",about " + backend->getSQLType(A_field_type_string,"") + "" +",mood_text " + backend->getSQLType(A_field_type_string,"") + "" +",rich_mood_text " + backend->getSQLType(A_field_type_string,"") + "" +",timezone " + backend->getSQLType(A_field_type_integer,"") + "" +",profile_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",nrof_authed_buddies " + backend->getSQLType(A_field_type_integer,"") + "" +",ipcountry " + backend->getSQLType(A_field_type_string,"") + "" +",avatar_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",mood_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",received_authrequest " + backend->getSQLType(A_field_type_string,"") + "" +",authreq_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",lastonline_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",availability " + backend->getSQLType(A_field_type_integer,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",refreshing " + backend->getSQLType(A_field_type_integer,"") + "" +",given_authlevel " + backend->getSQLType(A_field_type_integer,"") + "" +",given_displayname " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_speeddial " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_comment " + backend->getSQLType(A_field_type_string,"") + "" +",alertstring " + backend->getSQLType(A_field_type_string,"") + "" +",lastused_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",authrequest_count " + backend->getSQLType(A_field_type_integer,"") + "" +",assigned_phone1 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone1_label " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone2 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone2_label " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone3 " + backend->getSQLType(A_field_type_string,"") + "" +",assigned_phone3_label " + backend->getSQLType(A_field_type_string,"") + "" +",buddystatus " + backend->getSQLType(A_field_type_integer,"") + "" +",isauthorized " + backend->getSQLType(A_field_type_integer,"") + "" +",popularity_ord " + backend->getSQLType(A_field_type_integer,"") + "" +",external_id " + backend->getSQLType(A_field_type_string,"") + "" +",external_system_id " + backend->getSQLType(A_field_type_string,"") + "" +",isblocked " + backend->getSQLType(A_field_type_integer,"") + "" +",certificate_send_count " + backend->getSQLType(A_field_type_integer,"") + "" +",account_modification_serial_nr " + backend->getSQLType(A_field_type_integer,"") + "" +",nr_of_buddies " + backend->getSQLType(A_field_type_integer,"") + "" +",server_synced " + backend->getSQLType(A_field_type_integer,"") + "" +",contactlist_track " + backend->getSQLType(A_field_type_integer,"") + "" +",last_used_networktime " + backend->getSQLType(A_field_type_integer,"") + "" +",authorized_time " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest " + backend->getSQLType(A_field_type_string,"") + "" +",sent_authrequest_time " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest_serial " + backend->getSQLType(A_field_type_integer,"") + "" +",node_capabilities " + backend->getSQLType(A_field_type_integer,"") + "" +",revoked_auth " + backend->getSQLType(A_field_type_integer,"") + "" +",added_in_shared_group " + backend->getSQLType(A_field_type_integer,"") + "" +",in_shared_group " + backend->getSQLType(A_field_type_integer,"") + "" +",stack_version " + backend->getSQLType(A_field_type_integer,"") + "" +",offline_authreq_id " + backend->getSQLType(A_field_type_integer,"") + "" +",node_capabilities_and " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_crc " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_src " + backend->getSQLType(A_field_type_integer,"") + "" +",pop_score " + backend->getSQLType(A_field_type_integer,"") + "" +",main_phone " + backend->getSQLType(A_field_type_string,"") + "" +",unified_servants " + backend->getSQLType(A_field_type_string,"") + "" +",phone_home_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",phone_office_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",phone_mobile_normalized " + backend->getSQLType(A_field_type_string,"") + "" +",sent_authrequest_initmethod " + backend->getSQLType(A_field_type_integer,"") + "" +",authreq_initmethod " + backend->getSQLType(A_field_type_integer,"") + "" +",sent_authrequest_extrasbitmask " + backend->getSQLType(A_field_type_integer,"") + "" +",liveid_cid " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("Conversations","table","CREATE TABLE Conversations (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",identity " + backend->getSQLType(A_field_type_string,"") + "" +",live_host " + backend->getSQLType(A_field_type_string,"") + "" +",live_start_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",live_is_muted " + backend->getSQLType(A_field_type_integer,"") + "" +",alert_string " + backend->getSQLType(A_field_type_string,"") + "" +",is_bookmarked " + backend->getSQLType(A_field_type_integer,"") + "" +",given_displayname " + backend->getSQLType(A_field_type_string,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",local_livestatus " + backend->getSQLType(A_field_type_integer,"") + "" +",inbox_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",inbox_message_id " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_suppressed_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_normal_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_elevated_messages " + backend->getSQLType(A_field_type_integer,"") + "" +",unconsumed_messages_voice " + backend->getSQLType(A_field_type_integer,"") + "" +",active_vm_id " + backend->getSQLType(A_field_type_integer,"") + "" +",context_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",consumption_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",last_activity_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",active_invoice_message " + backend->getSQLType(A_field_type_integer,"") + "" +",spawned_from_convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",pinned_order " + backend->getSQLType(A_field_type_integer,"") + "" +",creator " + backend->getSQLType(A_field_type_string,"") + "" +",creation_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",my_status " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_joining_enabled " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_access_token " + backend->getSQLType(A_field_type_string,"") + "" +",opt_entry_level_rank " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_disclose_history " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_history_limit_in_days " + backend->getSQLType(A_field_type_integer,"") + "" +",opt_admin_only_activities " + backend->getSQLType(A_field_type_integer,"") + "" +",passwordhint " + backend->getSQLType(A_field_type_string,"") + "" +",meta_name " + backend->getSQLType(A_field_type_string,"") + "" +",meta_topic " + backend->getSQLType(A_field_type_string,"") + "" +",meta_guidelines " + backend->getSQLType(A_field_type_string,"") + "" +",meta_picture " + backend->getSQLType(A_field_type_blob,"") + "" +",premium_video_status " + backend->getSQLType(A_field_type_integer,"") + "" +",premium_video_is_grace_period " + backend->getSQLType(A_field_type_integer,"") + "" +",guid " + backend->getSQLType(A_field_type_string,"") + "" +",dialog_partner " + backend->getSQLType(A_field_type_string,"") + "" +",meta_description " + backend->getSQLType(A_field_type_string,"") + "" +",premium_video_sponsor_list " + backend->getSQLType(A_field_type_string,"") + "" +",mcr_caller " + backend->getSQLType(A_field_type_string,"") + "" +",chat_dbid " + backend->getSQLType(A_field_type_integer,"") + "" +",history_horizon " + backend->getSQLType(A_field_type_integer,"") + "" +",history_sync_state " + backend->getSQLType(A_field_type_string,"") + "" +",extprop_windowpos_x " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_y " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_w " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_windowpos_h " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_roster_visible " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_splitter_layout " + backend->getSQLType(A_field_type_string,"") + "" +",extprop_hide_from_history " + backend->getSQLType(A_field_type_integer,"") + "" +",extprop_window_detached " + backend->getSQLType(A_field_type_integer,"") + "" +",is_blocked " + backend->getSQLType(A_field_type_integer,"") + "" +",last_message_id " + backend->getSQLType(A_field_type_integer,"") + "" +",picture " + backend->getSQLType(A_field_type_string,"") + "" +",is_p2p_migrated " + backend->getSQLType(A_field_type_integer,"") + "" +",thread_version " + backend->getSQLType(A_field_type_string,"") + "" +",consumption_horizon_set_at " + backend->getSQLType(A_field_type_integer,"") + "" +",alt_identity " + backend->getSQLType(A_field_type_string,"") + "" +",in_migrated_thread_since " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Participants","table","CREATE TABLE Participants (id " + rowIdType + ",is_permanent " + backend->getSQLType(A_field_type_integer,"") + "" +",convo_id " + backend->getSQLType(A_field_type_integer,"") + "" +",identity " + backend->getSQLType(A_field_type_string,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Accountsididx","index","CREATE INDEX Accountsididx ON Accounts (id)"));
     res.push_back(Database::SchemaItem("Messagesididx","index","CREATE INDEX Messagesididx ON Messages (id)"));
     res.push_back(Database::SchemaItem("Chatsididx","index","CREATE INDEX Chatsididx ON Chats (id)"));
     res.push_back(Database::SchemaItem("Contactsididx","index","CREATE INDEX Contactsididx ON Contacts (id)"));

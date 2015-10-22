@@ -2,11 +2,53 @@
 #define skype_main_db_hpp
 #include "litesql.hpp"
 namespace SkypeDB {
+class Accounts;
 class Messages;
 class Chats;
 class Contacts;
 class Conversations;
 class Participants;
+class Accounts : public litesql::Persistent {
+public:
+    class Own {
+    public:
+        static const litesql::FieldType Id;
+    };
+    static const std::string type__;
+    static const std::string table__;
+    static const std::string sequence__;
+    static const litesql::FieldType Id;
+    litesql::Field<int> id;
+    static const litesql::FieldType Skypename;
+    litesql::Field<std::string> skypename;
+    static const litesql::FieldType Fullname;
+    litesql::Field<std::string> fullname;
+    static void initValues();
+protected:
+    void defaults();
+public:
+    Accounts(const litesql::Database& db);
+    Accounts(const litesql::Database& db, const litesql::Record& rec);
+    Accounts(const Accounts& obj);
+    const Accounts& operator=(const Accounts& obj);
+protected:
+    std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
+    void create();
+    virtual void addUpdates(Updates& updates);
+    virtual void addIDUpdates(Updates& updates);
+public:
+    static void getFieldTypes(std::vector<litesql::FieldType>& ftypes);
+protected:
+    virtual void delRecord();
+    virtual void delRelations();
+public:
+    virtual void update();
+    virtual void del();
+    virtual bool typeIsCorrect() const;
+    std::unique_ptr<Accounts> upcast() const;
+    std::unique_ptr<Accounts> upcastCopy() const;
+};
+std::ostream & operator<<(std::ostream& os, Accounts o);
 class Messages : public litesql::Persistent {
 public:
     class Own {

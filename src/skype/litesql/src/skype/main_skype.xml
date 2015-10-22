@@ -1,6 +1,13 @@
 <?xml version="1.0"?>
 <!DOCTYPE database SYSTEM "litesql.dtd"> 
-<database name="main" db_name="main" namespace="SkypeDB" output_filename="skype_main_db" generate_types="false"> 
+<database name="main" db_name="main" namespace="SkypeDB" output_filename="skype_main_db" generate_types="false">
+
+  <object name="Accounts" db_name="Accounts"> 
+  	<!--  <field name="id" type="integer" /> -->
+    <field name="skypename" type="string"/>
+    <field name="fullname" type="string"/>
+  </object>
+  
   <object name="Messages" db_name="Messages">
     <field name="is_permanent" db_name="is_permanent" type="integer" />
     <field name="convo_id" db_name="convo_id" type="integer"/>
@@ -249,4 +256,5 @@
     <field name="convo_id" db_name="convo_id" type="integer"/>
     <field name="identity" type="string"/>
   </object>
+  
 </database>

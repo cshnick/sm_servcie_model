@@ -14,7 +14,7 @@
 	<field name="friendlyname" type="string" />
 </object>
 <relation id="ConvUsers" >
-	<relate object="Conversations" handle="users" limit="one" />
+	<relate object="Conversations" handle="users"/>
 	<relate object="Users" handle="conversation"/>
 </relation>
 
@@ -38,8 +38,9 @@
 	<field name="skype_id" type="integer" />
 	<field name="skype_timestamp" type="integer" />
 </object>
+
 <relation id="ConvMessages" >
-	<relate object="Conversations" handle="messages" limit="one" />
+	<relate object="Conversations" handle="messages"/>
 	<relate object="Messages" handle="conversation"/>
 </relation>
 

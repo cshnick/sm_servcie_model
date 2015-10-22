@@ -357,6 +357,7 @@ const std::string user::type__("user");
 const std::string user::table__("user");
 const std::string user::sequence__("user_seq");
 const litesql::FieldType user::Id("id",A_field_type_integer,table__);
+const litesql::FieldType user::Type("type",A_field_type_string,table__);
 const litesql::FieldType user::Name("name",A_field_type_string,table__);
 const litesql::FieldType user::Passwd("passwd",A_field_type_string,table__);
 void user::initValues() {
@@ -365,28 +366,31 @@ void user::defaults() {
     id = 0;
 }
 user::user(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), name(Name), passwd(Passwd) {
+     : litesql::Persistent(db), id(Id), type(Type), name(Name), passwd(Passwd) {
     defaults();
 }
 user::user(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), name(Name), passwd(Passwd) {
+     : litesql::Persistent(db, rec), id(Id), type(Type), name(Name), passwd(Passwd) {
     defaults();
-    size_t size = (rec.size() > 3) ? 3 : rec.size();
+    size_t size = (rec.size() > 4) ? 4 : rec.size();
     switch(size) {
-    case 3: passwd = convert<const std::string&, std::string>(rec[2]);
+    case 4: passwd = convert<const std::string&, std::string>(rec[3]);
         passwd.setModified(false);
-    case 2: name = convert<const std::string&, std::string>(rec[1]);
+    case 3: name = convert<const std::string&, std::string>(rec[2]);
         name.setModified(false);
+    case 2: type = convert<const std::string&, std::string>(rec[1]);
+        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 user::user(const user& obj)
-     : litesql::Persistent(obj), id(obj.id), name(obj.name), passwd(obj.passwd) {
+     : litesql::Persistent(obj), id(obj.id), type(obj.type), name(obj.name), passwd(obj.passwd) {
 }
 const user& user::operator=(const user& obj) {
     if (this != &obj) {
         id = obj.id;
+        type = obj.type;
         name = obj.name;
         passwd = obj.passwd;
     }
@@ -400,6 +404,9 @@ std::string user::insert(litesql::Record& tables, litesql::Records& fieldRecs, l
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
+    fields.push_back(type.name());
+    values.push_back(type);
+    type.setModified(false);
     fields.push_back(name.name());
     values.push_back(name);
     name.setModified(false);
@@ -422,6 +429,7 @@ void user::create() {
 void user::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
+    updateField(updates, table__, type);
     updateField(updates, table__, name);
     updateField(updates, table__, passwd);
 }
@@ -429,6 +437,7 @@ void user::addIDUpdates(Updates& updates) {
 }
 void user::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
+    ftypes.push_back(Type);
     ftypes.push_back(Name);
     ftypes.push_back(Passwd);
 }
@@ -473,6 +482,7 @@ std::unique_ptr<user> user::upcast() const {
 std::unique_ptr<user> user::upcastCopy() const {
     user* np = new user(*this);
     np->id = id;
+    np->type = type;
     np->name = name;
     np->passwd = passwd;
     np->inDatabase = inDatabase;
@@ -481,6 +491,7 @@ std::unique_ptr<user> user::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, user o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
     os << o.name.name() << " = " << o.name << std::endl;
     os << o.passwd.name() << " = " << o.passwd << std::endl;
     os << "-------------------------------------" << std::endl;
@@ -588,6 +599,7 @@ const std::string Person::type__("Person");
 const std::string Person::table__("Person");
 const std::string Person::sequence__("Person_seq");
 const litesql::FieldType Person::Id("id",A_field_type_integer,table__);
+const litesql::FieldType Person::Type("type",A_field_type_string,table__);
 const litesql::FieldType Person::Name("name",A_field_type_string,table__);
 const litesql::FieldType Person::Age("age",A_field_type_integer,table__);
 const litesql::FieldType Person::Image("image",A_field_type_blob,table__);
@@ -607,34 +619,37 @@ void Person::defaults() {
     sex = 0;
 }
 Person::Person(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), name(Name), age(Age), image(Image), aDoubleValue(ADoubleValue), sex(Sex) {
+     : litesql::Persistent(db), id(Id), type(Type), name(Name), age(Age), image(Image), aDoubleValue(ADoubleValue), sex(Sex) {
     defaults();
 }
 Person::Person(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), name(Name), age(Age), image(Image), aDoubleValue(ADoubleValue), sex(Sex) {
+     : litesql::Persistent(db, rec), id(Id), type(Type), name(Name), age(Age), image(Image), aDoubleValue(ADoubleValue), sex(Sex) {
     defaults();
-    size_t size = (rec.size() > 6) ? 6 : rec.size();
+    size_t size = (rec.size() > 7) ? 7 : rec.size();
     switch(size) {
-    case 6: sex = convert<const std::string&, int>(rec[5]);
+    case 7: sex = convert<const std::string&, int>(rec[6]);
         sex.setModified(false);
-    case 5: aDoubleValue = convert<const std::string&, double>(rec[4]);
+    case 6: aDoubleValue = convert<const std::string&, double>(rec[5]);
         aDoubleValue.setModified(false);
-    case 4: image = convert<const std::string&, litesql::Blob>(rec[3]);
+    case 5: image = convert<const std::string&, litesql::Blob>(rec[4]);
         image.setModified(false);
-    case 3: age = convert<const std::string&, int>(rec[2]);
+    case 4: age = convert<const std::string&, int>(rec[3]);
         age.setModified(false);
-    case 2: name = convert<const std::string&, std::string>(rec[1]);
+    case 3: name = convert<const std::string&, std::string>(rec[2]);
         name.setModified(false);
+    case 2: type = convert<const std::string&, std::string>(rec[1]);
+        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 Person::Person(const Person& obj)
-     : litesql::Persistent(obj), id(obj.id), name(obj.name), age(obj.age), image(obj.image), aDoubleValue(obj.aDoubleValue), sex(obj.sex) {
+     : litesql::Persistent(obj), id(obj.id), type(obj.type), name(obj.name), age(obj.age), image(obj.image), aDoubleValue(obj.aDoubleValue), sex(obj.sex) {
 }
 const Person& Person::operator=(const Person& obj) {
     if (this != &obj) {
         id = obj.id;
+        type = obj.type;
         name = obj.name;
         age = obj.age;
         image = obj.image;
@@ -666,6 +681,9 @@ std::string Person::insert(litesql::Record& tables, litesql::Records& fieldRecs,
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
+    fields.push_back(type.name());
+    values.push_back(type);
+    type.setModified(false);
     fields.push_back(name.name());
     values.push_back(name);
     name.setModified(false);
@@ -697,6 +715,7 @@ void Person::create() {
 void Person::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
+    updateField(updates, table__, type);
     updateField(updates, table__, name);
     updateField(updates, table__, age);
     updateField(updates, table__, image);
@@ -707,6 +726,7 @@ void Person::addIDUpdates(Updates& updates) {
 }
 void Person::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
+    ftypes.push_back(Type);
     ftypes.push_back(Name);
     ftypes.push_back(Age);
     ftypes.push_back(Image);
@@ -759,6 +779,7 @@ std::unique_ptr<Person> Person::upcast() const {
 std::unique_ptr<Person> Person::upcastCopy() const {
     Person* np = new Person(*this);
     np->id = id;
+    np->type = type;
     np->name = name;
     np->age = age;
     np->image = image;
@@ -770,6 +791,7 @@ std::unique_ptr<Person> Person::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, Person o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
     os << o.name.name() << " = " << o.name << std::endl;
     os << o.age.name() << " = " << o.age << std::endl;
     os << o.image.name() << " = " << o.image << std::endl;
@@ -801,30 +823,34 @@ const std::string Role::type__("Role");
 const std::string Role::table__("Role");
 const std::string Role::sequence__("Role_seq");
 const litesql::FieldType Role::Id("id",A_field_type_integer,table__);
+const litesql::FieldType Role::Type("type",A_field_type_string,table__);
 void Role::initValues() {
 }
 void Role::defaults() {
     id = 0;
 }
 Role::Role(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id) {
+     : litesql::Persistent(db), id(Id), type(Type) {
     defaults();
 }
 Role::Role(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id) {
+     : litesql::Persistent(db, rec), id(Id), type(Type) {
     defaults();
-    size_t size = (rec.size() > 1) ? 1 : rec.size();
+    size_t size = (rec.size() > 2) ? 2 : rec.size();
     switch(size) {
+    case 2: type = convert<const std::string&, std::string>(rec[1]);
+        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 Role::Role(const Role& obj)
-     : litesql::Persistent(obj), id(obj.id) {
+     : litesql::Persistent(obj), id(obj.id), type(obj.type) {
 }
 const Role& Role::operator=(const Role& obj) {
     if (this != &obj) {
         id = obj.id;
+        type = obj.type;
     }
     litesql::Persistent::operator=(obj);
     return *this;
@@ -839,6 +865,9 @@ std::string Role::insert(litesql::Record& tables, litesql::Records& fieldRecs, l
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
+    fields.push_back(type.name());
+    values.push_back(type);
+    type.setModified(false);
     fieldRecs.push_back(fields);
     valueRecs.push_back(values);
     return litesql::Persistent::insert(tables, fieldRecs, valueRecs, sequence__);
@@ -855,11 +884,13 @@ void Role::create() {
 void Role::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
+    updateField(updates, table__, type);
 }
 void Role::addIDUpdates(Updates& updates) {
 }
 void Role::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
+    ftypes.push_back(Type);
 }
 void Role::delRecord() {
     deleteFromTable(table__, id);
@@ -911,12 +942,14 @@ std::unique_ptr<Role> Role::upcastCopy() const {
     if (type == "Employee")
         np = new Employee(*db);
     np->id = id;
+    np->type = type;
     np->inDatabase = inDatabase;
     return unique_ptr<Role>(np);
 }
 std::ostream & operator<<(std::ostream& os, Role o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
     os << "-------------------------------------" << std::endl;
     return os;
 }
@@ -1037,6 +1070,7 @@ std::unique_ptr<Student> Student::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, Student o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
     os << "-------------------------------------" << std::endl;
     return os;
 }
@@ -1157,6 +1191,7 @@ std::unique_ptr<Employee> Employee::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, Employee o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
     os << "-------------------------------------" << std::endl;
     return os;
 }
@@ -1183,6 +1218,7 @@ const std::string School::type__("School");
 const std::string School::table__("School");
 const std::string School::sequence__("School_seq");
 const litesql::FieldType School::Id("id",A_field_type_integer,table__);
+const litesql::FieldType School::Type("type",A_field_type_string,table__);
 const litesql::FieldType School::Name("name",A_field_type_string,table__);
 void School::initValues() {
 }
@@ -1190,26 +1226,29 @@ void School::defaults() {
     id = 0;
 }
 School::School(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), name(Name) {
+     : litesql::Persistent(db), id(Id), type(Type), name(Name) {
     defaults();
 }
 School::School(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), name(Name) {
+     : litesql::Persistent(db, rec), id(Id), type(Type), name(Name) {
     defaults();
-    size_t size = (rec.size() > 2) ? 2 : rec.size();
+    size_t size = (rec.size() > 3) ? 3 : rec.size();
     switch(size) {
-    case 2: name = convert<const std::string&, std::string>(rec[1]);
+    case 3: name = convert<const std::string&, std::string>(rec[2]);
         name.setModified(false);
+    case 2: type = convert<const std::string&, std::string>(rec[1]);
+        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 School::School(const School& obj)
-     : litesql::Persistent(obj), id(obj.id), name(obj.name) {
+     : litesql::Persistent(obj), id(obj.id), type(obj.type), name(obj.name) {
 }
 const School& School::operator=(const School& obj) {
     if (this != &obj) {
         id = obj.id;
+        type = obj.type;
         name = obj.name;
     }
     litesql::Persistent::operator=(obj);
@@ -1225,6 +1264,9 @@ std::string School::insert(litesql::Record& tables, litesql::Records& fieldRecs,
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
+    fields.push_back(type.name());
+    values.push_back(type);
+    type.setModified(false);
     fields.push_back(name.name());
     values.push_back(name);
     name.setModified(false);
@@ -1244,12 +1286,14 @@ void School::create() {
 void School::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
+    updateField(updates, table__, type);
     updateField(updates, table__, name);
 }
 void School::addIDUpdates(Updates& updates) {
 }
 void School::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
+    ftypes.push_back(Type);
     ftypes.push_back(Name);
 }
 void School::delRecord() {
@@ -1294,6 +1338,7 @@ std::unique_ptr<School> School::upcast() const {
 std::unique_ptr<School> School::upcastCopy() const {
     School* np = new School(*this);
     np->id = id;
+    np->type = type;
     np->name = name;
     np->inDatabase = inDatabase;
     return unique_ptr<School>(np);
@@ -1301,6 +1346,7 @@ std::unique_ptr<School> School::upcastCopy() const {
 std::ostream & operator<<(std::ostream& os, School o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
     os << o.name.name() << " = " << o.name << std::endl;
     os << "-------------------------------------" << std::endl;
     return os;
@@ -1328,30 +1374,34 @@ const std::string Office::type__("Office");
 const std::string Office::table__("Office");
 const std::string Office::sequence__("Office_seq");
 const litesql::FieldType Office::Id("id",A_field_type_integer,table__);
+const litesql::FieldType Office::Type("type",A_field_type_string,table__);
 void Office::initValues() {
 }
 void Office::defaults() {
     id = 0;
 }
 Office::Office(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id) {
+     : litesql::Persistent(db), id(Id), type(Type) {
     defaults();
 }
 Office::Office(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id) {
+     : litesql::Persistent(db, rec), id(Id), type(Type) {
     defaults();
-    size_t size = (rec.size() > 1) ? 1 : rec.size();
+    size_t size = (rec.size() > 2) ? 2 : rec.size();
     switch(size) {
+    case 2: type = convert<const std::string&, std::string>(rec[1]);
+        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 Office::Office(const Office& obj)
-     : litesql::Persistent(obj), id(obj.id) {
+     : litesql::Persistent(obj), id(obj.id), type(obj.type) {
 }
 const Office& Office::operator=(const Office& obj) {
     if (this != &obj) {
         id = obj.id;
+        type = obj.type;
     }
     litesql::Persistent::operator=(obj);
     return *this;
@@ -1366,6 +1416,9 @@ std::string Office::insert(litesql::Record& tables, litesql::Records& fieldRecs,
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
+    fields.push_back(type.name());
+    values.push_back(type);
+    type.setModified(false);
     fieldRecs.push_back(fields);
     valueRecs.push_back(values);
     return litesql::Persistent::insert(tables, fieldRecs, valueRecs, sequence__);
@@ -1382,11 +1435,13 @@ void Office::create() {
 void Office::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
+    updateField(updates, table__, type);
 }
 void Office::addIDUpdates(Updates& updates) {
 }
 void Office::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
+    ftypes.push_back(Type);
 }
 void Office::delRecord() {
     deleteFromTable(table__, id);
@@ -1430,12 +1485,14 @@ std::unique_ptr<Office> Office::upcast() const {
 std::unique_ptr<Office> Office::upcastCopy() const {
     Office* np = new Office(*this);
     np->id = id;
+    np->type = type;
     np->inDatabase = inDatabase;
     return unique_ptr<Office>(np);
 }
 std::ostream & operator<<(std::ostream& os, Office o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
     os << "-------------------------------------" << std::endl;
     return os;
 }
@@ -1444,30 +1501,34 @@ const std::string ThingWithMethods::type__("ThingWithMethods");
 const std::string ThingWithMethods::table__("ThingWithMethods");
 const std::string ThingWithMethods::sequence__("ThingWithMethods_seq");
 const litesql::FieldType ThingWithMethods::Id("id",A_field_type_integer,table__);
+const litesql::FieldType ThingWithMethods::Type("type",A_field_type_string,table__);
 void ThingWithMethods::initValues() {
 }
 void ThingWithMethods::defaults() {
     id = 0;
 }
 ThingWithMethods::ThingWithMethods(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id) {
+     : litesql::Persistent(db), id(Id), type(Type) {
     defaults();
 }
 ThingWithMethods::ThingWithMethods(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id) {
+     : litesql::Persistent(db, rec), id(Id), type(Type) {
     defaults();
-    size_t size = (rec.size() > 1) ? 1 : rec.size();
+    size_t size = (rec.size() > 2) ? 2 : rec.size();
     switch(size) {
+    case 2: type = convert<const std::string&, std::string>(rec[1]);
+        type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
         id.setModified(false);
     }
 }
 ThingWithMethods::ThingWithMethods(const ThingWithMethods& obj)
-     : litesql::Persistent(obj), id(obj.id) {
+     : litesql::Persistent(obj), id(obj.id), type(obj.type) {
 }
 const ThingWithMethods& ThingWithMethods::operator=(const ThingWithMethods& obj) {
     if (this != &obj) {
         id = obj.id;
+        type = obj.type;
     }
     litesql::Persistent::operator=(obj);
     return *this;
@@ -1479,6 +1540,9 @@ std::string ThingWithMethods::insert(litesql::Record& tables, litesql::Records& 
     fields.push_back(id.name());
     values.push_back(id);
     id.setModified(false);
+    fields.push_back(type.name());
+    values.push_back(type);
+    type.setModified(false);
     fieldRecs.push_back(fields);
     valueRecs.push_back(values);
     return litesql::Persistent::insert(tables, fieldRecs, valueRecs, sequence__);
@@ -1495,11 +1559,13 @@ void ThingWithMethods::create() {
 void ThingWithMethods::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
+    updateField(updates, table__, type);
 }
 void ThingWithMethods::addIDUpdates(Updates& updates) {
 }
 void ThingWithMethods::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
+    ftypes.push_back(Type);
 }
 void ThingWithMethods::delRecord() {
     deleteFromTable(table__, id);
@@ -1542,12 +1608,14 @@ std::unique_ptr<ThingWithMethods> ThingWithMethods::upcast() const {
 std::unique_ptr<ThingWithMethods> ThingWithMethods::upcastCopy() const {
     ThingWithMethods* np = new ThingWithMethods(*this);
     np->id = id;
+    np->type = type;
     np->inDatabase = inDatabase;
     return unique_ptr<ThingWithMethods>(np);
 }
 std::ostream & operator<<(std::ostream& os, ThingWithMethods o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
+    os << o.type.name() << " = " << o.type << std::endl;
     os << "-------------------------------------" << std::endl;
     return os;
 }
@@ -1568,14 +1636,14 @@ std::vector<litesql::Database::SchemaItem> ExampleDatabase::getSchema() const {
         res.push_back(Database::SchemaItem("Office_seq","sequence",backend->getCreateSequenceSQL("Office_seq")));
         res.push_back(Database::SchemaItem("ThingWithMethods_seq","sequence",backend->getCreateSequenceSQL("ThingWithMethods_seq")));
     }
-    res.push_back(Database::SchemaItem("user","table","CREATE TABLE user (id " + rowIdType + ",name " + backend->getSQLType(A_field_type_string,"256") + "" +",passwd " + backend->getSQLType(A_field_type_string,"") + "" +")"));
-    res.push_back(Database::SchemaItem("Person","table","CREATE TABLE Person (id " + rowIdType + ",name " + backend->getSQLType(A_field_type_string,"256") + "" +",age " + backend->getSQLType(A_field_type_integer,"") + "" +",image " + backend->getSQLType(A_field_type_blob,"") + "" +",aDoubleValue " + backend->getSQLType(A_field_type_double,"") + "" +",sex " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
-    res.push_back(Database::SchemaItem("Role","table","CREATE TABLE Role (id " + rowIdType + ")"));
+    res.push_back(Database::SchemaItem("user","table","CREATE TABLE user (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",name " + backend->getSQLType(A_field_type_string,"256") + "" +",passwd " + backend->getSQLType(A_field_type_string,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Person","table","CREATE TABLE Person (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",name " + backend->getSQLType(A_field_type_string,"256") + "" +",age " + backend->getSQLType(A_field_type_integer,"") + "" +",image " + backend->getSQLType(A_field_type_blob,"") + "" +",aDoubleValue " + backend->getSQLType(A_field_type_double,"") + "" +",sex " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Role","table","CREATE TABLE Role (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("Student","table","CREATE TABLE Student (id " + rowIdType + ")"));
     res.push_back(Database::SchemaItem("Employee","table","CREATE TABLE Employee (id " + rowIdType + ")"));
-    res.push_back(Database::SchemaItem("School","table","CREATE TABLE School (id " + rowIdType + ",name " + backend->getSQLType(A_field_type_string,"512") + "" +")"));
-    res.push_back(Database::SchemaItem("Office","table","CREATE TABLE Office (id " + rowIdType + ")"));
-    res.push_back(Database::SchemaItem("ThingWithMethods","table","CREATE TABLE ThingWithMethods (id " + rowIdType + ")"));
+    res.push_back(Database::SchemaItem("School","table","CREATE TABLE School (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",name " + backend->getSQLType(A_field_type_string,"512") + "" +")"));
+    res.push_back(Database::SchemaItem("Office","table","CREATE TABLE Office (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +")"));
+    res.push_back(Database::SchemaItem("ThingWithMethods","table","CREATE TABLE ThingWithMethods (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("Person_Person_Mother","table","CREATE TABLE Person_Person_Mother (Person1 " + backend->getSQLType(A_field_type_integer,"") + " UNIQUE" +",Person2 " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Person_Person_Father","table","CREATE TABLE Person_Person_Father (Person1 " + backend->getSQLType(A_field_type_integer,"") + " UNIQUE" +",Person2 " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Person_Person_Siblings","table","CREATE TABLE Person_Person_Siblings (Person1 " + backend->getSQLType(A_field_type_integer,"") + "" +",Person2 " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
