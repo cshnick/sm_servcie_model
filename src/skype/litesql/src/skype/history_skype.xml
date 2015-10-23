@@ -37,6 +37,8 @@
 	<field name="sender_id" type="integer" />
 	<field name="skype_id" type="integer" />
 	<field name="skype_timestamp" type="integer" />
+	<typedef name="int" alias="cache_key_type"/>
+	<method name="cache_field" returntype="litesql::Field&lt;int&gt; Messages::*" />
 </object>
 
 <relation id="ConvMessages" >
@@ -44,11 +46,12 @@
 	<relate object="Messages" handle="conversation"/>
 </relation>
 
-<object name="Users" db_name="Users">
+<object name="Users" db_name="Users"> 
 	<!-- <field name="id" type="integer" /> -->
 	<field name="displayname" type="string"/>
 	<field name="name" type="string" />
-	<field name="lastmessagetime" type="integer" />
+	<field name="lastmessagetime" type="integer"/>
+	<typedef name="std::string" alias="cache_key_type"/>
 	<method name="cache_field" returntype="litesql::Field&lt;std::string&gt; Users::*" />
 </object>
 

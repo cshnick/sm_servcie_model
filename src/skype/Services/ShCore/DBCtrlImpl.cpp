@@ -12,6 +12,7 @@
 #include "common/filewatcher.h"
 #include "common/string.h"
 #include "common/string_helper.h"
+#include "common/time_calculator.h"
 #include "core/exceptions.h"
 
 #include "litesql.hpp"
@@ -134,13 +135,6 @@ class DBControllerImplPrivate {
 
 	template<typename T = void>
 	void import() {
-		int test;
-		decltype(test) t;
-		HistoryDB::Users db_users(*history_db);
-		auto field = db_users.cache_field();
-//				decltype(field) field1;
-
-
 		std::unordered_map<std::string, std::string> chats_hash, contacts_hash;
 		auto contacts_cursor = select<SkypeDB::Contacts>(*skype_main).cursor();
 		cout << "Create users base" << endl;
@@ -173,11 +167,16 @@ class DBControllerImplPrivate {
 
 			percent = calcPercent(cnt, i);
 			cout << "\r" << asc_cnt << " - " << percent << "%" << flush;
-			try {
-				HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
-			} catch (const std::exception &e) {
-				std::cout << e.what() << std::endl;
-				break;
+
+			auto messages_cache = std::get<DBCache<HistoryDB::Messages>>(m_hash).map;
+			if (!messages_cache.count(sky_mes.id)) { //Not in cache
+				try {
+					cout << "Not in cache, Converting" << endl;
+					HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
+				} catch (const std::exception &e) {
+					std::cout << e.what() << std::endl;
+					break;
+				}
 			}
 
 			if ((asc_cnt % package) == package - 1) {
@@ -213,11 +212,22 @@ class DBControllerImplPrivate {
 	}
 
 	template<typename T>
-	using DBCache = std::unordered_map<std::string, T>;
+	struct DBCache {
+		typedef typename T::cache_key_type key_type;
+		std::unordered_map<key_type, T> map;
+	};
 
 	void cacheHistoryDB() {
-		cache_m<HistoryDB::Chats>();
+		Boss::uint64 start;
+		cout << "Caching users..." << endl;
+		start = Boss::GetTimeMs64();
 		cache_m<HistoryDB::Users>();
+		cout << "Caching users time: " << Boss::GetTimeMs64() - start << endl;
+		cout << "Caching messages..." << endl;
+		start = Boss::GetTimeMs64();
+	    cache_m<HistoryDB::Messages>();
+	    cout << "Caching messages time: " << Boss::GetTimeMs64() - start << endl;
+	    cout << "Finished Caching" << endl;
 	}
 
 	template<typename T, typename F>
@@ -231,14 +241,14 @@ class DBControllerImplPrivate {
 		auto rows = select<T>(*history_db).all();
 		std::for_each(rows.begin(), rows.end(), [this] (T &row) {
 			auto method = row.cache_field();
-			std::get<DBCache<T>>(m_hash).emplace(row.*method, std::move(row));
+			std::get<DBCache<T>>(m_hash).map.emplace(row.*method, std::move(row));
 		});
 	}
 
 	template<typename T>
 	void cache_element(T &element) {
 		auto method = element.cache_field();
-		std::get<DBCache<T>>(m_hash).emplace(element.*method, element);
+		std::get<DBCache<T>>(m_hash).map.emplace(element.*method, element);
 	}
 	template<typename From, typename To>
 	To convert(const From &);
@@ -251,11 +261,10 @@ private:
 	Boss::Mutex m_mutex;
 	std::unique_ptr<SkypeDB::main> skype_main;
 	std::unique_ptr<HistoryDB::history> history_db;
-	std::tuple< DBCache<HistoryDB::Chats>,
-			    DBCache<HistoryDB::Users>,
+    std::tuple< DBCache<HistoryDB::Users>,
 				DBCache<HistoryDB::Messages>,
 				DBCache<SkypeDB::Contacts>
-	          > m_hash;
+		      > m_hash;
 	std::string me;
 }; //class DBControllerImplPrivate
 
@@ -284,7 +293,7 @@ HistoryDB::Conversations DBControllerImplPrivate::convert(const SkypeDB::Convers
 	dest.friendlyname = static_cast<std::string>(source.displayname);
 	dest.update();
 	auto skype_participants = select<SkypeDB::Participants>(*skype_main, SkypeDB::Participants::Convo_id == source.id).all();
-	auto usr_cache = std::get<DBCache<HistoryDB::Users>>(m_hash);
+	auto usr_cache = std::get<DBCache<HistoryDB::Users>>(m_hash).map;
 	for (SkypeDB::Participants sk_part : skype_participants) {
 		if (sk_part.identity == me) {
 			assert(usr_cache.count(me));

@@ -271,6 +271,7 @@ public:
     litesql::Field<int> skype_id;
     static const litesql::FieldType Skype_timestamp;
     litesql::Field<int> skype_timestamp;
+    typedef int cache_key_type;
     static void initValues();
 protected:
     void defaults();
@@ -280,6 +281,7 @@ public:
     Messages(const Messages& obj);
     const Messages& operator=(const Messages& obj);
     Messages::ConversationHandle conversation();
+    virtual litesql::Field<int> Messages::* cache_field();
 protected:
     std::string insert(litesql::Record& tables, litesql::Records& fieldRecs, litesql::Records& valueRecs);
     void create();
@@ -326,6 +328,7 @@ public:
     litesql::Field<std::string> name;
     static const litesql::FieldType Lastmessagetime;
     litesql::Field<int> lastmessagetime;
+    typedef std::string cache_key_type;
     static void initValues();
 protected:
     void defaults();

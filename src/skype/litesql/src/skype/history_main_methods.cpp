@@ -16,6 +16,10 @@ litesql::Field<std::string> Users::* Users::cache_field() {
 	return &Users::name;
 }
 
+litesql::Field<int> Messages::* Messages::cache_field() {
+	return &Messages::skype_id;
+}
+
 } //namespace HistoryDB
 
 

@@ -231,6 +231,7 @@ public:
     litesql::Field<std::string> split_friendlyname;
     static const litesql::FieldType Conv_dbid;
     litesql::Field<int> conv_dbid;
+    typedef std::string cache_key_type;
     static void initValues();
 protected:
     void defaults();
@@ -429,6 +430,7 @@ public:
     litesql::Field<int> sent_authrequest_extrasbitmask;
     static const litesql::FieldType Liveid_cid;
     litesql::Field<std::string> liveid_cid;
+    typedef std::string cache_key_type;
     static void initValues();
 protected:
     void defaults();

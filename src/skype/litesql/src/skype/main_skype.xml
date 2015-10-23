@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE database SYSTEM "litesql.dtd"> 
+<!DOCTYPE database SYSTEM "../skype/litesql.dtd"> 
 <database name="main" db_name="main" namespace="SkypeDB" output_filename="skype_main_db" generate_types="false">
 
   <object name="Accounts" db_name="Accounts"> 
@@ -81,6 +81,7 @@
     <field name="dbpath" db_name="dbpath" type="string"/>
     <field name="split_friendlyname" db_name="split_friendlyname" type="string"/>
     <field name="conv_dbid" db_name="conv_dbid" type="integer"/>
+    <typedef name="std::string" alias="cache_key_type"/>
     <method name="cache_field" returntype="litesql::Field&lt;std::string&gt; Chats::*" />
   </object>
   
@@ -179,6 +180,7 @@
     <field name="liveid_cid" type="string"/>
    <!--  <field name="extprop_tags" type="string"/> -->
    <!--  <field name="extprop_away_since" type="integer" /> -->
+   <typedef name="std::string" alias="cache_key_type"/>
    <method name="cache_field" returntype="litesql::Field&lt;std::string&gt; Contacts::*" />
   </object>
     
