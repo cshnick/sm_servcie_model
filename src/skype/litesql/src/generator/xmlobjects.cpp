@@ -13,6 +13,7 @@ const char* Field::TAG="field";
 const char* Relation::TAG="relation";
 const char* Relate::TAG="relate";
 const char* Value::TAG="value";
+const char* Typedef::TAG="typedef";
 const char* IndexField::TAG="indexfield";
 const char* Index::TAG="index";
 const char* Param::TAG="param";

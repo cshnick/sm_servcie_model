@@ -7,7 +7,7 @@
           generate_types (true|false) #IMPLIED
           include CDATA #IMPLIED>
 
-<!ELEMENT object ((field)*,(method)*,(index)*)>
+<!ELEMENT object ((field)*,(typedef)*,(method)*,(index)*)>
 <!ATTLIST object
           name ID #REQUIRED
           inherits NMTOKEN #IMPLIED
@@ -33,6 +33,11 @@
 <!ATTLIST value
           name NMTOKEN #REQUIRED
           value CDATA #REQUIRED>
+          
+<!ELEMENT typedef EMPTY>
+<!ATTLIST typedef
+          name CDATA #REQUIRED
+          alias NMTOKEN #REQUIRED>
 
 <!ELEMENT method (param)*>
 <!ATTLIST method 

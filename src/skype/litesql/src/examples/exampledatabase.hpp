@@ -265,6 +265,7 @@ protected:
 public:
     static const litesql::FieldType Sex;
     litesql::Field<int> sex;
+    typedef int myint;
     static void initValues();
 protected:
     void defaults();

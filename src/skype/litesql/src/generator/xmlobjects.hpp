@@ -36,6 +36,17 @@ public:
     Value(const string& n, const string& v) : name(n), value(v) {}
 };
 
+class Typedef {
+public:
+	typedef counted_ptr<Typedef> Ptr;
+	typedef std::vector<Ptr> sequence;
+
+	static const char* TAG;
+
+	string name;
+	string alias;
+};
+
 class IndexField {
 public:
     static const char* TAG;
@@ -343,6 +354,7 @@ public:
     string name, db_name, inherits;
     bool m_has_type_field;
     Field::sequence fields;
+    Typedef::sequence typedefs;
     Method::sequence methods;
     Index::sequence indices;
     RelationHandle::sequence handles;

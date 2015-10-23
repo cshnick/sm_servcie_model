@@ -258,6 +258,7 @@ namespace xml {
     Field * fld;
     Field * rel_fld;
     Method * mtd;
+    Typedef * tdf;
     Index::Ptr idx;
  
     ParseState m_parseState;
@@ -443,6 +444,16 @@ void LitesqlParser::onStartElement(const XML_Char *fullname,
     }
 
   }
+  else if (xmlStrEqual(fullname,(XML_Char*)Typedef::TAG))
+  {
+	  if (m_parseState!=OBJECT) {
+		  m_parseState = ERROR;
+	  } else {
+		  Typedef::Ptr td(tdf = new Typedef{(char*)xmlGetAttrValue(atts,"name"), (char*)xmlGetAttrValue(atts,"alias")});
+		  obj->typedefs.push_back(td);
+		  Logger::report("typedef := ",td->name);
+	  }
+  }
   else if (xmlStrEqual(fullname,(XML_Char*)Param::TAG))
   {
     if (m_parseState!=METHOD)
@@ -619,6 +630,17 @@ void LitesqlParser::onEndElement(const XML_Char *fullname)
     }
 
   } 
+  else if (xmlStrEqual(fullname,(XML_Char*)Typedef::TAG))
+  {
+	  if (m_parseState!=OBJECT)
+	  {
+		  m_parseState = ERROR;
+	  }
+	  else
+	  {
+		  Logger::report("end ", Typedef::TAG );
+	  }
+  }
   else if (xmlStrEqual(fullname,(XML_Char*)Param::TAG))
   {
     if (m_parseState!= PARAM)
