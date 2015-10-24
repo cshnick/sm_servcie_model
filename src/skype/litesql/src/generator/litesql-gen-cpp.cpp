@@ -72,6 +72,20 @@ public:
     }
 };
 #include <iostream>
+class Typedef {
+public:
+	string name, alias;
+	string declaration() {
+		string decl;
+		decl.append("typedef ");
+		decl.append(name);
+		decl.append(" ");
+		decl.append(alias);
+		decl.append(";");
+
+		return decl;
+	}
+};
 class Method {
 public:
     string name, returnType, templateParams, constructorParams;
@@ -192,6 +206,7 @@ public:
 class Class {
     string name, db_name;
     string inherits;
+    vector<Typedef> typedefs;
     vector<Method> methods;
     vector<Variable> variables;
     vector<Class> classes;
@@ -199,6 +214,11 @@ public:
     Class(string n, string a, string i) : name(n), db_name(a), inherits(i) {}
     Class(string n, string a) : Class(n, n, a) {}
     Class(string n) : Class(n, n, "") {}
+
+    Class& cl_typedef(const Typedef &td) {
+    	typedefs.push_back(td);
+    	return *this;
+    }
 
     Class& method(const Method& m) {
         methods.push_back(m);
@@ -255,6 +275,10 @@ public:
                 fprintf(hpp, "%spublic:\n", ind.c_str());
             }
             methods[i].write(hpp, cpp, context, indent + 4);            
+        }
+        for (size_t i = 0; i < typedefs.size(); i++) {
+        	string decl = typedefs[i].declaration();
+        	fprintf(hpp, "    %s%s\n", ind.c_str(), decl.c_str());
         }
         fprintf(hpp, "%s};\n", ind.c_str());
         
@@ -849,6 +873,12 @@ void writeObjBaseMethods(Class& cl, const xml::Object& o) {
         cl.method(mtd);
     }
     
+    for (size_t i = 0; i < o.typedefs.size(); i++) {
+    	const xml::Typedef &td = *o.typedefs[i];
+    	gen::Typedef gtdf{td.name, td.alias};
+    	cl.cl_typedef(gtdf);
+    }
+
     cl.method(insert).method(create).method(addUpdates)
         .method(addIDUpdates).method(getFieldTypes).method(delRecord).method(delRelations)
          .method(update).method(del)
