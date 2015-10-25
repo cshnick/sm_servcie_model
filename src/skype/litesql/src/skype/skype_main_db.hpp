@@ -231,7 +231,6 @@ public:
     litesql::Field<std::string> split_friendlyname;
     static const litesql::FieldType Conv_dbid;
     litesql::Field<int> conv_dbid;
-    typedef std::string cache_key_type;
     static void initValues();
 protected:
     void defaults();
@@ -257,6 +256,7 @@ public:
     virtual bool typeIsCorrect() const;
     std::unique_ptr<Chats> upcast() const;
     std::unique_ptr<Chats> upcastCopy() const;
+    typedef std::string cache_key_type;
 };
 std::ostream & operator<<(std::ostream& os, Chats o);
 class Contacts : public litesql::Persistent {
@@ -430,7 +430,6 @@ public:
     litesql::Field<int> sent_authrequest_extrasbitmask;
     static const litesql::FieldType Liveid_cid;
     litesql::Field<std::string> liveid_cid;
-    typedef std::string cache_key_type;
     static void initValues();
 protected:
     void defaults();
@@ -456,6 +455,7 @@ public:
     virtual bool typeIsCorrect() const;
     std::unique_ptr<Contacts> upcast() const;
     std::unique_ptr<Contacts> upcastCopy() const;
+    typedef std::string cache_key_type;
 };
 std::ostream & operator<<(std::ostream& os, Contacts o);
 class Conversations : public litesql::Persistent {

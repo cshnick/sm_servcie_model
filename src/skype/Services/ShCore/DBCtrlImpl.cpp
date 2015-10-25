@@ -152,41 +152,40 @@ class DBControllerImplPrivate {
 		q.source(SkypeDB::Messages::table__);
 		auto cnt = atoi(skype_main->query(q)[0][0]);
 		auto i = cnt;
+		int need_update = 0;
 		int percent = 0;
 		int cut = 0;
 		int package = 1000;
 		cout << "Importing skype messages" << endl;
 		auto messages_vec = select<SkypeDB::Messages>(*skype_main).orderBy(SkypeDB::Messages::Timestamp, false).all();
 		history_db->begin();
+		auto messages_cache = std::get<DBCache<HistoryDB::Messages>>(m_hash);
 		for (auto sky_mes : messages_vec) {
 			int asc_cnt = cnt - i;
-			if (!(asc_cnt % package)) {
-				history_db->begin();
-				cout << "Historydb begin" << endl;
-			}
+
 
 			percent = calcPercent(cnt, i);
 			cout << "\r" << asc_cnt << " - " << percent << "%" << flush;
 
-			auto messages_cache = std::get<DBCache<HistoryDB::Messages>>(m_hash).map;
-			if (!messages_cache.count(sky_mes.id)) { //Not in cache
+			if (!messages_cache.contains(sky_mes.id)) {
 				try {
 					cout << "Not in cache, Converting" << endl;
+					if (!(need_update++ % package)) {
+						history_db->begin();
+						cout << "Historydb begin" << endl;
+					}
 					HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
+					if ((need_update % package) == package - 1 || i == 1) {
+						history_db->commit();
+						cout << "Historydb commit" << endl;
+					}
 				} catch (const std::exception &e) {
 					std::cout << e.what() << std::endl;
 					break;
 				}
 			}
-
-			if ((asc_cnt % package) == package - 1) {
-				history_db->commit();
-				cout << "Historydb commit" << endl;
-			}
       		--i;
-			if (!--cut) {
-				break;
-			}
+			if (!--cut) break;
 		}
 		history_db->commit();
 		cout << endl << "Succeeded!" << endl;
@@ -212,9 +211,23 @@ class DBControllerImplPrivate {
 	}
 
 	template<typename T>
-	struct DBCache {
+	class DBCache {
+	public:
 		typedef typename T::cache_key_type key_type;
+		inline bool contains(const key_type &key) const {
+			return map.count(key);
+		}
+		void insert(const key_type &key, const T &val) {
+			map.emplace(key, val);
+		}
+		T at(const key_type &key) const {
+			return map.at(key);
+		}
+		void sort() {
+		}
+	private:
 		std::unordered_map<key_type, T> map;
+
 	};
 
 	void cacheHistoryDB() {
@@ -241,14 +254,15 @@ class DBControllerImplPrivate {
 		auto rows = select<T>(*history_db).all();
 		std::for_each(rows.begin(), rows.end(), [this] (T &row) {
 			auto method = row.cache_field();
-			std::get<DBCache<T>>(m_hash).map.emplace(row.*method, std::move(row));
+			std::get<DBCache<T>>(m_hash).insert(row.*method, std::move(row));
 		});
+		std::get<DBCache<T>>(m_hash).sort();
 	}
 
 	template<typename T>
 	void cache_element(T &element) {
 		auto method = element.cache_field();
-		std::get<DBCache<T>>(m_hash).map.emplace(element.*method, element);
+		std::get<DBCache<T>>(m_hash).insert(element.*method, element);
 	}
 	template<typename From, typename To>
 	To convert(const From &);
@@ -293,11 +307,11 @@ HistoryDB::Conversations DBControllerImplPrivate::convert(const SkypeDB::Convers
 	dest.friendlyname = static_cast<std::string>(source.displayname);
 	dest.update();
 	auto skype_participants = select<SkypeDB::Participants>(*skype_main, SkypeDB::Participants::Convo_id == source.id).all();
-	auto usr_cache = std::get<DBCache<HistoryDB::Users>>(m_hash).map;
+	auto usr_cache = std::get<DBCache<HistoryDB::Users>>(m_hash);
 	for (SkypeDB::Participants sk_part : skype_participants) {
 		if (sk_part.identity == me) {
-			assert(usr_cache.count(me));
-			if (usr_cache.count(me)) {
+			assert(usr_cache.contains(me));
+			if (usr_cache.contains(me)) {
 				auto usr_me = usr_cache.at(me);
 				dest.users().link(usr_me);
 			}
@@ -305,7 +319,7 @@ HistoryDB::Conversations DBControllerImplPrivate::convert(const SkypeDB::Convers
 			auto contact_vec = select<SkypeDB::Contacts>(*skype_main, SkypeDB::Contacts::Skypename == sk_part.identity).all();
 			if (contact_vec.size() == 1) {//User is in contact list
 				SkypeDB::Contacts contact = contact_vec.at(0);
-				if (usr_cache.count(contact.skypename)) {
+				if (usr_cache.contains(contact.skypename)) {
 					dest.users().link(usr_cache.at(contact.skypename));
 				} else {
 					HistoryDB::Users nuser = convert<SkypeDB::Contacts, HistoryDB::Users>(contact);

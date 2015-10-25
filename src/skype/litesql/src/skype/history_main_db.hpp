@@ -271,7 +271,6 @@ public:
     litesql::Field<int> skype_id;
     static const litesql::FieldType Skype_timestamp;
     litesql::Field<int> skype_timestamp;
-    typedef int cache_key_type;
     static void initValues();
 protected:
     void defaults();
@@ -298,6 +297,7 @@ public:
     virtual bool typeIsCorrect() const;
     std::unique_ptr<Messages> upcast() const;
     std::unique_ptr<Messages> upcastCopy() const;
+    typedef int cache_key_type;
 };
 std::ostream & operator<<(std::ostream& os, Messages o);
 class Users : public litesql::Persistent {
@@ -328,7 +328,6 @@ public:
     litesql::Field<std::string> name;
     static const litesql::FieldType Lastmessagetime;
     litesql::Field<int> lastmessagetime;
-    typedef std::string cache_key_type;
     static void initValues();
 protected:
     void defaults();
@@ -355,6 +354,7 @@ public:
     virtual bool typeIsCorrect() const;
     std::unique_ptr<Users> upcast() const;
     std::unique_ptr<Users> upcastCopy() const;
+    typedef std::string cache_key_type;
 };
 std::ostream & operator<<(std::ostream& os, Users o);
 class history : public litesql::Database {

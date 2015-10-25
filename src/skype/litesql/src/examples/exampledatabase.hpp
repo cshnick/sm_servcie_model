@@ -265,7 +265,6 @@ protected:
 public:
     static const litesql::FieldType Sex;
     litesql::Field<int> sex;
-    typedef int myint;
     static void initValues();
 protected:
     void defaults();
@@ -296,6 +295,7 @@ public:
     virtual bool typeIsCorrect() const;
     std::unique_ptr<Person> upcast() const;
     std::unique_ptr<Person> upcastCopy() const;
+    typedef int myint;
 };
 std::ostream & operator<<(std::ostream& os, Person o);
 class Role : public litesql::Persistent {
