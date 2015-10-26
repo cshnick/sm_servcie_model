@@ -169,6 +169,7 @@ void SQLite3::throwError(int status) const {
     case SQLITE_NOMEM:      throw MemoryError(error);
     case SQLITE_FULL:       throw InsertionError(error);
     case SQLITE_CONSTRAINT: throw ConstraintError(error);
+    case SQLITE_CORRUPT:    throw CorruptError(error);
     default:                throw UnknownError("compile failed: " + error);
     }
 }

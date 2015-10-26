@@ -72,31 +72,20 @@ class DBControllerImplPrivate {
 		if (!m_w.get()) {
 			m_w.reset(new sm::filewatcher(m_filename, [this](std::string file, int mode) {
 				using namespace SkypeDB;
-				//std :: cout << file << "; mode: "<< (mode == sm::filewatcher::e_modify ? "modify" : "access") << std::endl;
 				std::lock_guard<Boss::Mutex> lock(m_mutex);
 				uint newBound = check_bound();
 				cout << (mode == sm::filewatcher::e_modify ? "modify" : "access") << endl;
 				if (newBound != m_watching_bound_line) {
 					int oldBound = m_watching_bound_line;
-					auto ms = select<SkypeDB::Messages>
-						(*skype_main, (Messages::Id > oldBound) && (Messages::Id <= newBound))
-						     .orderBy(Messages::Id, false).all();
+					auto ms = select<SkypeDB::Messages>(*skype_main,
+							  (Messages::Id > oldBound) && (Messages::Id <= newBound)).
+						      orderBy(Messages::Id, false).all();
 					std::for_each(ms.begin(), ms.end(), [this](const Messages &source) {
 						cout << source.id << " - " << source.body_xml << std::endl;
-						HistoryDB::Messages dest(*history_db);
-						dest.skype_id = (int)source.id;
-						dest.timestamp = (int)time(nullptr);
-						dest.skype_timestamp = (int)source.timestamp;
-						dest.body = conv_body(source.body_xml);
-//						dest.chat_id =   static_cast<int>(getOrCreate<HistoryDB::Chats, SkypeDB::Chats>
-//														 (source.chatname, SkypeDB::Chats::Name == source.chatname).id);
-//						dest.sender_id = static_cast<int>(getOrCreate<HistoryDB::Users, SkypeDB::Contacts>
-//														 (source.author  , SkypeDB::Contacts::Skypename == source.author).id);
-
-						dest.update();
+						HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(source);
+						cache_element(hm);
 					});
 					m_watching_bound_line = newBound;
-					//cout << "New message detected; latest index: " << m_watching_bound_line << endl;
 				}
 			}));
 		}
@@ -114,14 +103,19 @@ class DBControllerImplPrivate {
 		}
 		m_w.reset(nullptr);
 		m_filename = str;
-
 	}
 	uint check_bound() {
 		SelectQuery q;
 		q.result("max(id)");
 		q.source(SkypeDB::Messages::table__);
 		std::lock_guard<Boss::Mutex> lock(m_mutex);
-		return atoi(skype_main->query(q)[0][0]);
+		int result = m_watching_bound_line;
+		try {
+			result =  atoi(skype_main->query(q)[0][0]);
+		} catch (const litesql::CorruptError &e) {
+			cout << "Error: " << e << endl;
+		}
+		return result;
 	}
 
 	int calcPercent(int cnt, int i) {
@@ -224,6 +218,9 @@ class DBControllerImplPrivate {
 			return map.at(key);
 		}
 		void sort() {
+		}
+		void free() {
+
 		}
 	private:
 		std::unordered_map<key_type, T> map;

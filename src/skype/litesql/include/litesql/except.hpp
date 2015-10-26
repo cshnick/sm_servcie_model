@@ -61,7 +61,11 @@ public:
 
 class ConstraintError : public Except {
 public:
-    ConstraintError(std::string m) : Except("Contraint error: "+m){}
+    ConstraintError(std::string m) : Except("Constraint error: "+m){}
+};
+class CorruptError : public Except {
+public:
+    CorruptError(std::string m) : Except("Corrupt error: "+m){}
 };
 
 /** exception thrown when none of other exceptions match */
