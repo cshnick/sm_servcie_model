@@ -14,7 +14,7 @@
 #ifdef __unix
 #include "nix/nix_filewatcher.h"
 #else
-#error Unsupporetd OS
+#include "stub/stub_filewatcher.h"
 #endif
 #endif
 

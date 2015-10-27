@@ -20,7 +20,7 @@
 namespace Boss
 {
 
-#if !(defined(_MSC_VER) || defined(__clang__))
+#if !(defined(_MSC_VER) || !defined(__clang__))
 
   template <UInt N>
   inline constexpr UInt MakeId(char const (&str)[N])

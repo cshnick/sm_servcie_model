@@ -75,7 +75,7 @@ namespace Boss
   
   namespace Private
   {
-#if !(defined(_MSC_VER) || defined(__clang__))
+#if !(defined(_MSC_VER) || !defined(__clang__))
     template <typename T>
     struct Crc32TableWrap
     {      
@@ -88,6 +88,7 @@ namespace Boss
     
     typedef Crc32TableWrap<EmptyType> Crc32Table;
 
+      
     template<UInt const I>
     inline constexpr UInt Crc32Impl(char const *str)
     {
@@ -101,7 +102,7 @@ namespace Boss
         return 0xFFFFFFFF;
     }
 #endif
-#if (defined(_MSC_VER) || defined(__clang__))
+#if !(defined(_MSC_VER) || defined(__clang__))
     template <typename T>
     struct Crc32TableWrap
     {      
@@ -115,7 +116,7 @@ namespace Boss
     typedef Crc32TableWrap<EmptyType> Crc32Table;
 #endif
   }
-#if !(defined(_MSC_VER) || defined(__clang__))
+#if (defined(_MSC_VER) || defined(__clang__))
   template <UInt N>
   inline constexpr UInt Crc32(char const (&str)[N])
   {

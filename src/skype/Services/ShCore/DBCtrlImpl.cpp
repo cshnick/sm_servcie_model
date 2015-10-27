@@ -74,7 +74,7 @@ class DBControllerImplPrivate {
 				using namespace SkypeDB;
 				std::lock_guard<Boss::Mutex> lock(m_mutex);
 				uint newBound = check_bound();
-				cout << (mode == sm::filewatcher::e_modify ? "modify" : "access") << endl;
+				//cout << (mode == sm::filewatcher::e_modify ? "modify" : "access") << endl;
 				if (newBound != m_watching_bound_line) {
 					int oldBound = m_watching_bound_line;
 					auto ms = select<SkypeDB::Messages>(*skype_main,

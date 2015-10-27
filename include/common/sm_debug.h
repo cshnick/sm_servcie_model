@@ -14,7 +14,12 @@
 #  if (defined(__linux__) || defined (__unix__))
 #    include "nix/callstack.h"
 #  else
-#    error "Unknown OS"
+//Stub
+namespace Private {
+static inline bool callstack_dump(std::ostream &, unsigned int max_frames = 63) {
+	return false;
+}
+} //namespace Private
 #  endif
 #endif
 
