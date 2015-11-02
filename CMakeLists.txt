@@ -60,16 +60,17 @@ SET (regtool regtool)
 SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wno-vla")
 
 set (lib_path_prefix "../lib")
+set (bin_path_prefix "")
 if (APPLE)
-set (lib_path_prefix
-	 "../../lib/Debug")
+set (lib_path_prefix "../../lib/Debug")
+set (bin_path_prefix "/Debug")
 endif(APPLE)
 function (reg_lib reg_lib_name)
     add_custom_command(
     TARGET ${reg_lib_name}
     POST_BUILD
     COMMAND ./regtool -reg ${REGISTRY_FILE} ${lib_path_prefix}/lib${reg_lib_name}.so
-    WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}/Debug
+    WORKING_DIRECTORY ${EXECUTABLE_OUTPUT_PATH}${bin_path_prefix}
     COMMENT "Registering ${reg_lib_name}"
     )
 endfunction(reg_lib)

@@ -27,6 +27,7 @@
 
 #ifdef _WIN32
 #   define MAKE_MODULE_NAME(name_) name_ ".dll"
+#   define MAKE_MODULE_PATH ""
 #elif (defined(__linux__) || defined(__unix__))
 #   define MAKE_MODULE_NAME(name_) "lib" name_ ".so"
 #   define MAKE_MODULE_PATH "../lib/"

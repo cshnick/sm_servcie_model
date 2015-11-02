@@ -35,7 +35,7 @@ int main (int argc, char **argv) {
         int percent = 0, counter = 0;
         Boss::uint64 ctime = Boss::GetTimeMs64();
         for (Messages m : ms) {
-            percent = counter * 100 / mcnt;
+            percent = counter * 100 / (mcnt - 1);
             cout << "\r" << percent << "%" << flush;
             auto convs = m.conversation().get().all();
             assert(convs.size() == 1);
@@ -44,7 +44,7 @@ int main (int argc, char **argv) {
             counter++;
         }
         cout << endl;
-        cout << "Caching finished, elaped time ms: " << Boss::GetTimeMs64() - ctime << endl;
+        cout << "Caching finished, elapsed time ms: " << Boss::GetTimeMs64() - ctime << endl;
         
     } catch (const Except &e) {
         cerr << "Error: " << e.what() << endl;

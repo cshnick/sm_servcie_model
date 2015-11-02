@@ -3,12 +3,20 @@
 
 #include "common/filewatcher.h"
 
+namespace {
+#ifndef __APPLE__
+	constexpr const char *watch_file = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
+#else
+	constexpr const char *watch_file = "/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db";
+#endif //__APPLE__
+} //namespace
+
 int main (int argc, char **argv) {
     {
         using namespace std;
         
-        sm::filewatcher fw("/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db", [](const std::string &path, int) {
-            std::cout << "Callback retreived, incoming path: " << path << std::endl;
+        sm::filewatcher fw(watch_file, [](const std::string &path, int) {
+            std::cout << "Callback retrieved, incoming path: " << path << std::endl;
         });
         
         cout << "Attempting to start filewatcher" << endl;

@@ -30,6 +30,8 @@ public:
 		e_modify = 0x4
 	};
 
+	static constexpr const int latency = 100 * 1000; //100 ms
+
 	FileWatcherImpl(const FileWatcherImpl&) = delete;
 	FileWatcherImpl& operator=(const FileWatcherImpl&) = delete;
 	FileWatcherImpl() = delete;
@@ -116,7 +118,7 @@ private:
 					  | IN_DELETE_SELF | IN_MOVE_SELF;
 			inotify_wd = inotify_add_watch(inotify_fd, m_filename.c_str(), mask);
 			if (inotify_wd == -1) {
-				throw FileWatcherException("inotify_add_watch");
+				throw FileWatcherException("inotify_add_watch error, filename : " + m_filename);
 			}
 
 			for (;;) {
@@ -135,12 +137,17 @@ private:
 
 				/* Process all of the events in buffer returned by read() */
 
-				for (p = buf; p < buf + numRead; ) {
-					event = (struct inotify_event *) p;
-					displayInotifyEvent(event);
-
-					p += sizeof(struct inotify_event) + event->len;
-				}
+				int counter;
+				usleep(latency); //give application some time to operate the file
+				event = (struct inotify_event *) buf;
+				displayInotifyEvent(event); //Count only event after latency, ignore others
+//				for (p = buf; p < buf + numRead; ) {
+//					std::cout << "After read" << ++counter << std::endl;
+//					event = (struct inotify_event *) p;
+//					displayInotifyEvent(event);
+//
+//					p += sizeof(struct inotify_event) + event->len;
+//				}
 			}
 		}
 	}
