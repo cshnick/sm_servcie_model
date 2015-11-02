@@ -37,7 +37,7 @@ namespace sm {
                 
                 FSEventStreamContext * streamContext = (FSEventStreamContext *)malloc(sizeof(FSEventStreamContext));
                 streamContext->version = 0;
-                streamContext->info = this;//&fileDescriptor;
+                streamContext->info = this; //callback context;
                 streamContext->retain = NULL;
                 streamContext->release = NULL;
                 streamContext->copyDescription = NULL;
@@ -79,20 +79,18 @@ namespace sm {
                 FSEventStreamStart(m_stream);
                 pthread_mutex_unlock(&m_mutex);
                 m_flag = 1;
-                
-                std::cout << "Started" << std::endl;
             }
             void stop() {
                 m_flag = 0;
                 pthread_mutex_lock(&m_mutex);
                 FSEventStreamStop(m_stream);
                 pthread_mutex_unlock(&m_mutex);
-                std::cout << "Stopped watcher" << std::endl;
             }
             
         private:
+            typedef std::function<void(std::string, int)> UserCallback;
             std::string m_filename;
-            std::function<void(std::string, int)> m_func;
+            UserCallback m_func;
             FSEventStreamRef m_stream = nullptr;
             CFRunLoopRef m_runloop = nullptr;
             
@@ -139,7 +137,6 @@ namespace sm {
                     }
                     
                     CFRunLoopRun();
-                    std::cout << "CFRunLoopRun returned" << std::endl;
                 }
             }
             

@@ -40,6 +40,14 @@ SET (COMMON_LIBS
     ${MAC_COMMON_LIBS}
 )
 
+SET(DB_WRAPPERS_LIB
+	skype_dbs
+)
+
+SET(LITESQL_LIB
+	litesql
+)
+
 add_definitions (
 )
 

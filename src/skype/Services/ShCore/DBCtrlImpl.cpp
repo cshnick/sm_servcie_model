@@ -151,13 +151,11 @@ class DBControllerImplPrivate {
 		int cut = 0;
 		int package = 1000;
 		cout << "Importing skype messages" << endl;
-		auto messages_vec = select<SkypeDB::Messages>(*skype_main).orderBy(SkypeDB::Messages::Timestamp, false).all();
+		auto messages_vec = select<SkypeDB::Messages>(*skype_main).orderBy(SkypeDB::Messages::Timestamp).all();
 		history_db->begin();
 		auto messages_cache = std::get<DBCache<HistoryDB::Messages>>(m_hash);
 		for (auto sky_mes : messages_vec) {
 			int asc_cnt = cnt - i;
-
-
 			percent = calcPercent(cnt, i);
 			cout << "\r" << asc_cnt << " - " << percent << "%" << flush;
 
