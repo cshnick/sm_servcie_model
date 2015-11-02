@@ -10,19 +10,25 @@
 
 #include "cxxabi.h"
 
+#ifndef __APPLE__
+#   define MAIN_DB__ "/home/ilia/.Skype/sc.ryabokon.ilia/main.db"
+#else
+#   define MAIN_DB__ "/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db"
+#endif
+
 using namespace Boss;
 
 int main()
 {
   try
   {
-    Boss::Loader Ldr("sc_reg.xml", "../lib/" MAKE_MODULE_NAME("service_registry"),
-                     "../lib/" MAKE_MODULE_NAME("class_factory"));
+    Boss::Loader Ldr("sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
+                     MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory"));
 
     auto ctrl = Boss::CreateObject<skype_sc::IDBController>(skype_sc::service::id::DBControler);
     RefObjQIPtr<skype_sc::IDBWatcher> watcher(ctrl);
 
-    watcher->SetWatchFile(Base<String>::Create("/home/ilia/.Skype/sc.ryabokon.ilia/main.db").Get());
+    watcher->SetWatchFile(Base<String>::Create(MAIN_DB__).Get());
 
     Boss::RefObjQIPtr<skype_sc::IService> service(watcher);
     service->Start();

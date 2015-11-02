@@ -8,15 +8,16 @@
 #ifndef INCLUDE_COMMON_FILEWATCHER_H_
 #define INCLUDE_COMMON_FILEWATCHER_H_
 
-#ifdef _WIN32
-#include "win/filewatcher.h"
+#if defined(_WIN32)
+#  include "win/filewatcher.h"
+#elif defined(__unix)
+#  include "nix/nix_filewatcher.h"
+#elif defined(__APPLE__)
+#  include "macosx/macosx_filewatcher.h"
 #else
-#ifdef __unix
-#include "nix/nix_filewatcher.h"
-#else
-#include "stub/stub_filewatcher.h"
-#endif
-#endif
+#  include "stub/stub_filewatcher.h"
+#endif //defined(_WIN32)
+
 
 
 

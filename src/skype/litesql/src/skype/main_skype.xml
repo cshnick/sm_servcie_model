@@ -234,14 +234,14 @@
     <field name="chat_dbid" type="integer" />
     <field name="history_horizon" type="integer" />
     <field name="history_sync_state" type="string"/>
-    <field name="extprop_windowpos_x" type="integer" />
-    <field name="extprop_windowpos_y" type="integer" />
-    <field name="extprop_windowpos_w" type="integer" />
-    <field name="extprop_windowpos_h" type="integer" />
-    <field name="extprop_window_roster_visible" type="integer" />
-    <field name="extprop_window_splitter_layout" type="string"/>
-    <field name="extprop_hide_from_history" type="integer" />
-    <field name="extprop_window_detached" type="integer" />
+    <!-- <field name="extprop_windowpos_x" type="integer" /> -->
+    <!-- <field name="extprop_windowpos_y" type="integer" /> -->
+    <!-- <field name="extprop_windowpos_w" type="integer" /> -->
+    <!-- <field name="extprop_windowpos_h" type="integer" /> -->
+    <!-- <field name="extprop_window_roster_visible" type="integer" /> -->
+    <!-- <field name="extprop_window_splitter_layout" type="string"/> -->
+    <!-- <field name="extprop_hide_from_history" type="integer" /> -->
+    <!-- <field name="extprop_window_detached" type="integer" /> -->
     <field name="is_blocked" type="integer" />
     <field name="last_message_id" type="integer" />
     <field name="picture" type="string"/>

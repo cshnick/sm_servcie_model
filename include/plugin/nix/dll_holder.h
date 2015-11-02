@@ -30,7 +30,8 @@ namespace Boss
 
   namespace Private
   {
-	std::string DemangledDlError() {
+	   std::string DemangledDlError() {
+#ifndef __APPLE__
 		constexpr unsigned int buf_sz = 256;
 		char *buff = new char[buf_sz];
 		memset(buff, '\0', buf_sz);
@@ -48,7 +49,11 @@ namespace Boss
 					pos, &length, &status);
 		}
 		return buff;
+#else //__APPLE__
+        return std::string("");
+#endif
 	}
+      
 
     class DllHolder final
     {

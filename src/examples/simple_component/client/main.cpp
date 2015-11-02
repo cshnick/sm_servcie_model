@@ -19,8 +19,8 @@
 int main()
 {
 	try	{
-		Boss::Loader Ldr("Registry.xml", "../lib/" MAKE_MODULE_NAME("service_registry"),
-				"../lib/" MAKE_MODULE_NAME("class_factory"));
+		Boss::Loader Ldr("Registry.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
+				MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory"));
 		int stub = 0;
 		int stub1 = 1;
 		int stub2 = 2;

@@ -1,1 +1,2 @@
 add_subdirectory(functionality_test)
+add_subdirectory(filewatcher_test)

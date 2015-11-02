@@ -26,6 +26,7 @@ public:
 	: MutexHandle(new pthread_mutex_t) {
 		MutexAttr.reset(new pthread_mutexattr_t);
 		memset(MutexAttr.get(), 0, sizeof(pthread_mutexattr_t));
+        pthread_mutexattr_init(MutexAttr.get());
 		if (pthread_mutexattr_settype(MutexAttr.get(), PTHREAD_MUTEX_RECURSIVE))
 		{
 			throw MutexException("Can't create mutex");
@@ -56,8 +57,8 @@ public:
 	}
 
 private:
-	std::auto_ptr<pthread_mutexattr_t> MutexAttr;
-	std::auto_ptr<pthread_mutex_t> MutexHandle;
+	std::unique_ptr<pthread_mutexattr_t> MutexAttr;
+	std::unique_ptr<pthread_mutex_t> MutexHandle;
 };
 
 } //namespace Private

@@ -39,10 +39,6 @@ SET(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
 if (NOT APPLE)
     SET(CMAKE_INSTALL_RPATH
         "${CMAKE_INSTALL_RPATH}:$ORIGIN/../lib/")
-else (NOT APPLE)
-    SET (CMAKE_INSTALL_RPATH
-   	"@loader_path"
-    )
 endif (NOT APPLE)
 
 if (MSVC)

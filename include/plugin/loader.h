@@ -29,8 +29,10 @@
 #   define MAKE_MODULE_NAME(name_) name_ ".dll"
 #elif (defined(__linux__) || defined(__unix__))
 #   define MAKE_MODULE_NAME(name_) "lib" name_ ".so"
+#   define MAKE_MODULE_PATH "../lib/"
 #elif (defined(__APPLE__))
 #   define MAKE_MODULE_NAME(name_) "lib" name_ ".dylib"
+#   define MAKE_MODULE_PATH "../../lib/Debug/"
 #else
 #    error "Unknown OS"
 #endif
