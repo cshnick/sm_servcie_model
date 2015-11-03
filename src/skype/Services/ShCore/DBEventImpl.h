@@ -4,17 +4,45 @@
 #include "../../include/ifaces.h"
 #include "../../include/class_ids.h"
 #include "core/co_class.h"
+#include "core/ref_obj_ptr.h"
+#include "common/string.h"
 
 namespace skype_sc {
+using namespace Boss;
+class DBMessage : public SimpleCoClass<IMessage> {
+public:
+	DBMessage() {
+		body = Base<String>::Create("Naked body");
+	}
+
+	virtual RetCode BOSS_CALL Body(IString **in_body) override {
+		return body.QueryInterface(in_body);
+	}
+	virtual Boss::RetCode BOSS_CALL SetBody(IString *out_body) override {
+		body = out_body;
+		return Status::Ok;
+	}
+
+private:
+	ref_ptr<IString> body;
+};
 
 class DBEventImpl
- :public Boss::CoClass<skype_sc::service::id::DBEvent, IDBEvent> {
+		:public CoClass<skype_sc::service::id::DBEvent, IDBEvent> {
+
 
 public:
 	DBEventImpl();
 	virtual ~DBEventImpl();
 
-	virtual Boss::RetCode BOSS_CALL Message(IMessage **);
+	virtual Boss::RetCode BOSS_CALL Message(IMessage **) override;
+	virtual RetCode BOSS_CALL SetMessage(IMessage *mes) override {
+		m_message = mes;
+		return Status::Ok;
+	}
+
+private:
+	ref_ptr<IMessage> m_message;
 };
 
 } //namespace skype_sc

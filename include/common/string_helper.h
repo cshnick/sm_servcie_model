@@ -144,7 +144,7 @@ namespace Boss
       if (Str->Clear() != Status::Ok)
         throw StringHelperException("Failed to clear string.");
     }
-    template <UInt Type>
+    template <UInt Type = IString::AnsiString>
     typename Private::StringTypeFromTypeId<Type>::Type GetString() const
     {
       void const *Data = 0;

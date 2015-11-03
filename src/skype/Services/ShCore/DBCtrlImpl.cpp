@@ -1,10 +1,12 @@
 #include "DBCtrlImp.h"
+#include "DBEventImpl.h"
 
 #include <atomic>
 #include <iostream>
 #include <algorithm>
 #include <unordered_map>
 #include <functional>
+#include <future>
 
 #include "core/error_codes.h"
 #include "core/ref_obj_qi_ptr.h"
@@ -85,7 +87,8 @@ class DBControllerImplPrivate {
 						HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(source);
 						cache_element(hm);
 						for (auto obs : m_observers) {
-							obs->ReactOnDbChanged(nullptr);
+							ref_ptr<IDBEvent> stub_event = Base<DBEventImpl>::Create();
+							std::async(std::launch::async, &IDBObserver::ReactOnDbChanged, obs, stub_event.Get());
 						}
 					});
 					m_watching_bound_line = newBound;

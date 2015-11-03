@@ -1,7 +1,7 @@
 /*
  * db_ifaces.h
  *
- *  Created on: 03 нояб. 2015 г.
+ *  Created on: 03 пїЅпїЅпїЅпїЅ. 2015 пїЅ.
  *      Author: ilia
  */
 
@@ -13,11 +13,15 @@
 #include "common/istring.h"
 
 namespace skype_sc {
+using namespace Boss;
+
 struct IMessage
 		: public Boss::Inherit<Boss::IBase> {
 
-	BOSS_DECLARE_IFACEID(skype_sc.IChat) //
+	BOSS_DECLARE_IFACEID(skype_sc.IMessage) //
 
+	virtual Boss::RetCode BOSS_CALL Body(IString **) = 0;
+	virtual Boss::RetCode BOSS_CALL SetBody(IString *) = 0;
 };
 
 struct IConversation

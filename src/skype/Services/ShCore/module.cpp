@@ -10,7 +10,7 @@ namespace
     <
 	  skype_sc::DBControllerImpl,
       skype_sc::DBObserverImpl,
-      skype_sc::DBEventImpl
+	  skype_sc::DBEventImpl
       >
     ExportedCoClasses;
 }

@@ -14,7 +14,7 @@
 #include "ifaces.h"
 
 #ifndef __APPLE__
-#   define MAIN_DB__ "/home/ilia/.Skype/sc.ryabokon.ilia/main.db"
+#   define MAIN_DB__ "/home/ilia/.Skype/luxa_ryabic/main.db"
 #else
 #   define MAIN_DB__ "/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db"
 #endif
@@ -25,8 +25,12 @@ using namespace skype_sc;
 struct UIObserver
 	:public Boss::CoClass<skype_sc::service::id::DBObserver, IDBObserver> {
 
-	Boss::RetCode BOSS_CALL ReactOnDbChanged(IDBEvent*) override {
-		std::cout << "ReactOnDbChanged" << std::endl;
+	Boss::RetCode BOSS_CALL ReactOnDbChanged(IDBEvent *event) override {
+		ref_ptr<IMessage> mesg;
+		auto ret = event->Message(mesg.GetPPtr());
+		ref_ptr<IString> str;
+		if (ret == Status::Ok) ret = mesg->Body(str.GetPPtr());
+		std::cout << StringHelper(str).GetString<IString::AnsiString>() << std::endl;
 		return Boss::Status::Ok;
 	}
 };
@@ -43,11 +47,11 @@ int main()
 
     watcher->SetWatchFile(Base<String>::Create(MAIN_DB__).Get());
 
-    qi_ptr<skype_sc::IService> service(ctrl);
-    service->Start();
-
     ref_ptr<UIObserver> ui_observer = Base<UIObserver>::Create();
     watcher->AddObserver(ui_observer.Get());
+
+    qi_ptr<skype_sc::IService> service(ctrl);
+    service->Start();
 
     ref_ptr<IString> str;
 

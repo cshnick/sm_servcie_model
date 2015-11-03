@@ -34,6 +34,7 @@ struct IDBEvent
 	BOSS_DECLARE_IFACEID_HEX(0xb5413303) //skype_sc.IDBEvent
 
 	virtual Boss::RetCode BOSS_CALL Message(IMessage **) = 0;
+	virtual RetCode BOSS_CALL SetMessage(IMessage *mes) = 0;
 };
 
 struct IDBObserver;
