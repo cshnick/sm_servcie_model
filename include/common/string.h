@@ -127,7 +127,7 @@ namespace Boss
           return Status::Fail;
         if (StrLength != Length)
           return Status::False;
-        RefObjPtr<IBuffer> Buf;
+        ref_ptr<IBuffer> Buf;
         if (str->GetString(StrType, Buf.GetPPtr()) != Status::Ok)
           return Status::Fail;
         void const *StrBufData = 0;
@@ -201,7 +201,7 @@ namespace Boss
     mutable std::recursive_mutex Mtx;
     UInt Type = UnknownStringType;
     UInt Length = 0;
-    mutable RefObjPtr<IBuffer> Data;
+    mutable ref_ptr<IBuffer> Data;
     
     virtual RetCode ConvertInternal(UInt type)
     {

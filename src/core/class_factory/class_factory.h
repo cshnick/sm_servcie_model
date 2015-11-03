@@ -65,8 +65,8 @@ namespace Boss
     unsigned const CleanerTimeout = 1;
     std::unique_ptr<std::thread> CleanerThread;
     
-    RefObjPtr<IServiceRegistry> Registry;
-    RefObjPtr<IServiceLocator> Locator;
+    ref_ptr<IServiceRegistry> Registry;
+    ref_ptr<IServiceLocator> Locator;
     
     void Clean();
   };

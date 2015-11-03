@@ -11,6 +11,8 @@
 #ifndef __MULTY_COMPONENT_IFACES_H__
 #define __MULTY_COMPONENT_IFACES_H__
 
+#include "db_ifaces.h"
+
 #include "core/ibase.h"
 #include "core/core_types.h"
 #include "common/istring.h"
@@ -30,14 +32,17 @@ struct IDBEvent
 		: public Boss::Inherit<Boss::IBase> {
 
 	BOSS_DECLARE_IFACEID_HEX(0xb5413303) //skype_sc.IDBEvent
+
+	virtual Boss::RetCode BOSS_CALL Message(IMessage **) = 0;
 };
 
+struct IDBObserver;
 struct IDBWatcher
 		: public Boss::Inherit<Boss::IBase>  {
 
 	BOSS_DECLARE_IFACEID_HEX(0x27e199a6)  // CRC32(skype_sc.IDBWatcher)
 
-	virtual Boss::RetCode BOSS_CALL AddObserver() = 0;
+	virtual Boss::RetCode BOSS_CALL AddObserver(IDBObserver *) = 0;
 	virtual Boss::RetCode BOSS_CALL RemoveObserver() = 0;
 	virtual Boss::RetCode BOSS_CALL SetWatchFile(Boss::IString *) = 0;
 	virtual Boss::RetCode BOSS_CALL GetWatchFile(Boss::IString **) = 0;

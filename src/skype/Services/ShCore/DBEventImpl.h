@@ -13,6 +13,8 @@ class DBEventImpl
 public:
 	DBEventImpl();
 	virtual ~DBEventImpl();
+
+	virtual Boss::RetCode BOSS_CALL Message(IMessage **);
 };
 
 } //namespace skype_sc

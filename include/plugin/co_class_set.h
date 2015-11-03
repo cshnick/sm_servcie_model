@@ -29,12 +29,12 @@ namespace Boss
     struct CoClassSet
     {
       template <typename ... Args>
-      static RefObjPtr<IBase> CreateObject(ClassId clsId, Args const & ... args)
+      static ref_ptr<IBase> CreateObject(ClassId clsId, Args const & ... args)
       {
         typedef typename std::tuple_element<I, T>::type CurType;
         if (clsId == GetCoClassId<CurType>::Id)
         {
-          RefObjPtr<IBase> Obj;
+          ref_ptr<IBase> Obj;
           Base<CurType>::Create(args ... ).QueryInterface(Obj.GetPPtr());
           return std::move(Obj);
         }
@@ -51,7 +51,7 @@ namespace Boss
     struct CoClassSet<T, -1>
     {
       template <typename ... Args>
-      static RefObjPtr<IBase> CreateObject(ClassId clsId, Args const & ...)
+      static ref_ptr<IBase> CreateObject(ClassId clsId, Args const & ...)
       {
         throw CoClassSetException("Failed to create object with CoClassId = " +
                                   ToString(clsId) + ".");
@@ -77,12 +77,12 @@ namespace Boss
     
   public:
     template <typename ... Args>
-    static RefObjPtr<IBase> CreateObject(ClassId clsId, Args const & ... args)
+    static ref_ptr<IBase> CreateObject(ClassId clsId, Args const & ... args)
     {
       return Private::CoClassSet<CoClasses, CoClassCount - 1>::CreateObject(clsId, args ... );
     }
     template <typename ... Args, unsigned N>
-    static RefObjPtr<IBase> CreateObject(char const (&clsId)[N], Args const & ... args)
+    static ref_ptr<IBase> CreateObject(char const (&clsId)[N], Args const & ... args)
     {
       return CreateObject(MakeId(clsId), args ... );
     }

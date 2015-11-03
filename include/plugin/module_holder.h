@@ -30,7 +30,7 @@ namespace Boss
   class ModuleHolder final
   {
   public:
-    typedef RefObjPtr<IBase> IBasePtr;
+    typedef ref_ptr<IBase> IBasePtr;
     typedef std::vector<ClassId> ClassIdPool;
 
     ModuleHolder(ModuleHolder const &) = delete;
@@ -49,11 +49,11 @@ namespace Boss
       Dll = std::move(module.Dll);
       return *this;
     }
-    RefObjPtr<IServiceLocator> GetServiceLocator() const
+    ref_ptr<IServiceLocator> GetServiceLocator() const
     {
       typedef RetCode (*PFNBossGetServiceLocator)(IServiceLocator **);
       auto *BossGetServiceLocator = Dll.GetProc<PFNBossGetServiceLocator>("BossGetServiceLocator");
-      RefObjPtr<IServiceLocator> Inst;
+      ref_ptr<IServiceLocator> Inst;
       if (BossGetServiceLocator(Inst.GetPPtr()) != Status::Ok)
         throw ModuleHolderException("Failed to get ServiceLocator instance.");
       return std::move(Inst);
@@ -62,7 +62,7 @@ namespace Boss
     {
       typedef RetCode (*PFNBossSetServiceLocator)(IServiceLocator *);
       auto *BossSetServiceLocator = Dll.GetProc<PFNBossSetServiceLocator>("BossSetServiceLocator");
-      RefObjPtr<IServiceLocator> Inst;
+      ref_ptr<IServiceLocator> Inst;
       if (BossSetServiceLocator(locator) != Status::Ok)
         throw ModuleHolderException("Failed to set ServiceLocator.");
     }
@@ -104,9 +104,9 @@ namespace Boss
       return std::move(Ret);
     }
     template <typename T>
-    RefObjQIPtr<T> CreateObject(ClassId classId)
+    qi_ptr<T> CreateObject(ClassId classId)
     {
-      RefObjQIPtr<T> Ret(CreateObject(classId));
+      qi_ptr<T> Ret(CreateObject(classId));
       if (!Ret.Get())
         throw ModuleHolderException("Interface not found.");
       return std::move(Ret);

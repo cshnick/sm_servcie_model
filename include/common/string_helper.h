@@ -55,7 +55,7 @@ namespace Boss
   class StringHelper final
   {
   public:
-    typedef RefObjPtr<IString> IStringPtr;
+    typedef ref_ptr<IString> IStringPtr;
 
     StringHelper(StringHelper const &) = delete;
     StringHelper& operator = (StringHelper const &) = delete;
@@ -149,7 +149,7 @@ namespace Boss
     {
       void const *Data = 0;
       UInt Size = 0;
-      RefObjPtr<IBuffer> Buf;
+      ref_ptr<IBuffer> Buf;
       if (Str->GetString(Type, Buf.GetPPtr()) != Status::Ok ||
           Buf->GetSize(&Size)  != Status::Ok ||
           Buf->GetData(&Data)  != Status::Ok)

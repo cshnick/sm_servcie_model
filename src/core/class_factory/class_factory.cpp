@@ -120,17 +120,17 @@ namespace Boss
       }
       if (!Registry.Get())
         return Status::Fail;
-      RefObjPtr<IServiceInfo> SrvInfo;
+      ref_ptr<IServiceInfo> SrvInfo;
       RetCode Code = Registry->GetServiceInfo(clsId, SrvInfo.GetPPtr());
       if (Code != Status::Ok)
         return Code;
       {
-        RefObjQIPtr<ILocalServiceInfo> LocalSrvInfo(SrvInfo);
+        qi_ptr<ILocalServiceInfo> LocalSrvInfo(SrvInfo);
         if (LocalSrvInfo.Get())
         {
           std::string Path;
           {
-            RefObjPtr<IString> ModulePath;
+            ref_ptr<IString> ModulePath;
             if ((Code = LocalSrvInfo->GetModulePath(ModulePath.GetPPtr())) != Status::Ok)
               return Code;
             Path = std::move(StringHelper(ModulePath).GetString<IString::AnsiString>());
@@ -145,7 +145,7 @@ namespace Boss
         }
       }
       {
-        RefObjQIPtr<IRemoteServiceInfo> RemoteSrvInfo(SrvInfo);
+        qi_ptr<IRemoteServiceInfo> RemoteSrvInfo(SrvInfo);
         if (RemoteSrvInfo.Get())
         {
           return Status::NotImplemented;

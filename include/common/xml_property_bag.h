@@ -142,7 +142,7 @@ namespace Boss
       try
       {
         std::lock_guard<std::recursive_mutex> Lock(Mtx);
-        RefObjPtr<IBuffer> Buffer;
+        ref_ptr<IBuffer> Buffer;
         if (stream->Read(Buffer.GetPPtr()) != Status::Ok)
           return Status::Fail;
         void const *Data = 0;
@@ -205,7 +205,7 @@ namespace Boss
     }
     
   private:
-    typedef RefObjPtr<IBase> IBasePtr;
+    typedef ref_ptr<IBase> IBasePtr;
     typedef std::unordered_map<std::string, IBasePtr> PropPool;
     
     mutable std::recursive_mutex Mtx;
@@ -220,7 +220,7 @@ namespace Boss
                        rapidxml::xml_node<> *node) const
     {
       {
-        RefObjQIPtr<IEntityId> Id(prop);
+        qi_ptr<IEntityId> Id(prop);
         if (Id.Get())
         {
           UInt EntityId = 0;
@@ -236,7 +236,7 @@ namespace Boss
         }
       }
       {
-        RefObjQIPtr<IString> String(prop);
+        qi_ptr<IString> String(prop);
         if (String.Get())
         {
           auto *StrVal = doc->allocate_string(GetString(String.Get()).c_str());
@@ -249,7 +249,7 @@ namespace Boss
         }
       }
       {
-        RefObjQIPtr<IEnum> Enum(prop);
+        qi_ptr<IEnum> Enum(prop);
         if (Enum.Get())
         {
           auto *StrName = doc->allocate_string(name.c_str());
@@ -259,13 +259,13 @@ namespace Boss
           NewNode->append_attribute(TypeAttr);
           if (Enum->Reset() != Status::Ok)
             throw std::runtime_error("Failed to reset enum position.");
-          for (RefObjPtr<IBase> i ; Enum->Next(i.GetPPtr()) == Status::Ok ; i.Release())
+          for (ref_ptr<IBase> i ; Enum->Next(i.GetPPtr()) == Status::Ok ; i.Release())
             SerializeItem(Tags::ItemTag, i.Get(), doc, NewNode);
           return;
         }
       }
       {
-        RefObjQIPtr<IPropertyBag> PropBag(prop);
+        qi_ptr<IPropertyBag> PropBag(prop);
         if (PropBag.Get())
         {
           auto *StrName = doc->allocate_string(name.c_str());
@@ -273,20 +273,20 @@ namespace Boss
           node->append_node(NewNode);
           auto *TypeAttr = doc->allocate_attribute(Tags::TypeTag, Tags::PropertyBagTag);
           NewNode->append_attribute(TypeAttr);
-          RefObjPtr<IEnum> Enum;
+          ref_ptr<IEnum> Enum;
           if (PropBag->EnumProperties(Enum.GetPPtr()) != Status::Ok)
             throw std::runtime_error("Failed to get PropertyBag.");
           if (Enum->Reset() != Status::Ok)
             throw std::runtime_error("Failed to reset enum position.");
-          for (RefObjPtr<IBase> i ; Enum->Next(i.GetPPtr()) == Status::Ok ; i.Release())
+          for (ref_ptr<IBase> i ; Enum->Next(i.GetPPtr()) == Status::Ok ; i.Release())
           {
-            RefObjQIPtr<INamedValue> Prop(i);
+            qi_ptr<INamedValue> Prop(i);
             if (!Prop.Get())
               throw std::runtime_error("Failed to get PropertyItem.");
-            RefObjPtr<IString> Name;
+            ref_ptr<IString> Name;
             if (Prop->GetName(Name.GetPPtr()) != Status::Ok)
               throw std::runtime_error("Failed to get property name.");
-            RefObjPtr<IBase> Value;
+            ref_ptr<IBase> Value;
             if (Prop->GetValue(Value.GetPPtr()) != Status::Ok)
               throw std::runtime_error("Failed to get property value.");
             SerializeItem(GetString(Name.Get()), Value.Get(), doc, NewNode);
@@ -298,7 +298,7 @@ namespace Boss
     
     std::string GetString(IString *str) const
     {
-      RefObjPtr<IBuffer> StrBuffer;
+      ref_ptr<IBuffer> StrBuffer;
       if (str->GetString(IString::AnsiString, StrBuffer.GetPPtr()) != Status::Ok)
         throw std::runtime_error("Failed to get string.");
       UInt StrLen = 0;
@@ -349,7 +349,7 @@ namespace Boss
             throw std::runtime_error("Failed to get node name.");
           NewPropBag->Props[Name] = DeserializeItem(i);
         }
-        return IBasePtr(RefObjQIPtr<IBase>(NewPropBag).Get());
+        return IBasePtr(qi_ptr<IBase>(NewPropBag).Get());
       }
       throw std::runtime_error("Unknown type.");
     }

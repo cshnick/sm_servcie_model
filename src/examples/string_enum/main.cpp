@@ -53,7 +53,7 @@ namespace MyNs
     }
     
   private:
-    mutable Boss::RefObjPtr<Boss::IEnum> Strings;
+    mutable Boss::ref_ptr<Boss::IEnum> Strings;
         
     // ISimpleObject
     virtual Boss::RetCode BOSS_CALL GetStrings(Boss::IEnum **strings) const
@@ -70,15 +70,15 @@ int main()
 {
   try
   {
-    Boss::RefObjPtr<MyNs::ISimpleObject> Obj = Boss::Base<MyNs::SimpleObject>::Create();
-    Boss::RefObjPtr<Boss::IEnum> Strings;
+    Boss::ref_ptr<MyNs::ISimpleObject> Obj = Boss::Base<MyNs::SimpleObject>::Create();
+    Boss::ref_ptr<Boss::IEnum> Strings;
     if (Obj->GetStrings(Strings.GetPPtr()) != Boss::Status::Ok)
     {
       std::cerr << "failed to get strings." << std::endl;
       return -1;
     }
     Boss::EnumHelper<Boss::IString> Enum(Strings);
-    for (Boss::RefObjPtr<Boss::IString> i = Enum.First() ; i.Get() ; i = Enum.Next())
+    for (Boss::ref_ptr<Boss::IString> i = Enum.First() ; i.Get() ; i = Enum.Next())
       std::cout << Boss::StringHelper(i).GetString<Boss::IString::AnsiString>() << std::endl;
   }
   catch (std::exception const &e)

@@ -26,13 +26,13 @@ void ShowHelp()
   std::cout << "regtool -unreg reg_file_name service_name" << std::endl;
 }
 
-void Load(Boss::RefObjPtr<Boss::ISerializable> serializable, std::string const &filePath)
+void Load(Boss::ref_ptr<Boss::ISerializable> serializable, std::string const &filePath)
 {
   if (serializable->Load(Boss::Base<Boss::IFileStream>::Create(filePath).Get()) != Boss::Status::Ok)
     throw std::runtime_error("Failed to load Registry.");
 }
 
-void Save(Boss::RefObjPtr<Boss::ISerializable> serializable, std::string const &filePath)
+void Save(Boss::ref_ptr<Boss::ISerializable> serializable, std::string const &filePath)
 {
   if (serializable->Save(Boss::Base<Boss::OFileStream>::Create(filePath).Get()) != Boss::Status::Ok)
     throw std::runtime_error("Failed to save Registry.");
@@ -63,10 +63,10 @@ int main(int argc, char const **argv)
     std::string RegistryFilePath = argv[2];
 
     auto Reg = Boss::Base<Boss::ServiceRegistry>::Create();
-    Boss::RefObjQIPtr<Boss::IServiceRegistryCtrl> Ctrl(Reg);    
+    Boss::qi_ptr<Boss::IServiceRegistryCtrl> Ctrl(Reg);    
     if (!Ctrl.Get())
       throw std::runtime_error("Failed to get RegCtrl.");
-    Boss::RefObjQIPtr<Boss::ISerializable> Serializable(Ctrl);
+    Boss::qi_ptr<Boss::ISerializable> Serializable(Ctrl);
     if (!Serializable.Get())
       throw std::runtime_error("Failed to get ISerializable interface from Registry object.");
     

@@ -19,8 +19,8 @@
 #include "skype_main_db.hpp"
 #include "history_main_db.hpp"
 
-using Boss::RefObjPtr;
-using Boss::RefObjQIPtr;
+using Boss::ref_ptr;
+using Boss::qi_ptr;
 using Boss::IString;
 using Boss::String;
 using Boss::StringHelper;
@@ -84,6 +84,9 @@ class DBControllerImplPrivate {
 						cout << source.id << " - " << source.body_xml << std::endl;
 						HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(source);
 						cache_element(hm);
+						for (auto obs : m_observers) {
+							obs->ReactOnDbChanged(nullptr);
+						}
 					});
 					m_watching_bound_line = newBound;
 				}
@@ -96,6 +99,9 @@ class DBControllerImplPrivate {
 			return;
 		}
 		m_w->stop();
+	}
+	void addObserver(IDBObserver *obsr) {
+		m_observers.push_back(obsr);
 	}
 	void setWatchFile(std::string &&str) {
 		if (str == m_filename) {
@@ -275,6 +281,7 @@ private:
 				DBCache<SkypeDB::Contacts>
 		      > m_hash;
 	std::string me;
+	std::vector<IDBObserver*> m_observers;
 }; //class DBControllerImplPrivate
 
 template<>
@@ -371,7 +378,7 @@ Boss::RetCode BOSS_CALL DBControllerImpl::SetWatchFile(Boss::IString *p_str) {
 	return Boss::Status::Ok;
 }
 Boss::RetCode BOSS_CALL DBControllerImpl::GetWatchFile(Boss::IString **pptr) {
-	RefObjPtr<IString> str = Base<String>::Create(d->m_filename);
+	ref_ptr<IString> str = Base<String>::Create(d->m_filename);
 	return str.QueryInterface(pptr);
 }
 
@@ -386,8 +393,9 @@ Boss::RetCode BOSS_CALL DBControllerImpl::Stop() {
 	return Boss::Status::Ok;
 }
 
-Boss::RetCode BOSS_CALL DBControllerImpl::AddObserver() {
+Boss::RetCode BOSS_CALL DBControllerImpl::AddObserver(IDBObserver *obsr) {
 	std::cout << "DBWatcherImpl::AddObserver()" << std::endl;
+	d->addObserver(obsr);
 	return Boss::Status::Ok;
 }
 Boss::RetCode BOSS_CALL DBControllerImpl::RemoveObserver() {

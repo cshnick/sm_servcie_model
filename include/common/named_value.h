@@ -25,7 +25,7 @@ namespace Boss
     : public SimpleCoClass<INamedValue>
   {
   public:
-    NamedValue(std::string const &name, RefObjPtr<IBase> value)
+    NamedValue(std::string const &name, ref_ptr<IBase> value)
       : Name(Base<String>::Create(name))
       , Value(value)
     {
@@ -42,8 +42,8 @@ namespace Boss
     }
     
   private:
-    mutable RefObjPtr<IString> Name;
-    mutable RefObjPtr<IBase> Value;
+    mutable ref_ptr<IString> Name;
+    mutable ref_ptr<IBase> Value;
   };
   
 }

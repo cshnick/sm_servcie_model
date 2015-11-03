@@ -71,7 +71,7 @@ namespace Boss
       RetCode Res = Info->GetServiceId(&SrvId);
       if (Res != Status::Ok)
         return Res;
-      RefObjPtr<IEnum> ClassIdsEnum;
+      ref_ptr<IEnum> ClassIdsEnum;
       Res = Info->GetClassIds(ClassIdsEnum.GetPPtr());
       if (Res != Status::Ok)
         return Res;
@@ -152,33 +152,33 @@ namespace Boss
       RetCode Code = Registry->Load(stream);
       if (Code != Status::Ok)
         return Code;
-      RefObjPtr<IBase> ServiceEnumProp;
+      ref_ptr<IBase> ServiceEnumProp;
       if ((Code = Registry->GetProperty(ServicesTag, ServiceEnumProp.GetPPtr())) != Status::Ok)
         return Code;
       EnumHelper<IPropertyBag> ServiceEnum(ServiceEnumProp);
       ServicePool NewServices;
       for (auto i =ServiceEnum.First() ; i.Get() ; i = ServiceEnum.Next())
       {
-        RefObjPtr<IBase> EntId;
+        ref_ptr<IBase> EntId;
         if ((Code = i->GetProperty(ServiceIdTag, EntId.GetPPtr())) != Status::Ok)
           return Code;
-        RefObjQIPtr<IEntityId> EntSrvId(EntId);
+        qi_ptr<IEntityId> EntSrvId(EntId);
         if (!EntSrvId.Get())
           return Status::Fail;
         ServiceId SrvId = 0;
         if ((Code = EntSrvId->GetId(&SrvId)) != Status::Ok)
           return Code;
-        RefObjPtr<IBase> ClassIdsEnumProp;
+        ref_ptr<IBase> ClassIdsEnumProp;
         if ((Code = i->GetProperty(ClassIdsTag, ClassIdsEnumProp.GetPPtr())) != Status::Ok)
           return Code;
-        RefObjQIPtr<IEnum> ClassIdsEnum(ClassIdsEnumProp);
+        qi_ptr<IEnum> ClassIdsEnum(ClassIdsEnumProp);
         if (!ClassIdsEnum.Get())
           return Status::Fail;
-        RefObjPtr<IBase> ModulePathProp;
-        RefObjPtr<IServiceInfo> ServiceInfo;
+        ref_ptr<IBase> ModulePathProp;
+        ref_ptr<IServiceInfo> ServiceInfo;
         if (i->GetProperty(ModulePathTag, ModulePathProp.GetPPtr()) == Status::Ok)
         {
-          RefObjQIPtr<IString> ModulePath(ModulePathProp);
+          qi_ptr<IString> ModulePath(ModulePathProp);
           if (!ModulePath.Get())
             return Status::Fail;
           auto LocalSrvInfo = Base<LocalServiceInfo>::Create();
@@ -193,10 +193,10 @@ namespace Boss
           RemoteSrvInfo->SetServiceId(SrvId);
           RemoteSrvInfo->AddCoClassIds(ClassIdsEnum);
           {
-            RefObjPtr<IBase> EntId;
+            ref_ptr<IBase> EntId;
             if (i->GetProperty(SerializerIdTag, EntId.GetPPtr()) == Status::Ok)
             {
-              RefObjQIPtr<IEntityId> SerializerId(EntId);
+              qi_ptr<IEntityId> SerializerId(EntId);
               if (!SerializerId.Get())
                 return Status::Fail;
               ClassId Id;
@@ -207,10 +207,10 @@ namespace Boss
             return Status::Fail;
           }
           {
-            RefObjPtr<IBase> EntId;
+            ref_ptr<IBase> EntId;
             if (i->GetProperty(RemotingIdTag, EntId.GetPPtr()) == Status::Ok)
             {
-              RefObjQIPtr<IEntityId> RemotingId(EntId);
+              qi_ptr<IEntityId> RemotingId(EntId);
               if (!RemotingId.Get())
                 return Status::Fail;
               ClassId Id;
@@ -221,10 +221,10 @@ namespace Boss
             return Status::Fail;
           }
           {
-            RefObjPtr<IBase> EntId;
+            ref_ptr<IBase> EntId;
             if (i->GetProperty(TransportIdTag, EntId.GetPPtr()) == Status::Ok)
             {
-              RefObjQIPtr<IEntityId> TransportId(EntId);
+              qi_ptr<IEntityId> TransportId(EntId);
               if (!TransportId.Get())
                 return Status::Fail;
               ClassId Id;
@@ -234,10 +234,10 @@ namespace Boss
             }
             return Status::Fail;
           }
-          RefObjPtr<IBase> TransportPropertiesProp;
+          ref_ptr<IBase> TransportPropertiesProp;
           if (i->GetProperty(TransportPropertiesTag, TransportPropertiesProp.GetPPtr()) == Status::Ok)
           {
-            RefObjQIPtr<IPropertyBag> TransportProperties(TransportPropertiesProp);
+            qi_ptr<IPropertyBag> TransportProperties(TransportPropertiesProp);
             if (!TransportProperties.Get())
               return Status::Fail;
             RemoteSrvInfo->SetProps(TransportProperties);
@@ -305,14 +305,14 @@ namespace Boss
             return Code;
         }
         {
-          RefObjPtr<IEnum> ClassIds;
+          ref_ptr<IEnum> ClassIds;
           if ((service->GetClassIds(ClassIds.GetPPtr())) != Status::Ok)
             return Code;
           if ((Code = ServiceItem->SetProperty(ClassIdsTag, ClassIds.Get())) != Status::Ok)
             return Code;
         }
         {
-          RefObjQIPtr<IRemoteServiceInfo> RemoteService(service);
+          qi_ptr<IRemoteServiceInfo> RemoteService(service);
           if (RemoteService.Get())
           {
             {
@@ -339,7 +339,7 @@ namespace Boss
                 return Code;
               }
             }
-            RefObjPtr<IPropertyBag> TransportProps;
+            ref_ptr<IPropertyBag> TransportProps;
             if ((Code = RemoteService->GetTransportProperties(TransportProps.GetPPtr())) != Status::Ok ||
                 (Code = ServiceItem->SetProperty(TransportPropertiesTag, TransportProps.Get())) != Status::Ok)
             {
@@ -349,10 +349,10 @@ namespace Boss
           }
         }
         {
-          RefObjQIPtr<ILocalServiceInfo> LocalService(service);
+          qi_ptr<ILocalServiceInfo> LocalService(service);
           if (LocalService.Get())
           {
-            RefObjPtr<IString> ModulePath;
+            ref_ptr<IString> ModulePath;
             if ((Code = LocalService->GetModulePath(ModulePath.GetPPtr())) != Status::Ok ||
                 (Code = ServiceItem->SetProperty(ModulePathTag, ModulePath.Get())) != Status::Ok)
             {
@@ -366,7 +366,7 @@ namespace Boss
       RetCode Code = Registry->SetProperty(ServicesTag, ServiceEnum.Get());
       if (Code != Status::Ok)
         return Code;
-      RefObjQIPtr<ISerializable> Serializable(Registry);
+      qi_ptr<ISerializable> Serializable(Registry);
       if (!Serializable.Get())
         return Status::Fail;
       if ((Code = Serializable->Save(stream)) != Status::Ok)

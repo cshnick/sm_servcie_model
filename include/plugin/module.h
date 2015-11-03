@@ -26,15 +26,15 @@ namespace Boss
     namespace
     {
 
-      RefObjPtr<IServiceLocator>& GetServiceLocatorHolder()
+      ref_ptr<IServiceLocator>& GetServiceLocatorHolder()
       {
-        static RefObjPtr<IServiceLocator> Ret;
+        static ref_ptr<IServiceLocator> Ret;
         return Ret;
       }
       
     }
     
-    RefObjPtr<IServiceLocator> GetServiceLocator()
+    ref_ptr<IServiceLocator> GetServiceLocator()
     {
       return GetServiceLocatorHolder();
     }

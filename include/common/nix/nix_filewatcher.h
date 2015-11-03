@@ -62,6 +62,7 @@ public:
 		m_flag = 2;
 		pthread_join(m_thread, 0);
 		pthread_detach(m_thread);
+		pthread_mutex_destroy(&m_mutex);
 	}
 
 private:

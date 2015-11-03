@@ -61,7 +61,7 @@ namespace Boss
   private:
     mutable std::recursive_mutex Mtx;
     
-    typedef RefObjPtr<IBase> IBasePtr;
+    typedef ref_ptr<IBase> IBasePtr;
     typedef std::unordered_map<UInt, IBasePtr> ServicePool;
     mutable ServicePool Services;
   };

@@ -19,76 +19,76 @@ namespace Boss
 {
 
   template <typename T>
-  class RefObjQIPtr;
+  class qi_ptr;
 
   template <typename T>
-  class RefObjPtr final
+  class ref_ptr final
   {
   public:
-    explicit RefObjPtr(T *ptr = nullptr)
+    explicit ref_ptr(T *ptr = nullptr)
       : Ptr(ptr)
     {
       if (Ptr)
         Ptr->AddRef();
     }
     template <typename Other>
-    explicit RefObjPtr(T *ptr)
+    explicit ref_ptr(T *ptr)
       : Ptr(ptr)
     {
       if (Ptr)
         Ptr->AddRef();
     }
-    RefObjPtr(RefObjPtr const &ptr)
+    ref_ptr(ref_ptr const &ptr)
       : Ptr(ptr.Ptr)
     {
       if (Ptr)
         Ptr->AddRef();
     }
     template <typename Other>
-    RefObjPtr(RefObjPtr<Other> const &ptr)
+    ref_ptr(ref_ptr<Other> const &ptr)
       : Ptr(ptr.Ptr)
     {
       if (Ptr)
         Ptr->AddRef();
     }
-    RefObjPtr(RefObjPtr &&ptr)
+    ref_ptr(ref_ptr &&ptr)
       : Ptr(ptr.Ptr)
     {
       ptr.Ptr = 0;
     }
     template <typename Other>
-    RefObjPtr(RefObjPtr<Other> &&ptr)
+    ref_ptr(ref_ptr<Other> &&ptr)
       : Ptr(ptr.Ptr)
     {
       ptr.Ptr = 0;
     }
-    RefObjPtr& operator = (T *ptr)
+    ref_ptr& operator = (T *ptr)
     {
-      RefObjPtr Tmp(ptr);
+      ref_ptr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
     template <typename Other>
-    RefObjPtr& operator = (Other *ptr)
+    ref_ptr& operator = (Other *ptr)
     {
-      RefObjPtr<Other> Tmp(ptr);
+      ref_ptr<Other> Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
-    RefObjPtr& operator = (RefObjPtr const &ptr)
+    ref_ptr& operator = (ref_ptr const &ptr)
     {
-      RefObjPtr Tmp(ptr);
+      ref_ptr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
     template <typename Other>
-    RefObjPtr& operator = (RefObjPtr<Other> const &ptr)
+    ref_ptr& operator = (ref_ptr<Other> const &ptr)
     {
-      RefObjPtr<Other> Tmp(ptr);
+      ref_ptr<Other> Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
-    RefObjPtr& operator = (RefObjPtr &&ptr)
+    ref_ptr& operator = (ref_ptr &&ptr)
     {
       Release();
       Ptr = ptr.Ptr;
@@ -96,14 +96,14 @@ namespace Boss
       return *this;
     }
     template <typename Other>
-    RefObjPtr& operator = (RefObjPtr<Other> &&ptr)
+    ref_ptr& operator = (ref_ptr<Other> &&ptr)
     {
       Release();
       Ptr = ptr.Ptr;
       ptr.Ptr = 0;
       return *this;
     }
-    ~RefObjPtr()
+    ~ref_ptr()
     {
       Release();
     }
@@ -138,14 +138,14 @@ namespace Boss
     {
       return &Ptr;
     }
-    void Swap(RefObjPtr &ptr)
+    void Swap(ref_ptr &ptr)
     {
       T *Tmp = ptr.Ptr;
       ptr.Ptr = Ptr;
       Ptr = Tmp;
     }
     template <typename Other>
-    void Swap(RefObjPtr<Other> &ptr)
+    void Swap(ref_ptr<Other> &ptr)
     {
       auto *Tmp = ptr.Ptr;
       ptr.Ptr = static_cast<decltype(ptr.Ptr)>(Ptr);
@@ -162,9 +162,9 @@ namespace Boss
 
   private:
     template <typename Other>
-    friend class RefObjPtr;
+    friend class ref_ptr;
     template <typename Other>
-    friend class RefObjQIPtr;
+    friend class qi_ptr;
     
     T *Ptr;
   };

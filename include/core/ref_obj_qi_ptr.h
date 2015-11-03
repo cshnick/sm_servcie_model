@@ -17,105 +17,105 @@ namespace Boss
 {
 
   template <typename T>
-  class RefObjQIPtr final
+  class qi_ptr final
   {
   public:
-    explicit RefObjQIPtr(T *ptr = 0)
+    explicit qi_ptr(T *ptr = 0)
       : Ptr(ptr)
     {
       if (Ptr)
         Ptr->AddRef();
     }
     template <typename Other>
-    explicit RefObjQIPtr(Other *ptr)
+    explicit qi_ptr(Other *ptr)
       : Ptr(0)
     {
       if (ptr)
         ptr->QueryInterface(InterfaceTraits<T>::Id, reinterpret_cast<Boss::Ptr *>(&Ptr));
     }
-    RefObjQIPtr(RefObjQIPtr const &ptr)
+    qi_ptr(qi_ptr const &ptr)
       : Ptr(ptr.Ptr)
     {
       if (Ptr)
         Ptr->AddRef();
     }
     template <typename Other>
-    RefObjQIPtr(RefObjQIPtr<Other> const &ptr)
+    qi_ptr(qi_ptr<Other> const &ptr)
       : Ptr(0)
     {
       if (ptr.Ptr)
-        const_cast<RefObjQIPtr<Other> &>(ptr).QueryInterface(&Ptr);
+        const_cast<qi_ptr<Other> &>(ptr).QueryInterface(&Ptr);
     }
-    RefObjQIPtr(RefObjQIPtr &&ptr)
+    qi_ptr(qi_ptr &&ptr)
       : Ptr(ptr.Ptr)
     {
       ptr.Ptr = 0;
     }
     template <typename Other>
-    RefObjQIPtr(RefObjQIPtr<Other> &&ptr)
+    qi_ptr(qi_ptr<Other> &&ptr)
       : Ptr(0)
     {
       if (ptr.Ptr)
         ptr.QueryInterface(&Ptr);
       ptr.Release();
     }
-    RefObjQIPtr(RefObjPtr<T> const &ptr)
+    qi_ptr(ref_ptr<T> const &ptr)
       : Ptr(ptr.Ptr)
     {
       if (Ptr)
         Ptr->AddRef();
     }
     template <typename Other>
-    RefObjQIPtr(RefObjPtr<Other> const &ptr)
+    qi_ptr(ref_ptr<Other> const &ptr)
       : Ptr(0)
     {
       if (ptr.Get())
-        const_cast<RefObjPtr<Other> &>(ptr).QueryInterface(&Ptr);
+        const_cast<ref_ptr<Other> &>(ptr).QueryInterface(&Ptr);
     }
-    RefObjQIPtr(RefObjPtr<T> &&ptr)
+    qi_ptr(ref_ptr<T> &&ptr)
       : Ptr(ptr.Ptr)
     {
       ptr.Ptr = 0;
     }
     template <typename Other>
-    RefObjQIPtr(RefObjPtr<Other> &&ptr)
+    qi_ptr(ref_ptr<Other> &&ptr)
       : Ptr(0)
     {
       if (ptr.Ptr)
         ptr.QueryInterface(&Ptr);
       ptr.Release();
     }
-    RefObjQIPtr& operator = (T *ptr)
+    qi_ptr& operator = (T *ptr)
     {
-      RefObjQIPtr Tmp(ptr);
+      qi_ptr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
     template <typename Other>
-    RefObjQIPtr& operator = (Other *ptr)
+    qi_ptr& operator = (Other *ptr)
     {
-      RefObjQIPtr<T> Tmp;
+      qi_ptr<T> Tmp;
       if (ptr)
         ptr->QueryInterface(InterfaceTraits<T>::Id, reinterpret_cast<Boss::Ptr *>(Tmp.GetPPtr()));
       Swap(Tmp);
       return *this;
     }
-    RefObjQIPtr& operator = (RefObjQIPtr const &ptr)
+    qi_ptr& operator = (qi_ptr const &ptr)
     {
-      RefObjQIPtr Tmp(ptr);
+      qi_ptr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
     template <typename Other>
-    RefObjQIPtr& operator = (RefObjQIPtr<Other> const &ptr)
+    qi_ptr& operator = (qi_ptr<Other> const &ptr)
     {
-      RefObjQIPtr<T> Tmp;
+      qi_ptr<T> Tmp;
       if (ptr.Ptr)
         ptr.QueryInterface(Tmp.GetPPtr());
       Swap(Tmp);
       return *this;
     }
-    RefObjQIPtr& operator = (RefObjQIPtr &&ptr)
+    qi_ptr& operator = (qi_ptr &&ptr)
     {
       Release();
       Ptr = ptr.Ptr;
@@ -123,32 +123,32 @@ namespace Boss
       return *this;
     }
     template <typename Other>
-    RefObjQIPtr& operator = (RefObjQIPtr<Other> &&ptr)
+    qi_ptr& operator = (qi_ptr<Other> &&ptr)
     {
-      RefObjQIPtr<T> Tmp;
+      qi_ptr<T> Tmp;
       if (ptr.Ptr)
         ptr.QueryInterface(Tmp.GetPPtr());
       Swap(Tmp);
       ptr.Release();
       return *this;
     }
-    RefObjQIPtr& operator = (RefObjPtr<T> const &ptr)
+    qi_ptr& operator = (ref_ptr<T> const &ptr)
     {
-      RefObjQIPtr Tmp(ptr);
+      qi_ptr Tmp(ptr);
       Swap(Tmp);
       return *this;
     }
     template <typename Other>
-    RefObjQIPtr& operator = (RefObjPtr<Other> &&ptr)
+    qi_ptr& operator = (ref_ptr<Other> &&ptr)
     {
-      RefObjQIPtr<T> Tmp;
+      qi_ptr<T> Tmp;
       if (ptr.Ptr)
         ptr.QueryInterface(Tmp.GetPPtr());
       Swap(Tmp);
       ptr.Release();
       return *this;
     }
-    ~RefObjQIPtr()
+    ~qi_ptr()
     {
       Release();
     }
@@ -183,7 +183,7 @@ namespace Boss
     {
       return &Ptr;
     }
-    void Swap(RefObjQIPtr &ptr)
+    void Swap(qi_ptr &ptr)
     {
       T *Tmp = ptr.Ptr;
       ptr.Ptr = Ptr;
@@ -197,14 +197,14 @@ namespace Boss
     {
       return Ptr;
     }
-    operator RefObjPtr<T> () const
+    operator ref_ptr<T> () const
     {
-      return std::move(RefObjPtr<T>(Ptr));
+      return std::move(ref_ptr<T>(Ptr));
     }
 
   private:
     template <typename Other>
-    friend class RefObjQIPtr;
+    friend class qi_ptr;
     T *Ptr;
   };
 

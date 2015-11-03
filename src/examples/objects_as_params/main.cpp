@@ -111,7 +111,7 @@ namespace MyNs
       }
       
     private:
-      Boss::RefObjPtr<IFaces::IInputObject> Obj;
+      Boss::ref_ptr<IFaces::IInputObject> Obj;
           
       // ISimpleObject
       virtual Boss::RetCode BOSS_CALL SetObject(IFaces::IInputObject *obj)
@@ -147,20 +147,20 @@ int main()
 {
   try
   {
-    Boss::RefObjPtr<MyNs::IFaces::ISimpleObject> Obj = Boss::Base<MyNs::Impl::SimpleObject>::Create();
+    Boss::ref_ptr<MyNs::IFaces::ISimpleObject> Obj = Boss::Base<MyNs::Impl::SimpleObject>::Create();
     if (Obj->SetObject(Boss::Base<MyNs::Impl::InputObject>::Create().Get()) != Boss::Status::Ok)
     {
       std::cerr << "failed to set object." << std::endl;
       return -1;
     }
-    Boss::RefObjPtr<MyNs::IFaces::IInputObject> In;
+    Boss::ref_ptr<MyNs::IFaces::IInputObject> In;
     if (Obj->GetObject(In.GetPPtr()) != Boss::Status::Ok)
     {
       std::cerr << "failed to get object." << std::endl;
       return -1;
     }
     In->Method();
-    Boss::RefObjPtr<MyNs::IFaces::IOutputObject> Out;
+    Boss::ref_ptr<MyNs::IFaces::IOutputObject> Out;
     if (Obj->CreateNewObject(Out.GetPPtr()) != Boss::Status::Ok)
     {
       std::cerr << "failed to create new object." << std::endl;

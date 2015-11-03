@@ -49,20 +49,20 @@ namespace Boss
           CoClassIds = Base<Enum>::Create();
         CoClassIds->AddItem(Base<EntityId>::Create(clsId));
       }
-      void AddCoClassIds(RefObjPtr<IEnum> coClassIds)
+      void AddCoClassIds(ref_ptr<IEnum> coClassIds)
       {
         if (!coClassIds.Get())
           return;
         if (!CoClassIds.Get())
           CoClassIds = Base<Enum>::Create();
         coClassIds->Reset();
-        for (RefObjPtr<IBase> i ; coClassIds->Next(i.GetPPtr()) == Status::Ok ; i.Release())
+        for (ref_ptr<IBase> i ; coClassIds->Next(i.GetPPtr()) == Status::Ok ; i.Release())
           CoClassIds->AddItem(i);
       }
       
     private:
       ServiceId SrvId;
-      mutable RefObjPtr<Enum> CoClassIds;
+      mutable ref_ptr<Enum> CoClassIds;
       
       // IServiceInfo
       virtual RetCode BOSS_CALL GetServiceId(ServiceId *serviceId) const
@@ -88,13 +88,13 @@ namespace Boss
     {
       Path = Base<String>::Create(path);
     }
-    void SetModulePath(RefObjPtr<IString> path)
+    void SetModulePath(ref_ptr<IString> path)
     {
       Path = path;
     }
     
   private:
-    mutable RefObjPtr<IString> Path;
+    mutable ref_ptr<IString> Path;
     
     // ILocalServiceInfo
     virtual RetCode BOSS_CALL GetModulePath(IString **path) const
@@ -119,13 +119,13 @@ namespace Boss
     {
       TransportId = id;
     }
-    void SetProps(RefObjPtr<IPropertyBag> props)
+    void SetProps(ref_ptr<IPropertyBag> props)
     {
       Props = props;
     }
     
   private:
-    mutable RefObjPtr<IPropertyBag> Props;
+    mutable ref_ptr<IPropertyBag> Props;
     ClassId SerializerId = 0;
     ClassId RemotingId = 0;
     ClassId TransportId = 0;

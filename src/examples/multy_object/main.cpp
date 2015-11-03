@@ -169,10 +169,10 @@ int main()
   try
   {
     auto Obj = Boss::Base<MyNs::Impl::Face_1_2_3_4>::Create();
-    FuncForIFace1(Boss::RefObjQIPtr<MyNs::IFaces::IFace1>(Obj).Get());
-    FuncForIFace2(Boss::RefObjQIPtr<MyNs::IFaces::IFace2>(Obj).Get());
-    FuncForIFace3(Boss::RefObjQIPtr<MyNs::IFaces::IFace3>(Obj).Get());
-    FuncForIFace4(Boss::RefObjQIPtr<MyNs::IFaces::IFace4>(Obj).Get());
+    FuncForIFace1(Boss::qi_ptr<MyNs::IFaces::IFace1>(Obj).Get());
+    FuncForIFace2(Boss::qi_ptr<MyNs::IFaces::IFace2>(Obj).Get());
+    FuncForIFace3(Boss::qi_ptr<MyNs::IFaces::IFace3>(Obj).Get());
+    FuncForIFace4(Boss::qi_ptr<MyNs::IFaces::IFace4>(Obj).Get());
   }
   catch (std::exception const &e)
   {

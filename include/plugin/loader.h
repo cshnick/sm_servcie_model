@@ -57,7 +57,7 @@ namespace Boss
           {
             auto SrvRegModule = std::move(ModuleHolder(std::move(DllHolder(srvRegModulePath))));
             auto SrvReg = SrvRegModule.CreateObject<IServiceRegistry>(Service::Id::ServiceRegistry);
-            RefObjQIPtr<ISerializable> Serializable(SrvReg);
+            qi_ptr<ISerializable> Serializable(SrvReg);
             if (!Serializable.Get())
               throw LoaderException("Failed to get ISerializable interface from Registry object.");
             if (Serializable->Load(Base<IFileStream>::Create(registryFilePath).Get()) != Status::Ok)
@@ -68,7 +68,7 @@ namespace Boss
           {
             auto ClassFactoryModule = std::move(ModuleHolder(std::move(DllHolder(clsFactoryModulePath))));
             auto NewClsFactory = ClassFactoryModule.CreateObject<IClassFactory>(Service::Id::ClassFactory);
-            RefObjQIPtr<IClassFactoryCtrl> Ctrl(NewClsFactory);
+            qi_ptr<IClassFactoryCtrl> Ctrl(NewClsFactory);
             if (!Ctrl.Get())
               throw LoaderException("Failed to get ICalssFactoryCtrl interface from ClassFactory object.");
             if (Ctrl->SetRegistry(SrvRegistry.second.Get()) != Status::Ok)
@@ -78,19 +78,19 @@ namespace Boss
           } ())
     {
       if (Locator->AddService(Service::Locator::Id::ClassFactoryService,
-          RefObjQIPtr<IBase>(ClsFactory.second).Get()) != Status::Ok)
+          qi_ptr<IBase>(ClsFactory.second).Get()) != Status::Ok)
       {
         throw LoaderException("Failed to put ClassFactory into ServiceLocator.");
       }
       Private::SetServiceLocator(Locator.Get());
     }
     template <typename T>
-    RefObjPtr<T> CreateObject(ClassId clsId)
+    ref_ptr<T> CreateObject(ClassId clsId)
     {
-      RefObjPtr<IBase> NewInst;
+      ref_ptr<IBase> NewInst;
       if (ClsFactory.second->CreateObject(clsId, NewInst.GetPPtr()) != Status::Ok)
         throw LoaderException("Failed to create object.");
-      RefObjQIPtr<T> Ret(NewInst);
+      qi_ptr<T> Ret(NewInst);
       if (!Ret.Get())
         throw LoaderException("Interface not found.");
       return Ret;
@@ -104,9 +104,9 @@ namespace Boss
     }
     
   private:
-    RefObjPtr<IServiceLocator> Locator;
-    std::pair<ModuleHolder, RefObjPtr<IServiceRegistry>> SrvRegistry;
-    std::pair<ModuleHolder, RefObjPtr<IClassFactory>> ClsFactory;
+    ref_ptr<IServiceLocator> Locator;
+    std::pair<ModuleHolder, ref_ptr<IServiceRegistry>> SrvRegistry;
+    std::pair<ModuleHolder, ref_ptr<IClassFactory>> ClsFactory;
   };
   
 }

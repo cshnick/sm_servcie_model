@@ -58,7 +58,7 @@ namespace Boss
     }
     
     template <typename T>
-    void AddItem(RefObjPtr<T> item)
+    void AddItem(ref_ptr<T> item)
     {
       Items.push_back(item);
       CurPos = std::begin(Items);
@@ -66,7 +66,7 @@ namespace Boss
     
   private:
     std::recursive_mutex Mtx;
-    typedef std::list<RefObjQIPtr<IBase>> ItemPool;
+    typedef std::list<qi_ptr<IBase>> ItemPool;
     typedef ItemPool::iterator Iterator;
     ItemPool Items;
     Iterator CurPos = std::begin(Items);

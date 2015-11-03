@@ -57,7 +57,7 @@ int main()
 {
   try
   {
-    Boss::RefObjPtr<MyNs::ISimpleObject> Inst = Boss::Base<MyNs::SimpleObject>::Create();
+    Boss::ref_ptr<MyNs::ISimpleObject> Inst = Boss::Base<MyNs::SimpleObject>::Create();
     Inst->HelloWorld();
   }
   catch (std::exception const &e)

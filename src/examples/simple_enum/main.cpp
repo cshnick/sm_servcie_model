@@ -164,7 +164,7 @@ namespace MyNs
   
 }
 
-Boss::RefObjPtr<Boss::IEnum> CreateTestCollection()
+Boss::ref_ptr<Boss::IEnum> CreateTestCollection()
 {
   auto Collection = Boss::Base<Boss::Enum>::Create();
   // FixPrice
@@ -179,26 +179,26 @@ Boss::RefObjPtr<Boss::IEnum> CreateTestCollection()
   return Collection;
 }
 
-void ShowAllObjects(Boss::RefObjPtr<Boss::IEnum> collection)
+void ShowAllObjects(Boss::ref_ptr<Boss::IEnum> collection)
 {
   Boss::EnumHelper<Boss::IBase> Collection(collection);
   for (auto i = Collection.First() ; i.Get() ; i = Collection.Next())
   {
     double Price = 0;
     {
-      Boss::RefObjQIPtr<MyNs::IFaces::IFixPrice> FixPrice(i);
+      Boss::qi_ptr<MyNs::IFaces::IFixPrice> FixPrice(i);
       if (!FixPrice.Get())
         throw std::runtime_error("Unknown object.");
       if (FixPrice->GetPrice(&Price) != Boss::Status::Ok)
         throw std::runtime_error("Failed to get price.");
     }
     std::string ObjectType = "FixPrice";
-    Boss::RefObjQIPtr<MyNs::IFaces::IBestOffer> BestOffer(i);
+    Boss::qi_ptr<MyNs::IFaces::IBestOffer> BestOffer(i);
     std::vector<double> Offers;
     if (BestOffer.Get())
     {
       ObjectType = "BestOffer";
-      Boss::RefObjPtr<Boss::IEnum> AllOffers;
+      Boss::ref_ptr<Boss::IEnum> AllOffers;
       if (BestOffer->GetAllOffers(AllOffers.GetPPtr()) != Boss::Status::Ok)
         throw std::runtime_error("Failed to get all offers for \"BestOffer\" object.");
       Boss::EnumHelper<MyNs::IFaces::IFixPrice> OffersEnum(AllOffers);
@@ -212,7 +212,7 @@ void ShowAllObjects(Boss::RefObjPtr<Boss::IEnum> collection)
     }
     else
     {
-      Boss::RefObjQIPtr<MyNs::IFaces::IAuction> Auction(i);
+      Boss::qi_ptr<MyNs::IFaces::IAuction> Auction(i);
       if (Auction.Get())
         ObjectType = "Auction";
     }
@@ -228,13 +228,13 @@ void ShowAllObjects(Boss::RefObjPtr<Boss::IEnum> collection)
   }
 }
 
-void SetMyOffers(Boss::RefObjPtr<Boss::IEnum> collection,
+void SetMyOffers(Boss::ref_ptr<Boss::IEnum> collection,
                  unsigned minPercent, unsigned maxPercent)
 {
   Boss::EnumHelper<MyNs::IFaces::IBestOffer> Collection(collection);
   for (auto i = Collection.First(); i.Get() ; i = Collection.Next())
   {
-    Boss::RefObjQIPtr<MyNs::IFaces::IFixPrice> FixPrice(i);
+    Boss::qi_ptr<MyNs::IFaces::IFixPrice> FixPrice(i);
     if (!FixPrice.Get())
       throw std::runtime_error("Failed to get price object.");
     double Price = 0;
@@ -247,12 +247,12 @@ void SetMyOffers(Boss::RefObjPtr<Boss::IEnum> collection,
   }
 }
 
-void SetMyBets(Boss::RefObjPtr<Boss::IEnum> collection, unsigned percent)
+void SetMyBets(Boss::ref_ptr<Boss::IEnum> collection, unsigned percent)
 {
   Boss::EnumHelper<MyNs::IFaces::IAuction> Collection(collection);
   for (auto i = Collection.First() ; i.Get() ; i = Collection.Next())
   {
-    Boss::RefObjQIPtr<MyNs::IFaces::IFixPrice> FixPrice(i);
+    Boss::qi_ptr<MyNs::IFaces::IFixPrice> FixPrice(i);
     if (!FixPrice.Get())
       throw std::runtime_error("Failed to get price object.");
     double Price = 0;

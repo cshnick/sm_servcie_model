@@ -25,25 +25,25 @@ namespace Boss
   
   namespace Private
   {
-    RefObjPtr<IServiceLocator> GetServiceLocator();
+    ref_ptr<IServiceLocator> GetServiceLocator();
   }
   
   template <typename T>
-  inline RefObjPtr<T> CreateObject(ClassId clsId)
+  inline ref_ptr<T> CreateObject(ClassId clsId)
   {
     auto Locator = Private::GetServiceLocator();
     if (!Locator.Get())
       throw FactoryToolsException("Failed to get ServiceLocator.");
-    RefObjPtr<IBase> FactoryInst;
+    ref_ptr<IBase> FactoryInst;
     if (Locator->GetService(Service::Locator::Id::ClassFactoryService, FactoryInst.GetPPtr()) != Status::Ok)
       throw FactoryToolsException("ClassFactory not found.");
-    RefObjQIPtr<IClassFactory> Factory(FactoryInst);
+    qi_ptr<IClassFactory> Factory(FactoryInst);
     if (!Factory.Get())
       throw FactoryToolsException("Interface IClassFactory not found.");
-    RefObjPtr<IBase> Inst;
+    ref_ptr<IBase> Inst;
     if (Factory->CreateObject(clsId, Inst.GetPPtr()) != Status::Ok)
       throw FactoryToolsException("Failed to create object.");
-    RefObjQIPtr<T> Ret(Inst);
+    qi_ptr<T> Ret(Inst);
     if (!Ret.Get())
       throw FactoryToolsException("Interface not found.");
     return std::move(Ret);

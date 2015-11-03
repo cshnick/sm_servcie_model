@@ -26,8 +26,8 @@ namespace Boss
   class EnumHelper final
   {
   public:
-    typedef RefObjQIPtr<IEnum> IEnumPtr;
-    typedef RefObjPtr<IBase> IBasePtr;
+    typedef qi_ptr<IEnum> IEnumPtr;
+    typedef ref_ptr<IBase> IBasePtr;
 
     EnumHelper(EnumHelper const &) = delete;
     EnumHelper& operator = (EnumHelper const &) = delete;
@@ -45,14 +45,14 @@ namespace Boss
         throw EnumHelperException("Empty IEnum pointer");
     }
 
-    RefObjPtr<T> First()
+    ref_ptr<T> First()
     {
       ResetInternal();
       return std::move(Next());
     }
-    RefObjPtr<T> Next()
+    ref_ptr<T> Next()
     {
-      RefObjQIPtr<T> Ret;
+      qi_ptr<T> Ret;
       for (IBasePtr i ; (i = NextInternal()).Get() ; )
       {
         if ((Ret = std::move(i)).Get())

@@ -333,10 +333,10 @@ namespace Boss
     Base const & operator = (Base &&) = delete;
 
     template <typename ... Args>
-    static RefObjPtr<T> Create(Args const & ... args)
+    static ref_ptr<T> Create(Args const & ... args)
     {
       Private::ModuleCounter::ScopedLock Lock;
-      RefObjPtr<T> NewInst(new Base<T>(args ...));
+      ref_ptr<T> NewInst(new Base<T>(args ...));
       Private::FinalizeConstruct<T>::Construct(NewInst.Get());
       return std::move(NewInst);
     }
