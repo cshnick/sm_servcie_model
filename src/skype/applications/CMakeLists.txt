@@ -1,3 +1,4 @@
 add_subdirectory(functionality_test)
 add_subdirectory(filewatcher_test)
 add_subdirectory(history_db_test)
+add_subdirectory(history_gui)

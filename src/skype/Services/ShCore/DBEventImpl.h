@@ -22,8 +22,17 @@ public:
 		body = out_body;
 		return Status::Ok;
 	}
+	virtual RetCode BOSS_CALL Id(int *p_id) override {
+		*p_id = id;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL SetId(int p_id) override {
+		id = p_id;
+		return Status::Ok;
+	}
 
 private:
+	int id = -1;
 	ref_ptr<IString> body;
 };
 

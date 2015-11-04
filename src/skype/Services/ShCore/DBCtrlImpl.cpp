@@ -7,6 +7,7 @@
 #include <unordered_map>
 #include <functional>
 #include <future>
+#include <sstream>
 
 #include "core/error_codes.h"
 #include "core/ref_obj_qi_ptr.h"
@@ -87,8 +88,12 @@ class DBControllerImplPrivate {
 						HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(source);
 						cache_element(hm);
 						for (auto obs : m_observers) {
-							ref_ptr<IDBEvent> stub_event = Base<DBEventImpl>::Create();
-							std::async(std::launch::async, &IDBObserver::ReactOnDbChanged, obs, stub_event.Get());
+							auto semi_event = Base<DBEventImpl>::Create();
+							auto semi_message = Base<DBMessage>::Create();
+							semi_message->SetBody(Base<String>::Create(hm.body).Get());
+							semi_message->SetId(hm.skype_id);
+							semi_event->SetMessage(semi_message.Get());
+							std::async(std::launch::async, &IDBObserver::ReactOnDbChanged, obs, semi_event.Get());
 						}
 					});
 					m_watching_bound_line = newBound;
@@ -127,17 +132,9 @@ class DBControllerImplPrivate {
 		return result;
 	}
 
-	int calcPercent(int cnt, int i) {
-	    int offset = 9;
-	    double status_move = (cnt - i) << offset;
-	    double percentage = status_move / cnt;
-	    int status_res = static_cast<int>(percentage * 100) >> offset;
-
-	    return status_res;
-	}
-
 	template<typename T = void>
 	void import() {
+		auto start_time = Boss::GetTimeMs64();
 		std::unordered_map<std::string, std::string> chats_hash, contacts_hash;
 		auto contacts_cursor = select<SkypeDB::Contacts>(*skype_main).cursor();
 		cout << "Create users base" << endl;
@@ -154,42 +151,41 @@ class DBControllerImplPrivate {
 		q.result("count(*)");
 		q.source(SkypeDB::Messages::table__);
 		auto cnt = atoi(skype_main->query(q)[0][0]);
-		auto i = cnt;
-		int need_update = 0;
-		int percent = 0;
-		int cut = 0;
-		int package = 1000;
+
+		int counter = 0, transac_cnt = 0, package = 2000, percent = 0, cut = 0;
 		cout << "Importing skype messages" << endl;
 		auto messages_vec = select<SkypeDB::Messages>(*skype_main).orderBy(SkypeDB::Messages::Timestamp).all();
 		history_db->begin();
 		auto messages_cache = std::get<DBCache<HistoryDB::Messages>>(m_hash);
 		for (auto sky_mes : messages_vec) {
-			int asc_cnt = cnt - i;
-			percent = calcPercent(cnt, i);
-			cout << "\r" << asc_cnt << " - " << percent << "%" << flush;
-
+			percent = counter * 100 / (cnt - 1);
 			if (!messages_cache.contains(sky_mes.id)) {
-				try {
-					cout << "Not in cache, Converting" << endl;
-					if (!(need_update++ % package)) {
-						history_db->begin();
-						cout << "Historydb begin" << endl;
-					}
-					HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
-					if ((need_update % package) == package - 1 || i == 1) {
-						history_db->commit();
-						cout << "Historydb commit" << endl;
-					}
-				} catch (const std::exception &e) {
-					std::cout << e.what() << std::endl;
-					break;
+				if (!(transac_cnt % package)) {
+					history_db->begin();
+					cout << "\rHistorydb begin" << endl;
 				}
+				cout << "\r" << percent << "% - "<< counter << " Not in cache, Converting" << endl;
+				for (;;) {
+					try {
+						HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
+						break;
+					} catch (const std::exception &e) {
+						cout << "\r" << e.what();
+					}
+				}
+				if ((transac_cnt % package) == package - 1 || counter == cnt - 1) {
+					history_db->commit();
+					cout << "\rHistorydb commit" << endl;
+				}
+				transac_cnt++;
 			}
-      		--i;
+
+			cout << "\r" << counter << " - " << percent << "%" << flush;
+      		counter++;
 			if (!--cut) break;
 		}
 		history_db->commit();
-		cout << endl << "Succeeded!" << endl;
+		cout << endl << "Succeeded! Time: " << human_readable(GetTimeMs64() - start_time) << endl;
 	}
 
 	std::string conv_body(const std::string &resource) {
@@ -227,7 +223,6 @@ class DBControllerImplPrivate {
 		void sort() {
 		}
 		void free() {
-
 		}
 	private:
 		std::unordered_map<key_type, T> map;

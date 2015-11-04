@@ -1,0 +1,9 @@
+<RCC>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>qml/SkyList.qml</file>
+        <file>qml/ProgressBarCustom.qml</file>
+        <file>qml/Test.qml</file>
+        <file>images/logoskype.svg</file>
+    </qresource>
+</RCC>

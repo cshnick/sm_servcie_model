@@ -58,6 +58,20 @@ uint64 GetTimeMs64()
 #endif
 }
 
+std::string human_readable(Boss::uint64 val) {
+	std::stringstream ss;
+	int msecs = val % 1000;
+	int seconds = (val/1000) % 60;
+	int minutes = val/1000/60;
+	int hours =  val/1000/60/60;
+	if (hours)   ss << hours   << "h ";
+	if (minutes) ss << minutes << "min ";
+	if (seconds) ss << seconds << "s ";
+	             ss << msecs   << "ms" << std::endl;
+
+	return ss.str();
+}
+
 } //namespace Boss
 
 #endif /* INCLUDE_COMMON_TIME_CALCULATOR_H_ */

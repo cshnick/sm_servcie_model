@@ -20,8 +20,10 @@ struct IMessage
 
 	BOSS_DECLARE_IFACEID(skype_sc.IMessage) //
 
-	virtual Boss::RetCode BOSS_CALL Body(IString **) = 0;
-	virtual Boss::RetCode BOSS_CALL SetBody(IString *) = 0;
+	virtual RetCode BOSS_CALL Body(IString **) = 0;
+	virtual RetCode BOSS_CALL SetBody(IString *) = 0;
+	virtual RetCode BOSS_CALL Id(int *p_id) = 0;
+	virtual RetCode BOSS_CALL SetId(int p_id) = 0;
 };
 
 struct IConversation
