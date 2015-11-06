@@ -26,6 +26,16 @@ public:
 };
 
 class SkyModelPrivate;
+struct UIObserver
+		:public Boss::SimpleCoClass<skype_sc::IDBObserver> {
+
+	UIObserver(SkyModelPrivate *q);
+	Boss::RetCode BOSS_CALL ReactOnDbChanged(skype_sc::IDBEvent *event) override;
+
+private:
+	SkyModelPrivate *q;
+};
+
 class SkyProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
@@ -40,6 +50,7 @@ public:
     int loadProgress() const;
     void setLoadProgress(int val);
     Q_SIGNAL void loadProgressChanged(int progress);
+    Q_SIGNAL void loadFinished();
 
     Q_INVOKABLE void stringChanged(const QString &p_str);
     Q_INVOKABLE QVariant get(int p_index, int role);
@@ -57,13 +68,6 @@ private:
 
 private:
     std::unique_ptr<SkyModelPrivate> d;
-
-    SkyModel *model_impl() {
-        return reinterpret_cast<SkyModel*> (this->sourceModel());
-    }
-    SkyModel *model_impl() const {
-        return reinterpret_cast<SkyModel*> (this->sourceModel());
-    }
 };
 
 #endif // SKYPROXYMODEL_H

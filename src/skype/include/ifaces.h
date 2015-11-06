@@ -44,7 +44,7 @@ struct IDBWatcher
 	BOSS_DECLARE_IFACEID_HEX(0x27e199a6)  // CRC32(skype_sc.IDBWatcher)
 
 	virtual Boss::RetCode BOSS_CALL AddObserver(IDBObserver *) = 0;
-	virtual Boss::RetCode BOSS_CALL RemoveObserver() = 0;
+	virtual Boss::RetCode BOSS_CALL RemoveObserver(IDBObserver *) = 0;
 	virtual Boss::RetCode BOSS_CALL SetWatchFile(Boss::IString *) = 0;
 	virtual Boss::RetCode BOSS_CALL GetWatchFile(Boss::IString **) = 0;
 };

@@ -14,26 +14,10 @@
 
 
 std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
-BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi);
+BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi)
 
 using namespace Boss;
 using namespace skype_sc;
-
-struct UIObserver
-		:public Boss::CoClass<skype_sc::service::id::DBObserver, IDBObserver> {
-
-	Boss::RetCode BOSS_CALL ReactOnDbChanged(IDBEvent *event) override {
-		ref_ptr<IMessage> mesg;
-		auto ret = event->Message(mesg.GetPPtr());
-		ref_ptr<IString> body;
-		if (ret == Status::Ok) ret = mesg->Body(body.GetPPtr());
-		int id;
-		ret = mesg->Id(&id);
-		std::cout << id << " - " << StringHelper(body).GetString<IString::AnsiString>() << std::endl;
-
-		return Boss::Status::Ok;
-	}
-};
 
 class SkyModelPrivate {
 public:
@@ -45,7 +29,7 @@ public:
 			m_dbctrl = CreateObject<IDBController>(skype_sc::service::id::DBControler);
 
 			qi_ptr<IDBWatcher> watcher(m_dbctrl);
-			m_observer = Base<UIObserver>::Create().Get();
+			m_observer = Base<UIObserver>::Create(this).Get();
 			watcher->AddObserver(m_observer.Get());
 			watcher->SetWatchFile(Base<String>::Create(SkyProxyModel::s_dbPath).Get());
 			qi_ptr<IService> serv(m_dbctrl);
@@ -55,8 +39,34 @@ public:
 			qDebug() << e.what();
 		}
 	}
+	Boss::RetCode ReactOnDbChanged(skype_sc::IDBEvent *event) {
+		Boss::ref_ptr<skype_sc::IMessage> mesg;
+		auto ret = event->Message(mesg.GetPPtr());
+		Boss::ref_ptr<Boss::IString> body;
+		if (ret == Boss::Status::Ok) ret = mesg->Body(body.GetPPtr());
+		int id;
+		ret = mesg->Id(&id);
+        //std::cout << id << " - " << StringHelper(body).GetString<IString::AnsiString>() << std::endl;
+        QVariantMap m;
+        m["Name"] = StringHelper(body).GetString<IString::AnsiString>().c_str();
+        m["Height"] = 50;
+        m["Author"] = "Luxa Ryabic";
+        m["Timestamp"] = QDateTime::currentDateTime();
+        if (model_impl()) {
+            model_impl()->append(m);
+        }
+
+		return Boss::Status::Ok;
+	}
 	~SkyModelPrivate() {
 	}
+
+    SkyModel *model_impl() {
+        return reinterpret_cast<SkyModel*> (q->sourceModel());
+    }
+    SkyModel *model_impl() const {
+        return reinterpret_cast<SkyModel*> (q->sourceModel());
+    }
 
 private:
 	SkyProxyModel *q;
@@ -64,8 +74,15 @@ private:
 	ref_ptr<IDBController> m_dbctrl;
 	ref_ptr<UIObserver> m_observer;
 	std::unique_ptr<sm::filewatcher> m_fw;
-	std::unique_ptr<Loader> m_pluginLoader;
+	std::unique_ptr<Loader> m_pluginLoader = nullptr;
 };
+
+UIObserver::UIObserver(SkyModelPrivate *p_q)
+	: q(p_q) {
+}
+Boss::RetCode UIObserver::ReactOnDbChanged(IDBEvent *event) {
+	return q->ReactOnDbChanged(event);
+}
 
 
 QVariantMap fromMessage() {
@@ -134,7 +151,10 @@ void SkyProxyModel::loadTest() {
     for (int i = 0; i < 4; i++) {
         QVariantMap m;
         m["Name"] = l.at(i);
-        model_impl()->append(m);
+        m["Height"] = 50;
+        m["Author"] = "Luxa Ryabic";
+        m["Timestamp"] = QDateTime::currentDateTime();
+        d->model_impl()->append(m);
     }
 }
 void SkyProxyModel::loadSkypeTest() {

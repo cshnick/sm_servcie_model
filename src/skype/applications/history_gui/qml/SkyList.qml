@@ -114,7 +114,8 @@ Rectangle {
             }
 
             Component.onCompleted: {
-                sky_model.loadSkypeTest()
+                //sky_model.loadSkypeTest()
+                sky_model.loadTest()
             }
         }
 

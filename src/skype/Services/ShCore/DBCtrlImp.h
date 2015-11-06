@@ -29,7 +29,7 @@ class DBControllerImpl
 	virtual Boss::RetCode BOSS_CALL Stop() override;
 
 	virtual Boss::RetCode BOSS_CALL AddObserver(IDBObserver *) override;
-	virtual Boss::RetCode BOSS_CALL RemoveObserver() override;
+	virtual Boss::RetCode BOSS_CALL RemoveObserver(IDBObserver *obsr) override;
 
  private:
 

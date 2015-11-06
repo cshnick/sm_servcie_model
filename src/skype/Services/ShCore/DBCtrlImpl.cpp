@@ -109,7 +109,20 @@ class DBControllerImplPrivate {
 		m_w->stop();
 	}
 	void addObserver(IDBObserver *obsr) {
+		auto iter = std::find(m_observers.begin(), m_observers.end(), obsr);
+		if (iter != m_observers.end()) {
+			std::cout << "Observer " << obsr << " allready exists" << std::endl;
+			return;
+		}
 		m_observers.push_back(obsr);
+	}
+	void removeObserver(IDBObserver *obsr) {
+		auto iter = std::find(m_observers.begin(), m_observers.end(), obsr);
+		if (iter == m_observers.end()) {
+			std::cout << "Observer " <<  obsr << " is not registered" << std::endl;
+			return;
+		}
+		m_observers.erase(iter);
 	}
 	void setWatchFile(std::string &&str) {
 		if (str == m_filename) {
@@ -397,8 +410,9 @@ Boss::RetCode BOSS_CALL DBControllerImpl::AddObserver(IDBObserver *obsr) {
 	d->addObserver(obsr);
 	return Boss::Status::Ok;
 }
-Boss::RetCode BOSS_CALL DBControllerImpl::RemoveObserver() {
+Boss::RetCode BOSS_CALL DBControllerImpl::RemoveObserver(IDBObserver *obsr) {
 	std::cout << "DBWatcherImpl::RemoveObserver()" << std::endl;
+	d->removeObserver(obsr);
 	return Boss::Status::Ok;
 }
 
