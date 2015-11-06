@@ -4,11 +4,15 @@ set(CMAKE_PREFIX_PATH ${QT_5_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 SET (SRC_DIR "src")
 include_directories(
+    ${INCLUDES_DIR}
+    include
+    ../../litesql/include/
+    ../../litesql/src/skype/
     .
     ${SRC_DIR}
 )
 SET (SRC_LIST
-    ${SRC_DIR}/SkyHistoryMain.cpp
+    ${SRC_DIR}/history_gui.cpp
     ${SRC_DIR}/skymodel.cpp
     ${SRC_DIR}/skyproxymodel.cpp
 )
@@ -32,3 +36,4 @@ add_executable(${PROJECT_NAME}
 )
 
 qt5_use_modules(${PROJECT_NAME} Quick Core Network Xml Widgets)
+target_link_libraries(${PROJECT_NAME} ${COMMON_LIBS})

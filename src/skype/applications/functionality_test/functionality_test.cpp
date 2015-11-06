@@ -42,7 +42,7 @@ int main()
 {
 	try  {
 		Boss::Loader Ldr("sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
-				MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory"));
+				                       MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory"));
 
 		auto ctrl = Boss::CreateObject<skype_sc::IDBController>(skype_sc::service::id::DBControler);
 		qi_ptr<skype_sc::IDBWatcher> watcher(ctrl);

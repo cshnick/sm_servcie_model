@@ -7,6 +7,8 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
+#include "unistd.h"
+
 #include "skyproxymodel.h"
 
 int main(int argc, char *argv[])

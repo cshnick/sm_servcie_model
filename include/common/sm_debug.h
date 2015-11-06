@@ -15,7 +15,7 @@
 #    include "nix/callstack.h"
 #  else
 //Stub
-namespace Private {
+namespace PrivateSM {
 static inline bool callstack_dump(std::ostream &, unsigned int max_frames = 63) {
 	return false;
 }
@@ -46,7 +46,7 @@ public:
 private:
 	static std::stringstream m_strm;
 };
-}
+} //namespace private
 
 namespace sm {
 	typedef Private::CallstackImpl callstack;

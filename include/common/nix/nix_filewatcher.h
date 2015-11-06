@@ -17,6 +17,8 @@
 
 #include "core/exceptions.h"
 
+
+
 namespace sm {
 BOSS_DECLARE_RUNTIME_EXCEPTION(FileWatcher)
 
@@ -46,7 +48,7 @@ public:
 			throw FileWatcherException("inotify_init");
 		}
 		pthread_mutex_init(&m_mutex, nullptr);
-		pthread_create(&m_thread, nullptr, &FileWatcherImpl::thread_func, (void*)this);
+		pthread_create(&m_thread, nullptr, FileWatcherImpl::thread_func, (void*)this);
 	}
 	void start() {
 		m_flag = 1;
@@ -93,7 +95,6 @@ private:
 	}
 	static void *thread_func(void *context) {
 		reinterpret_cast<FileWatcherImpl*>(context)->thread_loop();
-		return 0;
 	}
 	void thread_loop() {
 		for (;;) {

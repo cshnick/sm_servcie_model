@@ -81,8 +81,8 @@ class DBControllerImplPrivate {
 				if (newBound != m_watching_bound_line) {
 					int oldBound = m_watching_bound_line;
 					auto ms = select<SkypeDB::Messages>(*skype_main,
-							  (Messages::Id > oldBound) && (Messages::Id <= newBound)).
-						      orderBy(Messages::Id, false).all();
+							(Messages::Id > oldBound) && (Messages::Id <= newBound)).
+									orderBy(Messages::Id, false).all();
 					std::for_each(ms.begin(), ms.end(), [this](const Messages &source) {
 						cout << source.id << " - " << source.body_xml << std::endl;
 						HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(source);
@@ -363,6 +363,7 @@ DBControllerImpl::DBControllerImpl()
 }
 
 DBControllerImpl::~DBControllerImpl() {
+	cout << "~DBControllerImpl()" << endl;
 }
 
 Boss::RetCode BOSS_CALL DBControllerImpl::Import() {
