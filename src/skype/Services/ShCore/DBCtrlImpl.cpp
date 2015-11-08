@@ -14,6 +14,7 @@
 #include "common/mutex.h"
 #include "common/filewatcher.h"
 #include "common/string.h"
+#include "common/enum.h"
 #include "common/string_helper.h"
 #include "common/time_calculator.h"
 #include "core/exceptions.h"
@@ -201,6 +202,20 @@ class DBControllerImplPrivate {
 		cout << endl << "Succeeded! Time: " << human_readable(GetTimeMs64() - start_time) << endl;
 	}
 
+	template<typename T = void>
+	void recent(IEnum **result) { //2 weeks
+		using namespace HistoryDB;
+		ref_ptr<Enum> res = Base<Enum>::Create();
+		auto messages = select<Messages>(*history_db, Messages::Skype_timestamp > (time(nullptr) - (2 * 7 * 24 * 60 * 60)))
+				.orderBy(Messages::Timestamp, false).all();
+		for (Messages m : messages) {
+			ref_ptr<IMessage> im(convert<Messages, ref_ptr<IMessage>>(m));
+			res->AddItem(im);
+		}
+
+		*result = res.Get();
+	}
+
 	std::string conv_body(const std::string &resource) {
 		std::string converted(resource);
 		return std::move(converted);
@@ -370,6 +385,41 @@ HistoryDB::Chats DBControllerImplPrivate::convert(const SkypeDB::Chats &source) 
 	return std::move(dest);
 }
 
+template<>
+ref_ptr<IUser> DBControllerImplPrivate::convert(const HistoryDB::Users &source) {
+	using namespace HistoryDB;
+	Users src_cpy = source;
+	ref_ptr<IUser> dest = Base<DBUser>::Create();
+	std::string display_name = static_cast<std::string>(source.displayname) == "NULL" ? source.name : source.displayname;
+	dest->SetName(Base<String>::Create(display_name).Get());
+	dest->SetSkypeName(Base<String>::Create(source.name).Get());
+
+	return dest;
+}
+
+template<>
+ref_ptr<IMessage> DBControllerImplPrivate::convert(const HistoryDB::Messages &source) {
+	using namespace HistoryDB;
+	Messages src_cpy = source;
+	ref_ptr<IMessage> dest = Base<DBMessage>::Create();
+	dest->SetBody(Base<String>::Create(source.body).Get());
+	dest->SetId(source.id);
+	auto conversation = Base<DBConversation>::Create();
+
+	auto history_conv = src_cpy.conversation().get().all().at(0);
+	auto history_users = history_conv.users().get().all();
+	ref_ptr<Enum> conversation_users = Base<Enum>::Create();
+	for (auto usr : history_users) {
+		ref_ptr<IUser> iuser = convert<Users, ref_ptr<IUser>>(usr);
+//		auto iuser = Base<DBUser>::Create();
+		conversation_users->AddItem(iuser);
+	}
+	conversation->SetUsers(conversation_users.Get());
+	dest->SetConversation(conversation.Get());
+
+	return dest;
+}
+
 DBControllerImpl::DBControllerImpl()
 	: d(new DBControllerImplPrivate(this)) {
 
@@ -382,6 +432,12 @@ DBControllerImpl::~DBControllerImpl() {
 Boss::RetCode BOSS_CALL DBControllerImpl::Import() {
 	cout << "DBControllerImpl::Import()" << endl;
 	d->import();
+	return Boss::Status::Ok;
+}
+
+Boss::RetCode BOSS_CALL DBControllerImpl::Recent(Boss::IEnum **result) {
+	cout << "DBControllerImpl::Recent()" << endl;
+	d->recent(result);
 	return Boss::Status::Ok;
 }
 

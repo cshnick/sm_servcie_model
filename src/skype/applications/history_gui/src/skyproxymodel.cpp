@@ -13,7 +13,7 @@
 #include "common/filewatcher.h"
 
 
-std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
+std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/luxa_ryabic/main.db";
 BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi)
 
 using namespace Boss;
@@ -58,6 +58,12 @@ public:
 
 		return Boss::Status::Ok;
 	}
+
+    void loadRecent() {
+        qi_ptr<IEnum> recent;
+        m_dbctrl->Recent(recent.GetPPtr());
+    }
+
 	~SkyModelPrivate() {
 	}
 
@@ -159,4 +165,8 @@ void SkyProxyModel::loadTest() {
 }
 void SkyProxyModel::loadSkypeTest() {
 }
+void SkyProxyModel::loadRecent() {
+    d->loadRecent();
+}
+
 //INVOKABLE

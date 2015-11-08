@@ -5,5 +5,9 @@
         <file>qml/ProgressBarCustom.qml</file>
         <file>qml/Test.qml</file>
         <file>images/logoskype.svg</file>
+        <file>qml/DataArea.qml</file>
+        <file>qml/TreesArea.qml</file>
+        <file>images/clock.svg</file>
+        <file>images/profile.svg</file>
     </qresource>
 </RCC>

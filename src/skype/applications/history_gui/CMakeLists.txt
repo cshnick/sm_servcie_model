@@ -15,6 +15,7 @@ SET (SRC_LIST
     ${SRC_DIR}/history_gui.cpp
     ${SRC_DIR}/skymodel.cpp
     ${SRC_DIR}/skyproxymodel.cpp
+    ${SRC_DIR}/skycontactstreemodel.cpp
 )
 SET (HEADERS
     ${SRC_DIR}/skymodel.h
@@ -26,11 +27,13 @@ find_package(Qt5 COMPONENTS Quick Core Network Xml Widgets)
 qt5_add_resources(RESOURCES qml.qrc)
 qt5_wrap_cpp(skymodel_MOC ${SRC_DIR}/skymodel.h)
 qt5_wrap_cpp(skyproxymodel_MOC ${SRC_DIR}/skyproxymodel.h)
+qt5_wrap_cpp(skycontactstreemodel_MOC ${SRC_DIR}/skycontactstreemodel.h)
 
 add_executable(${PROJECT_NAME}
     ${SRC_LIST}
     ${skymodel_MOC}
     ${skyproxymodel_MOC}
+    ${skycontactstreemodel_MOC}
     ${RESOURCES}
     ${HEADERS}
 )

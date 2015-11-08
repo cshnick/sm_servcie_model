@@ -102,7 +102,7 @@
     <field name="phone_office" type="string"/>
     <field name="phone_mobile" type="string"/>
     <field name="emails" type="string"/>
-    <field name="hashed_emails" type="string"/>
+    <!-- <field name="hashed_emails" type="string"/> -->
     <field name="homepage" type="string"/>
     <field name="about" type="string"/>
     <!-- <field name="avatar_image" type="blob"/>  -->

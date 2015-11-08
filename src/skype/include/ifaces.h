@@ -16,6 +16,7 @@
 #include "core/ibase.h"
 #include "core/core_types.h"
 #include "common/istring.h"
+#include "common/ienum.h"
 
 namespace skype_sc {
 
@@ -26,6 +27,7 @@ struct IDBController
     BOSS_DECLARE_IFACEID_HEX(0x52dd9648)
 
 	virtual Boss::RetCode BOSS_CALL Import() = 0;
+    virtual Boss::RetCode BOSS_CALL Recent(Boss::IEnum **) = 0;
 };
 
 struct IDBEvent

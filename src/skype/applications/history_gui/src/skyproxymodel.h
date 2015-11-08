@@ -58,6 +58,7 @@ public:
     Q_INVOKABLE void refresh();
     Q_INVOKABLE void loadTest();
     Q_INVOKABLE void loadSkypeTest();
+    Q_INVOKABLE void loadRecent();
 
 protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;

@@ -300,8 +300,6 @@ public:
     litesql::Field<std::string> phone_mobile;
     static const litesql::FieldType Emails;
     litesql::Field<std::string> emails;
-    static const litesql::FieldType Hashed_emails;
-    litesql::Field<std::string> hashed_emails;
     static const litesql::FieldType Homepage;
     litesql::Field<std::string> homepage;
     static const litesql::FieldType About;

@@ -10,6 +10,7 @@
 #include "unistd.h"
 
 #include "skyproxymodel.h"
+#include "skycontactstreemodel.h"
 
 int main(int argc, char *argv[])
 {
@@ -17,10 +18,12 @@ int main(int argc, char *argv[])
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
     SkyProxyModel *model = new SkyProxyModel();
+    SkyContactsTreeModel *contacts_model = new SkyContactsTreeModel;
 
     QQmlApplicationEngine engine;
 
     engine.rootContext()->setContextProperty("sky_model", model);
+    engine.rootContext()->setContextProperty("sky_contacts_model", contacts_model);
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
 
 

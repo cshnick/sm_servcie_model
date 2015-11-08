@@ -6,9 +6,45 @@
 #include "core/co_class.h"
 #include "core/ref_obj_ptr.h"
 #include "common/string.h"
+#include "common/enum.h"
 
 namespace skype_sc {
 using namespace Boss;
+
+class DBUser : public SimpleCoClass<IUser> {
+public:
+	virtual RetCode BOSS_CALL Name(IString **p_name) override {
+		return m_name.QueryInterface(p_name);
+	}
+	virtual Boss::RetCode BOSS_CALL SetName(IString *p_name) override {
+		m_name = p_name;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL SkypeName(IString **p_name) override {
+		return m_skype_name.QueryInterface(p_name);
+	}
+	virtual Boss::RetCode BOSS_CALL SetSkypeName(IString *p_name) override {
+		m_skype_name = p_name;
+		return Status::Ok;
+	}
+
+private:
+	ref_ptr<IString> m_name;
+	ref_ptr<IString> m_skype_name;
+};
+
+class DBConversation : public SimpleCoClass<IConversation> {
+public:
+	virtual RetCode BOSS_CALL Users(IEnum **p_users) override {
+		return users.QueryInterface(p_users);
+	}
+	virtual Boss::RetCode BOSS_CALL SetUsers(IEnum *p_users) override {
+		users = p_users;
+		return Status::Ok;
+	}
+private:
+	ref_ptr<IEnum> users;
+};
 class DBMessage : public SimpleCoClass<IMessage> {
 public:
 	DBMessage() {
@@ -30,10 +66,18 @@ public:
 		id = p_id;
 		return Status::Ok;
 	}
+	virtual RetCode BOSS_CALL SetConversation(IConversation *p_conv) override {
+		conversation = p_conv;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL Conversation(IConversation **p_conv) override {
+		return conversation.QueryInterface(p_conv);
+	}
 
 private:
 	int id = -1;
 	ref_ptr<IString> body;
+	ref_ptr<IConversation> conversation;
 };
 
 class DBEventImpl
