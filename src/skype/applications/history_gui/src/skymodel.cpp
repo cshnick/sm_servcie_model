@@ -1,12 +1,12 @@
 #include "skymodel.h"
 #include <QtGui>
 
-static std::vector<QString>g_roles = {"Name",
-                                      "Height",
-                                      "Timestamp",
-                                      "Author",
-                                      "Chatname"
-                                     };
+std::vector<QString> SkyModel::s_roles = {"Name",
+                                          "Height",
+                                          "Timestamp",
+                                          "Author",
+                                          "Chatname"
+                                         };
 
 class SkyModelPrivate {
     friend class SkyModel;
@@ -24,13 +24,13 @@ public:
 //        if (role == s_fields.count() + Qt::UserRole + 1) {
 //            return dta;
 //        }
-        return dta.value(g_roles[role - Qt::UserRole]);
+        return dta.value(SkyModel::s_roles[role - Qt::UserRole]);
     }
 
     QHash<int, QByteArray> roleNames() const {
         QHash<int, QByteArray> roles;
-        for (size_t i = 0; i < g_roles.size(); i++) {
-            QString str = g_roles.at(i);
+        for (size_t i = 0; i < SkyModel::s_roles.size(); i++) {
+            QString str = SkyModel::s_roles.at(i);
             roles[Qt::UserRole + i] = str.toLocal8Bit();
         }
 

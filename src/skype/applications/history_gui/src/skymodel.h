@@ -8,6 +8,7 @@ class SkyModelPrivate;
 class SkyModel : public QAbstractListModel
 {
 public:
+    static std::vector<QString> s_roles;
     SkyModel(QObject *parent = 0);
 
     int rowCount(const QModelIndex &parent) const;
