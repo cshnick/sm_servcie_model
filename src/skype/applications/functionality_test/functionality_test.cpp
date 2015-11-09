@@ -21,7 +21,7 @@
 #include "ifaces.h"
 
 #ifndef __APPLE__
-#   define MAIN_DB__ "/home/ilia/.Skype/sc.ryabokon.ilia/main.db"
+#   define MAIN_DB__ "/home/ilia/.Skype/luxa_ryabic/main.db"
 #else
 #   define MAIN_DB__ "/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db"
 #endif

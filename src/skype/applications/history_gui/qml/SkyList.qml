@@ -18,7 +18,7 @@ Rectangle {
             anchors.fill: parent
             width: parent.width
             model: sky_model
-            highlight: Rectangle { color: "#2ABFD4"; radius: 0 }
+            highlight: Rectangle { color: "#ECEE5B"; radius: 0 }
             highlightMoveDuration : 50
             highlightMoveVelocity : 200
 
@@ -27,7 +27,7 @@ Rectangle {
             section.delegate: Rectangle {
                 width: container.width
                 height: 30
-                color: "#B4E0E1"
+                color: "#75CADD"
 
                 Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter

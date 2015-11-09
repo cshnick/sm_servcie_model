@@ -40,8 +40,18 @@ class SkyProxyModel : public QSortFilterProxyModel
 {
     Q_OBJECT
     Q_PROPERTY(int loadProgress READ loadProgress WRITE setLoadProgress NOTIFY loadProgressChanged)
+    Q_PROPERTY(int state READ loadProgress WRITE setState NOTIFY stateChanged)
 
 public:
+    enum State
+    {
+        STATE_UNDEFINED = 0,
+        STATE_EDIT,
+        STATE_RECENT_TREE,
+
+    };
+    Q_ENUMS(State)
+
     explicit SkyProxyModel(QObject *parent = 0);
     virtual ~SkyProxyModel();
 
@@ -49,8 +59,13 @@ public:
 
     int loadProgress() const;
     void setLoadProgress(int val);
+    int state() const;
+    void setState(int val);
+    void emitStateChanged(int new_val) {Q_EMIT stateChanged(new_val);}
+
     Q_SIGNAL void loadProgressChanged(int progress);
     Q_SIGNAL void loadFinished();
+    Q_SIGNAL void stateChanged(int);
 
     Q_INVOKABLE void stringChanged(const QString &p_str);
     Q_INVOKABLE QVariant get(int p_index, int role);

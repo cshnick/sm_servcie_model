@@ -16,7 +16,7 @@
 #include "../../include/skype_helpers.h"
 
 
-std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
+std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/luxa_ryabic/main.db";
 BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi)
 
 using namespace Boss;
@@ -90,7 +90,8 @@ public:
 
 private:
 	SkyProxyModel *q;
-	int m_progress = 0;
+    int m_progress = 0, m_state = 0;
+
 	ref_ptr<IDBController> m_dbctrl;
 	ref_ptr<UIObserver> m_observer;
 	std::unique_ptr<sm::filewatcher> m_fw;
@@ -134,13 +135,25 @@ bool SkyProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_p
 {
     Q_UNUSED(source_row)
     Q_UNUSED(source_parent)
-    const QModelIndex ind = sourceModel()->index(source_row, 0, source_parent);
 
-    QString name_data = ind.data(Qt::UserRole).toString();
-    QString author = ind.data(Qt::UserRole + 3).toString();
+    bool accept = false;
+    switch (d->m_state) {
+    case STATE_EDIT : {
+        const QModelIndex ind = sourceModel()->index(source_row, 0, source_parent);
 
-    bool accept = name_data.contains(filterRegExp()) ||
-            author.contains(filterRegExp());
+        QString name_data = ind.data(Qt::UserRole).toString();
+        QString author = ind.data(Qt::UserRole + 3).toString();
+
+        accept = name_data.contains(filterRegExp()) ||
+                author.contains(filterRegExp());
+    } break;
+    case STATE_RECENT_TREE : {
+
+    } break;
+    default:
+        accept = false;
+    }
+
     return accept;
 }
 
@@ -153,9 +166,17 @@ bool SkyProxyModel::lessThan(const QModelIndex &left, const QModelIndex &right) 
 
 int SkyProxyModel::loadProgress() const {return d->m_progress;}
 void SkyProxyModel::setLoadProgress(int val) {d->m_progress = val;}
+int SkyProxyModel::state() const {return d->m_state;}
+void SkyProxyModel::setState(int val) {
+    if (val != d->m_state) {
+        d->m_state = val;
+        emitStateChanged(val);
+    }
+}
 
 //INVOKABLE
 void SkyProxyModel::stringChanged(const QString &p_str) {
+    setState(STATE_EDIT);
     setFilterFixedString(p_str);
 }
 QVariant SkyProxyModel::get(int p_index, int role) {
