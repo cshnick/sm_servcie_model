@@ -740,6 +740,7 @@ const std::string Messages::table__("Messages");
 const std::string Messages::sequence__("Messages_seq");
 const litesql::FieldType Messages::Id("id",A_field_type_integer,table__);
 const litesql::FieldType Messages::Type("type",A_field_type_string,table__);
+const litesql::FieldType Messages::Author("author",A_field_type_string,table__);
 const litesql::FieldType Messages::Body("body",A_field_type_string,table__);
 const litesql::FieldType Messages::Chat_id("chat_id",A_field_type_integer,table__);
 const litesql::FieldType Messages::Timestamp("timestamp",A_field_type_integer,table__);
@@ -757,26 +758,28 @@ void Messages::defaults() {
     skype_timestamp = 0;
 }
 Messages::Messages(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), type(Type), body(Body), chat_id(Chat_id), timestamp(Timestamp), sender_id(Sender_id), skype_id(Skype_id), skype_timestamp(Skype_timestamp) {
+     : litesql::Persistent(db), id(Id), type(Type), author(Author), body(Body), chat_id(Chat_id), timestamp(Timestamp), sender_id(Sender_id), skype_id(Skype_id), skype_timestamp(Skype_timestamp) {
     defaults();
 }
 Messages::Messages(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), type(Type), body(Body), chat_id(Chat_id), timestamp(Timestamp), sender_id(Sender_id), skype_id(Skype_id), skype_timestamp(Skype_timestamp) {
+     : litesql::Persistent(db, rec), id(Id), type(Type), author(Author), body(Body), chat_id(Chat_id), timestamp(Timestamp), sender_id(Sender_id), skype_id(Skype_id), skype_timestamp(Skype_timestamp) {
     defaults();
-    size_t size = (rec.size() > 8) ? 8 : rec.size();
+    size_t size = (rec.size() > 9) ? 9 : rec.size();
     switch(size) {
-    case 8: skype_timestamp = convert<const std::string&, int>(rec[7]);
+    case 9: skype_timestamp = convert<const std::string&, int>(rec[8]);
         skype_timestamp.setModified(false);
-    case 7: skype_id = convert<const std::string&, int>(rec[6]);
+    case 8: skype_id = convert<const std::string&, int>(rec[7]);
         skype_id.setModified(false);
-    case 6: sender_id = convert<const std::string&, int>(rec[5]);
+    case 7: sender_id = convert<const std::string&, int>(rec[6]);
         sender_id.setModified(false);
-    case 5: timestamp = convert<const std::string&, int>(rec[4]);
+    case 6: timestamp = convert<const std::string&, int>(rec[5]);
         timestamp.setModified(false);
-    case 4: chat_id = convert<const std::string&, int>(rec[3]);
+    case 5: chat_id = convert<const std::string&, int>(rec[4]);
         chat_id.setModified(false);
-    case 3: body = convert<const std::string&, std::string>(rec[2]);
+    case 4: body = convert<const std::string&, std::string>(rec[3]);
         body.setModified(false);
+    case 3: author = convert<const std::string&, std::string>(rec[2]);
+        author.setModified(false);
     case 2: type = convert<const std::string&, std::string>(rec[1]);
         type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
@@ -784,12 +787,13 @@ Messages::Messages(const litesql::Database& db, const litesql::Record& rec)
     }
 }
 Messages::Messages(const Messages& obj)
-     : litesql::Persistent(obj), id(obj.id), type(obj.type), body(obj.body), chat_id(obj.chat_id), timestamp(obj.timestamp), sender_id(obj.sender_id), skype_id(obj.skype_id), skype_timestamp(obj.skype_timestamp) {
+     : litesql::Persistent(obj), id(obj.id), type(obj.type), author(obj.author), body(obj.body), chat_id(obj.chat_id), timestamp(obj.timestamp), sender_id(obj.sender_id), skype_id(obj.skype_id), skype_timestamp(obj.skype_timestamp) {
 }
 const Messages& Messages::operator=(const Messages& obj) {
     if (this != &obj) {
         id = obj.id;
         type = obj.type;
+        author = obj.author;
         body = obj.body;
         chat_id = obj.chat_id;
         timestamp = obj.timestamp;
@@ -813,6 +817,9 @@ std::string Messages::insert(litesql::Record& tables, litesql::Records& fieldRec
     fields.push_back(type.name());
     values.push_back(type);
     type.setModified(false);
+    fields.push_back(author.name());
+    values.push_back(author);
+    author.setModified(false);
     fields.push_back(body.name());
     values.push_back(body);
     body.setModified(false);
@@ -848,6 +855,7 @@ void Messages::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
     updateField(updates, table__, type);
+    updateField(updates, table__, author);
     updateField(updates, table__, body);
     updateField(updates, table__, chat_id);
     updateField(updates, table__, timestamp);
@@ -860,6 +868,7 @@ void Messages::addIDUpdates(Updates& updates) {
 void Messages::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
     ftypes.push_back(Type);
+    ftypes.push_back(Author);
     ftypes.push_back(Body);
     ftypes.push_back(Chat_id);
     ftypes.push_back(Timestamp);
@@ -910,6 +919,7 @@ std::unique_ptr<Messages> Messages::upcastCopy() const {
     Messages* np = new Messages(*this);
     np->id = id;
     np->type = type;
+    np->author = author;
     np->body = body;
     np->chat_id = chat_id;
     np->timestamp = timestamp;
@@ -923,6 +933,7 @@ std::ostream & operator<<(std::ostream& os, Messages o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
     os << o.type.name() << " = " << o.type << std::endl;
+    os << o.author.name() << " = " << o.author << std::endl;
     os << o.body.name() << " = " << o.body << std::endl;
     os << o.chat_id.name() << " = " << o.chat_id << std::endl;
     os << o.timestamp.name() << " = " << o.timestamp << std::endl;
@@ -1132,7 +1143,7 @@ std::vector<litesql::Database::SchemaItem> history::getSchema() const {
     res.push_back(Database::SchemaItem("Conversations","table","CREATE TABLE Conversations (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("ChatUsers","table","CREATE TABLE ChatUsers (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",user_id " + backend->getSQLType(A_field_type_integer,"") + "" +",chat_id " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("info","table","CREATE TABLE info (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",dbversion " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
-    res.push_back(Database::SchemaItem("Messages","table","CREATE TABLE Messages (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",body " + backend->getSQLType(A_field_type_string,"") + "" +",chat_id " + backend->getSQLType(A_field_type_integer,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",sender_id " + backend->getSQLType(A_field_type_integer,"") + "" +",skype_id " + backend->getSQLType(A_field_type_integer,"") + "" +",skype_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Messages","table","CREATE TABLE Messages (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",author " + backend->getSQLType(A_field_type_string,"") + "" +",body " + backend->getSQLType(A_field_type_string,"") + "" +",chat_id " + backend->getSQLType(A_field_type_integer,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",sender_id " + backend->getSQLType(A_field_type_integer,"") + "" +",skype_id " + backend->getSQLType(A_field_type_integer,"") + "" +",skype_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Users","table","CREATE TABLE Users (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",displayname " + backend->getSQLType(A_field_type_string,"") + "" +",name " + backend->getSQLType(A_field_type_string,"") + "" +",lastmessagetime " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Conversations_Users_ConvUsers","table","CREATE TABLE Conversations_Users_ConvUsers (Conversations1 " + backend->getSQLType(A_field_type_integer,"") + "" +",Users2 " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("O7c896dc7077d9154b921f4d3004b5","table","CREATE TABLE O7c896dc7077d9154b921f4d3004b5 (Conversations1 " + backend->getSQLType(A_field_type_integer,"") + "" +",Messages2 " + backend->getSQLType(A_field_type_integer,"") + "" +")"));

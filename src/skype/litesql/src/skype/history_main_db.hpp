@@ -259,6 +259,8 @@ public:
     litesql::Field<int> id;
     static const litesql::FieldType Type;
     litesql::Field<std::string> type;
+    static const litesql::FieldType Author;
+    litesql::Field<std::string> author;
     static const litesql::FieldType Body;
     litesql::Field<std::string> body;
     static const litesql::FieldType Chat_id;

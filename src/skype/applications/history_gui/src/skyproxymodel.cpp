@@ -11,9 +11,12 @@
 #include "common/string.h"
 #include "common/string_helper.h"
 #include "common/filewatcher.h"
+#include "common/enum_helper.h"
+
+#include "../../include/skype_helpers.h"
 
 
-std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/luxa_ryabic/main.db";
+std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
 BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi)
 
 using namespace Boss;
@@ -42,18 +45,10 @@ public:
 	Boss::RetCode ReactOnDbChanged(skype_sc::IDBEvent *event) {
 		Boss::ref_ptr<skype_sc::IMessage> mesg;
 		auto ret = event->Message(mesg.GetPPtr());
-		Boss::ref_ptr<Boss::IString> body;
-		if (ret == Boss::Status::Ok) ret = mesg->Body(body.GetPPtr());
-		int id;
-		ret = mesg->Id(&id);
-        //std::cout << id << " - " << StringHelper(body).GetString<IString::AnsiString>() << std::endl;
-        QVariantMap m;
-        m["Name"] = StringHelper(body).GetString<IString::AnsiString>().c_str();
-        m["Height"] = 50;
-        m["Author"] = "Luxa Ryabic";
-        m["Timestamp"] = QDateTime::currentDateTime();
+        assert(!ret);
+        QVariantMap m(convert(Message_hlpr(mesg)));
         if (model_impl()) {
-            model_impl()->append(m);
+            model_impl()->insert(0, m);
         }
 
 		return Boss::Status::Ok;
@@ -62,6 +57,25 @@ public:
     void loadRecent() {
         qi_ptr<IEnum> recent;
         m_dbctrl->Recent(recent.GetPPtr());
+        EnumHelper<IMessage> recent_hlpr(recent);
+        for (auto iter = recent_hlpr.First(); iter.Get(); iter = recent_hlpr.Next()) {
+            Message_hlpr mh(iter);
+            QVariantMap m(convert(mh));
+            if (model_impl()) {
+                model_impl()->append(m);
+            }
+        }
+    }
+
+    QVariantMap convert(const Message_hlpr &h) {
+        QVariantMap m;
+        m["Name"] = QString::fromStdString(h.Body());
+        m["Height"] = 50;
+        m["Author"] = QString::fromStdString(h.Author());
+        m["Timestamp"] = QDateTime::fromTime_t(h.SkypeTimestamp());
+        m["Chatname"] = QString::fromStdString(h.Conversation().Name());
+
+        return m;
     }
 
 	~SkyModelPrivate() {

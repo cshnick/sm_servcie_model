@@ -35,6 +35,13 @@ private:
 
 class DBConversation : public SimpleCoClass<IConversation> {
 public:
+	virtual RetCode BOSS_CALL SetName(IString *p_name) override {
+		m_name = p_name;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL Name(IString **p_name) override {
+		return m_name.QueryInterface(p_name);
+	}
 	virtual RetCode BOSS_CALL Users(IEnum **p_users) override {
 		return users.QueryInterface(p_users);
 	}
@@ -44,18 +51,42 @@ public:
 	}
 private:
 	ref_ptr<IEnum> users;
+	ref_ptr<IString> m_name;
 };
 class DBMessage : public SimpleCoClass<IMessage> {
 public:
 	DBMessage() {
-		body = Base<String>::Create("Naked body");
+		m_author = Base<String>::Create("Naked body");
 	}
 
+	virtual RetCode BOSS_CALL Author(IString **author) override {
+		return m_author.QueryInterface(author);
+	}
+	virtual Boss::RetCode BOSS_CALL SetAuthor(IString *author) override {
+		m_author = author;
+		return Status::Ok;
+	}
 	virtual RetCode BOSS_CALL Body(IString **in_body) override {
 		return body.QueryInterface(in_body);
 	}
 	virtual Boss::RetCode BOSS_CALL SetBody(IString *out_body) override {
 		body = out_body;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL Timestamp(int *p_id) override {
+		*p_id = timestamp;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL SetTimestamp(int p_id) override {
+		timestamp = p_id;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL SkypeTimestamp(int *p_id) override {
+		*p_id = skype_timestamp;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL SetSkypeTimestamp(int p_id) override {
+		skype_timestamp = p_id;
 		return Status::Ok;
 	}
 	virtual RetCode BOSS_CALL Id(int *p_id) override {
@@ -75,8 +106,10 @@ public:
 	}
 
 private:
-	int id = -1;
+	int id = -1, timestamp = -1, skype_timestamp = -1;
+
 	ref_ptr<IString> body;
+	ref_ptr<IString> m_author;
 	ref_ptr<IConversation> conversation;
 };
 

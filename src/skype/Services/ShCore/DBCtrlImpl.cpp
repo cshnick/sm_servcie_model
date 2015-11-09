@@ -83,18 +83,15 @@ class DBControllerImplPrivate {
 					int oldBound = m_watching_bound_line;
 					auto ms = select<SkypeDB::Messages>(*skype_main,
 							(Messages::Id > oldBound) && (Messages::Id <= newBound)).
-									orderBy(Messages::Id, false).all();
+									orderBy(Messages::Timestamp, true).all();
 					std::for_each(ms.begin(), ms.end(), [this](const Messages &source) {
 						cout << source.id << " - " << source.body_xml << std::endl;
 						HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(source);
 						cache_element(hm);
 						for (auto obs : m_observers) {
-							auto semi_event = Base<DBEventImpl>::Create();
-							auto semi_message = Base<DBMessage>::Create();
-							semi_message->SetBody(Base<String>::Create(hm.body).Get());
-							semi_message->SetId(hm.skype_id);
-							semi_event->SetMessage(semi_message.Get());
-							std::async(std::launch::async, &IDBObserver::ReactOnDbChanged, obs, semi_event.Get());
+							auto db_event = Base<DBEventImpl>::Create();
+							db_event->SetMessage(convert<HistoryDB::Messages, ref_ptr<IMessage>>(hm).Get());
+							std::async(std::launch::async, &IDBObserver::ReactOnDbChanged, obs, db_event.Get());
 						}
 					});
 					m_watching_bound_line = newBound;
@@ -207,13 +204,13 @@ class DBControllerImplPrivate {
 		using namespace HistoryDB;
 		ref_ptr<Enum> res = Base<Enum>::Create();
 		auto messages = select<Messages>(*history_db, Messages::Skype_timestamp > (time(nullptr) - (2 * 7 * 24 * 60 * 60)))
-				.orderBy(Messages::Timestamp, false).all();
+				.orderBy(Messages::Skype_timestamp, false).all();
 		for (Messages m : messages) {
 			ref_ptr<IMessage> im(convert<Messages, ref_ptr<IMessage>>(m));
 			res->AddItem(im);
 		}
 
-		*result = res.Get();
+        res.QueryInterface(result);
 	}
 
 	std::string conv_body(const std::string &resource) {
@@ -367,6 +364,7 @@ HistoryDB::Messages DBControllerImplPrivate::convert(const SkypeDB::Messages &so
 	dest.timestamp = (int)time(nullptr);
 	dest.skype_timestamp = (int)source.timestamp;
 	dest.body = conv_body(source.body_xml);
+	dest.author = static_cast<std::string>(source.author);
 	auto skype_conv   = select<SkypeDB::Conversations>(*skype_main, SkypeDB::Conversations::Id == source.convo_id).all().at(0);
 	dest.update();
 	auto history_conv = convert<SkypeDB::Conversations, HistoryDB::Conversations>(skype_conv);
@@ -404,9 +402,12 @@ ref_ptr<IMessage> DBControllerImplPrivate::convert(const HistoryDB::Messages &so
 	ref_ptr<IMessage> dest = Base<DBMessage>::Create();
 	dest->SetBody(Base<String>::Create(source.body).Get());
 	dest->SetId(source.id);
+	dest->SetAuthor(Base<String>::Create(source.author).Get());
+	dest->SetTimestamp(source.timestamp);
+	dest->SetSkypeTimestamp(source.skype_timestamp);
 	auto conversation = Base<DBConversation>::Create();
-
 	auto history_conv = src_cpy.conversation().get().all().at(0);
+	conversation->SetName(Base<String>::Create(history_conv.friendlyname).Get());
 	auto history_users = history_conv.users().get().all();
 	ref_ptr<Enum> conversation_users = Base<Enum>::Create();
 	for (auto usr : history_users) {

@@ -7,9 +7,14 @@
 
 #include <common/string.h>
 #include "common/string_helper.h"
+#include "common/ienum.h"
+#include "common/enum.h"
 #include "common/enum_helper.h"
 #include "core/co_class.h"
 #include "core/ref_obj_ptr.h"
+#include "core/base.h"
+#include "core/ibase.h"
+#include "skype_helpers.h"
 
 #include "cxxabi.h"
 
@@ -55,18 +60,16 @@ int main()
 		watcher->AddObserver(ui_observer.Get());
 
 		qi_ptr<skype_sc::IService> service(ctrl);
-		//service->Start();
+		service->Start();
 		ref_ptr<IEnum> recent;
 		ctrl->Recent(recent.GetPPtr());
-
 		int counter = 0;
-		EnumHelper<IString*> mess_enum(recent);
-//		for (Boss::ref_ptr<skype_sc::IMessage*> iter = mess_enum.First(); iter.Get(); iter = mess_enum.Next()) {
-//			counter++;
-//		}
-//		std::cout << "Counter: " << counter << std::endl;
-		mess_enum.Next();
-
+		EnumHelper<IMessage> mess_enum(recent);
+		for (ref_ptr<IMessage> iter = mess_enum.First(); iter.Get(); iter = mess_enum.Next()) {
+			Message_hlpr mh(iter);
+			std::cout << "Body: " << mh.Body() << "; Id: " << mh.Id() << std::endl;
+		}
+		std::cout << "Counter: " << counter << std::endl;
 
 		while (true) {
 			sleep(5);
@@ -74,6 +77,8 @@ int main()
 	} catch (std::exception const &e)  {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}
+
+	std::cout << "Succeeded!" << std::endl;
 
 	return 0;
 }
