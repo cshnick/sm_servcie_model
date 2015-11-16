@@ -1,16 +1,23 @@
 #include "skycontactstreemodel.h"
+#include <QtCore>
+
+SkyContactsItem::SkyContactsItem(const QString &text, const QString &image)
+    : QStandardItem(text) {
+    setData(image, Qt::UserRole);
+}
 
 SkyContactsTreeModel::SkyContactsTreeModel(QObject *parent)
     :QStandardItemModel(parent)
 {
     setColumnCount(1);
-    QStandardItem *recent = new QStandardItem(QIcon(":/images/profile.svg"), "Recent");
+    QStandardItem *recent = new SkyContactsItem("Recent", "qrc:/images/profile.svg");
     invisibleRootItem()->appendRow(recent);
-    for (int i = 0; i < 10; i++) {
-        QStandardItem *item = new QStandardItem(QString("row %1").arg(i));
-        recent->appendRow(item);
-    }
-    QStandardItem *contacts = new QStandardItem(QIcon(":images/logoskype.svg"), "Contacts");
+    recent->appendRow(new SkyContactsItem("Test", "qrc:/images/clock.svg"));
+    QStandardItem *contacts = new SkyContactsItem("Contacts", "qrc:/images/logoskype.svg");
     invisibleRootItem()->appendRow(contacts);
+}
+
+QString SkyContactsTreeModel::icon_path(const QModelIndex &ind) {
+    return ind.data(Qt::UserRole).toString();
 }
 

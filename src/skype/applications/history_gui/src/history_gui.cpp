@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QTextCodec>
+#include <QtQml>
 
 #include <QAction>
 #include <QMenu>
@@ -21,10 +22,15 @@ int main(int argc, char *argv[])
     SkyContactsTreeModel *contacts_model = new SkyContactsTreeModel;
 
     QQmlApplicationEngine engine;
-
     engine.rootContext()->setContextProperty("sky_model", model);
     engine.rootContext()->setContextProperty("sky_contacts_model", contacts_model);
+    qmlRegisterType<ModelState>("Enums", 1, 0, "ModelState");
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
+    QObject *rect = engine.rootObjects().at(0)->findChild<QObject*>("SkylistRect");
+    model->setQmlObject(rect);
+
+    qDebug() << "Rect width" << rect->property("width").toInt();
+    qDebug() << "Rect object name" << rect->objectName();
 
 
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
@@ -42,7 +48,6 @@ int main(int argc, char *argv[])
             root->connect(restoreAction, SIGNAL(triggered()), root, SLOT(showNormal()));
             QAction *quitAction = new QAction(QObject::tr("&Quit"), root);
             root->connect(quitAction, SIGNAL(triggered()), qApp, SLOT(quit()));
-
 
             QMenu *trayIconMenu = new QMenu();
             trayIconMenu->addAction(minimizeAction);

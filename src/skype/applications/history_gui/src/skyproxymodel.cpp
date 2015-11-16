@@ -5,6 +5,7 @@
 #include <QFontMetrics>
 #include <QRect>
 #include <QtGui>
+#include <QTextDocument>
 
 #include "../../include/class_ids.h"
 #include "plugin/loader.h"
@@ -16,7 +17,7 @@
 #include "../../include/skype_helpers.h"
 
 
-std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/luxa_ryabic/main.db";
+std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
 BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi)
 
 using namespace Boss;
@@ -36,7 +37,7 @@ public:
 			watcher->AddObserver(m_observer.Get());
 			watcher->SetWatchFile(Base<String>::Create(SkyProxyModel::s_dbPath).Get());
 			qi_ptr<IService> serv(m_dbctrl);
-			serv->Start();
+            serv->Start();
 
 		} catch (const std::exception &e) {
 			qDebug() << e.what();
@@ -68,9 +69,17 @@ public:
     }
 
     QVariantMap convert(const Message_hlpr &h) {
+        int width = 1115;
+        QString body = QString::fromStdString(h.Body());
+        if (qml_object) {
+            width = qml_object->property("width").toInt();
+        }
+        QTextDocument doc(body);
+        doc.setTextWidth(width);
+        int height = doc.size().height();
         QVariantMap m;
-        m["Name"] = QString::fromStdString(h.Body());
-        m["Height"] = 50;
+        m["Name"] = body;
+        m["Height"] = height + 30;
         m["Author"] = QString::fromStdString(h.Author());
         m["Timestamp"] = QDateTime::fromTime_t(h.SkypeTimestamp());
         m["Chatname"] = QString::fromStdString(h.Conversation().Name());
@@ -96,6 +105,7 @@ private:
 	ref_ptr<UIObserver> m_observer;
 	std::unique_ptr<sm::filewatcher> m_fw;
 	std::unique_ptr<Loader> m_pluginLoader = nullptr;
+    QObject *qml_object = nullptr;
 };
 
 UIObserver::UIObserver(SkyModelPrivate *p_q)
@@ -104,7 +114,6 @@ UIObserver::UIObserver(SkyModelPrivate *p_q)
 Boss::RetCode UIObserver::ReactOnDbChanged(IDBEvent *event) {
 	return q->ReactOnDbChanged(event);
 }
-
 
 QVariantMap fromMessage() {
     return QVariantMap();
@@ -138,7 +147,7 @@ bool SkyProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_p
 
     bool accept = false;
     switch (d->m_state) {
-    case STATE_EDIT : {
+    case ModelState::STATE_EDIT : {
         const QModelIndex ind = sourceModel()->index(source_row, 0, source_parent);
 
         QString name_data = ind.data(Qt::UserRole).toString();
@@ -147,7 +156,7 @@ bool SkyProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_p
         accept = name_data.contains(filterRegExp()) ||
                 author.contains(filterRegExp());
     } break;
-    case STATE_RECENT_TREE : {
+    case ModelState::STATE_RECENT_TREE : {
 
     } break;
     default:
@@ -174,9 +183,14 @@ void SkyProxyModel::setState(int val) {
     }
 }
 
+void SkyProxyModel::setQmlObject(QObject *o) {
+    qDebug() << "New qml object" << o;
+    d->qml_object = o;
+}
+
 //INVOKABLE
 void SkyProxyModel::stringChanged(const QString &p_str) {
-    setState(STATE_EDIT);
+    setState(ModelState::STATE_EDIT);
     setFilterFixedString(p_str);
 }
 QVariant SkyProxyModel::get(int p_index, int role) {

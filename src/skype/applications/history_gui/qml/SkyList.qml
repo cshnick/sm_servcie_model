@@ -1,10 +1,12 @@
 import QtQuick 2.0
 import QtQuick.Controls 1.2
 import QtQuick.Controls.Styles 1.2
+import Enums 1.0
 
 Rectangle {
     id: container
     anchors.fill: parent
+
     signal textChanged(string text)
 
     function filter(text) {
@@ -17,8 +19,9 @@ Rectangle {
             id: sky_view
             anchors.fill: parent
             width: parent.width
+            objectName: "SkylistRect"
             model: sky_model
-            highlight: Rectangle { color: "#ECEE5B"; radius: 0 }
+            highlight: Rectangle { color: "#D4EDED"; radius: 0 }
             highlightMoveDuration : 50
             highlightMoveVelocity : 200
 
@@ -27,7 +30,8 @@ Rectangle {
             section.delegate: Rectangle {
                 width: container.width
                 height: 30
-                color: "#75CADD"
+//                color: "#74CADB"
+                color: "transparent"
 
                 Rectangle {
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -116,6 +120,10 @@ Rectangle {
             Component.onCompleted: {
                 //sky_model.loadSkypeTest()
                 //sky_model.loadTest()
+
+                //sky_model.state = sky_model.STATE_EDIT
+                console.log("State: " + sky_model.state)
+                sky_model.state = ModelState.STATE_EDIT
                 sky_model.loadRecent()
             }
         }

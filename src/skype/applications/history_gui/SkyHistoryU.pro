@@ -2,9 +2,9 @@ QMAKE_CC = gcc-4.9
 QMAKE_CXX = g++-4.9
 
 TEMPLATE = app
-QT += qml quick widgets
+QT += qml quick widgets qml
 
-isEmpty(MAIN_SRC)       : MAIN_SRC=/home/ilia/Development/sm_service_model
+isEmpty(MAIN_SRC)       : MAIN_SRC=/home/ilia/Development/sm_servcie_model
 isEmpty(LITE_SQL_CMAKE) : MAIN_LIB_DIR=/home/ilia/Development/cmake_sm/lib
 
 LITE_SQL_SRC=$$MAIN_SRC/src/skype/litesql

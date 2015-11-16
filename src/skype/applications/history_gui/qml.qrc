@@ -9,5 +9,6 @@
         <file>qml/TreesArea.qml</file>
         <file>images/clock.svg</file>
         <file>images/profile.svg</file>
+        <file>images/clock.png</file>
     </qresource>
 </RCC>

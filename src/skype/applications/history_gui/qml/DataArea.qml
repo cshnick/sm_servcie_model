@@ -40,7 +40,7 @@ Item {
 
     SkyList {
         id: sky_list
-        property int filter_after : 0
+        property int filter_after : 1
         function text_changed(text) {
             if (text.length > filter_after) {
                 filter(text)
