@@ -29,10 +29,6 @@ int main(int argc, char *argv[])
     QObject *rect = engine.rootObjects().at(0)->findChild<QObject*>("SkylistRect");
     model->setQmlObject(rect);
 
-    qDebug() << "Rect width" << rect->property("width").toInt();
-    qDebug() << "Rect object name" << rect->objectName();
-
-
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         QApplication::setQuitOnLastWindowClosed(false);
         QObject *root = 0;

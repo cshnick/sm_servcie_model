@@ -364,10 +364,6 @@ public:
     litesql::Field<int> isauthorized;
     static const litesql::FieldType Popularity_ord;
     litesql::Field<int> popularity_ord;
-    static const litesql::FieldType External_id;
-    litesql::Field<std::string> external_id;
-    static const litesql::FieldType External_system_id;
-    litesql::Field<std::string> external_system_id;
     static const litesql::FieldType Isblocked;
     litesql::Field<int> isblocked;
     static const litesql::FieldType Certificate_send_count;
@@ -426,8 +422,6 @@ public:
     litesql::Field<int> authreq_initmethod;
     static const litesql::FieldType Sent_authrequest_extrasbitmask;
     litesql::Field<int> sent_authrequest_extrasbitmask;
-    static const litesql::FieldType Liveid_cid;
-    litesql::Field<std::string> liveid_cid;
     static void initValues();
 protected:
     void defaults();

@@ -137,8 +137,8 @@
     <field name="buddystatus" type="integer" />
     <field name="isauthorized" type="integer" />
     <field name="popularity_ord" type="integer" />
-    <field name="external_id" type="string"/>
-    <field name="external_system_id" type="string"/>
+    <!-- <field name="external_id" type="string"/> -->
+    <!-- <field name="external_system_id" type="string"/>  -->
     <field name="isblocked" type="integer" />
     <!-- <field name="authorization_certificate" type="blob"/> -->
     <field name="certificate_send_count" type="integer" />
@@ -177,7 +177,7 @@
     <!-- <field name="verified_email" type="blob"/> -->
     <!-- <field name="verified_company" type="blob"/> -->
     <field name="sent_authrequest_extrasbitmask" type="integer" />
-    <field name="liveid_cid" type="string"/>
+    <!-- <field name="liveid_cid" type="string"/> -->
    <!--  <field name="extprop_tags" type="string"/> -->
    <!--  <field name="extprop_away_since" type="integer" /> -->
    <typedef name="std::string" alias="cache_key_type"/>

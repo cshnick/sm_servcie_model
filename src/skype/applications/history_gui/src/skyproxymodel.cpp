@@ -17,7 +17,7 @@
 #include "../../include/skype_helpers.h"
 
 
-std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
+std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/luxa_ryabic/main.db";
 BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi)
 
 using namespace Boss;
