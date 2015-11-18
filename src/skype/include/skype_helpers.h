@@ -18,6 +18,28 @@
 
 namespace skype_sc {
 
+struct Account_hlpr {
+	Account_hlpr(Boss::ref_ptr<IAccount> p_acc) : m_acc(p_acc) {
+	}
+	std::string Name() const {
+		Boss::ref_ptr<Boss::IString> name;
+		m_acc->Name(name.GetPPtr());
+		return Boss::StringHelper(name).GetString<Boss::IString::AnsiString>();
+	}
+	std::string FilePath() const {
+		Boss::ref_ptr<Boss::IString> path;
+		m_acc->FilePath(path.GetPPtr());
+		return Boss::StringHelper(path).GetString<Boss::IString::AnsiString>();
+	}
+	std::string HistoryDBPath() const {
+		Boss::ref_ptr<Boss::IString> path;
+		m_acc->HistoryDBPath(path.GetPPtr());
+		return Boss::StringHelper(path).GetString<Boss::IString::AnsiString>();
+	}
+private:
+	mutable ref_ptr<IAccount> m_acc;
+};
+
 struct User_hlpr {
 	User_hlpr(Boss::ref_ptr<IUser> p_usr) : m_user(p_usr) {
 	}

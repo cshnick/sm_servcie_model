@@ -20,6 +20,16 @@
 
 namespace skype_sc {
 
+struct IAccount
+		: public Boss::Inherit<Boss::IBase> {
+
+	BOSS_DECLARE_IFACEID_HEX(0x665d6e11) //skype_sc.IAccount
+
+	virtual Boss::RetCode BOSS_CALL Name(Boss::IString **) = 0;
+	virtual Boss::RetCode BOSS_CALL FilePath(Boss::IString **) = 0;
+	virtual Boss::RetCode BOSS_CALL HistoryDBPath(Boss::IString **) = 0;
+};
+
 struct ISettings
 		: public Boss::Inherit<Boss::IBase> {
 

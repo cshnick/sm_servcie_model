@@ -38,14 +38,14 @@ namespace Boss
     void ModuleCounterImpl::AddRef()
     {
       GetModuleCounter().fetch_add(1, std::memory_order_relaxed);
-//      std::cout << "Added: " << GetModuleCounter() << std::endl;
+      std::cout << "Added: " << GetModuleCounter() << std::endl;
 //      ::sm::callstack::print();
     }
 
     void ModuleCounterImpl::Release()
     {
       GetModuleCounter().fetch_sub(1, std::memory_order_relaxed);
-//      std::cout << "Released: " << GetModuleCounter() << std::endl;
+      std::cout << "Released: " << GetModuleCounter() << std::endl;
 //      ::sm::callstack::print();
     }
 
