@@ -81,7 +81,7 @@ int main() {
 
 	//Reading from existing json object
 	FILE *f;
-	f = fopen("../../sm_servcie_model/src/skype/applications/libjson_test/test1.json", "rb");
+	f = fopen("../../sm_service_model/src/skype/applications/libjson_test/settings.json", "rb");
 	if (f == NULL) {
 		printf("I couldn't open file for reading.\n");
 		exit(0);

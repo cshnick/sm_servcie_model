@@ -28,7 +28,7 @@ int main (int argc, char **argv) {
 //		settings->Accounts(accs.GetPPtr());
 
 		qi_ptr<ISerializable> sz(settings);
-		sz->Save(Base<OFileStream>::Create("test.json").Get());
+		sz->Save(Base<OFileStream>::Create("settings.json").Get());
 
 	} catch (const exception &e) {
 		cout << e.what() << endl;

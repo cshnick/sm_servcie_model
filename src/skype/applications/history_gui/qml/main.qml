@@ -73,10 +73,13 @@ ApplicationWindow {
 
             Component.onCompleted: {
                 var accs = sky_model.settings()["Accounts"]
-                console.log(o)
+                var i = 0
                 for(var acc in accs) {
-                   console.log(k, o[k]);
-                   itemModel.createaAccSettingsRect(k, o[k])
+                    var acc_o = accs[acc]
+                    console.log(acc_o["Name"])
+                    console.log(acc_o["FilePath"]);
+                    itemModel.createaAccSettingsRect(acc_o["Name"], acc_o["FilePath"])
+                    i++
                 }
             }
         }
