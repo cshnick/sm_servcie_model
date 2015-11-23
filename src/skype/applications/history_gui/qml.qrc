@@ -10,5 +10,7 @@
         <file>images/clock.png</file>
         <file>images/profile.png</file>
         <file>qml/MainView.qml</file>
+        <file>qml/AccSettingsRect.qml</file>
+        <file>qml/Helper.js</file>
     </qresource>
 </RCC>

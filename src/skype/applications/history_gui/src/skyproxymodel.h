@@ -6,6 +6,7 @@
 #include <QMutex>
 #include <atomic>
 #include <memory>
+#include <QJsonObject>
 
 #include "../../include/ifaces.h"
 #include "core/ref_obj_ptr.h"
@@ -79,6 +80,7 @@ public:
     Q_INVOKABLE void loadTest();
     Q_INVOKABLE void loadSkypeTest();
     Q_INVOKABLE void loadRecent();
+    Q_INVOKABLE QJsonObject settings();
 
 protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;

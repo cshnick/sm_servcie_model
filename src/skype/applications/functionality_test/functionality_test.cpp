@@ -60,6 +60,7 @@ int main()
 		watcher->AddObserver(ui_observer.Get());
 
 		qi_ptr<skype_sc::IService> service(ctrl);
+
 		service->Start();
 		ref_ptr<IEnum> recent;
 		ctrl->Recent(recent.GetPPtr());
@@ -68,6 +69,7 @@ int main()
 		for (ref_ptr<IMessage> iter = mess_enum.First(); iter.Get(); iter = mess_enum.Next()) {
 			Message_hlpr mh(iter);
 			std::cout << "Body: " << mh.Body() << "; Id: " << mh.Id() << std::endl;
+			counter++;
 		}
 		std::cout << "Counter: " << counter << std::endl;
 

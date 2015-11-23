@@ -36,6 +36,9 @@ struct Account_hlpr {
 		m_acc->HistoryDBPath(path.GetPPtr());
 		return Boss::StringHelper(path).GetString<Boss::IString::AnsiString>();
 	}
+	constexpr static const char* TName = "Name";
+	constexpr static const char* TFilePath = "FilePath";
+	constexpr static const char* THistoryDBPath = "HistoryDBPath";
 private:
 	mutable ref_ptr<IAccount> m_acc;
 };

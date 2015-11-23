@@ -17,7 +17,7 @@
 #include "../../include/skype_helpers.h"
 
 
-std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/luxa_ryabic/main.db";
+std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
 BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi)
 
 using namespace Boss;
@@ -68,6 +68,16 @@ public:
         }
     }
 
+    QJsonObject settings() {
+        QFile jsonf("settings.json");
+        jsonf.open(QIODevice::ReadOnly);
+        QByteArray all = jsonf.readAll();
+        jsonf.close();
+        QJsonDocument jdoc = QJsonDocument::fromJson(all);
+        QJsonObject o = jdoc.object();
+        return o;
+    }
+
     QVariantMap convert(const Message_hlpr &h) {
         int width = 1115;
         QString body = QString::fromStdString(h.Body());
@@ -102,7 +112,7 @@ private:
     int m_progress = 0, m_state = 0;
 
 	ref_ptr<IDBController> m_dbctrl;
-	ref_ptr<UIObserver> m_observer;
+    ref_ptr<UIObserver> m_observer;
 	std::unique_ptr<sm::filewatcher> m_fw;
 	std::unique_ptr<Loader> m_pluginLoader = nullptr;
     QObject *qml_object = nullptr;
@@ -216,6 +226,9 @@ void SkyProxyModel::loadSkypeTest() {
 }
 void SkyProxyModel::loadRecent() {
     d->loadRecent();
+}
+QJsonObject SkyProxyModel::settings() {
+    return d->settings();
 }
 
 //INVOKABLE

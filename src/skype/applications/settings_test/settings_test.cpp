@@ -5,6 +5,7 @@
 #include "common/string.h"
 #include "common/string_helper.h"
 #include "common/enum.h"
+#include "common/file_stream.h"
 
 #include "plugin/module.h"
 #include "plugin/loader.h"
@@ -23,8 +24,11 @@ int main (int argc, char **argv) {
 		cout << StringHelper(home).GetString<IString::AnsiString>() << endl;
 
 		auto settings = CreateObject<ISettings>(skype_sc::service::id::Settings);
-		ref_ptr<IEnum> accs;
-		settings->Accounts(accs.GetPPtr());
+//		ref_ptr<IEnum> accs;
+//		settings->Accounts(accs.GetPPtr());
+
+		qi_ptr<ISerializable> sz(settings);
+		sz->Save(Base<OFileStream>::Create("test.json").Get());
 
 	} catch (const exception &e) {
 		cout << e.what() << endl;
