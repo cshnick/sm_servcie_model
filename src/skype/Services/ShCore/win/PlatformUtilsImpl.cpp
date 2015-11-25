@@ -8,6 +8,7 @@
 #include "../PlatformUtilsImpl.h"
 #include <iostream>
 #include "core/error_codes.h"
+#include "core"
 
 namespace skype_sc {
 using namespace std;

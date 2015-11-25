@@ -22,6 +22,7 @@ struct IPlatformUtils
 
 	virtual Boss::RetCode BOSS_CALL SkypeLocation(Boss::IString **) = 0;
 	virtual Boss::RetCode BOSS_CALL UserSettingsDir(Boss::IString **) = 0;
+	virtual Boss::RetCode BOSS_CALL Exists(Boss::IString*, bool *) = 0;
 };
 
 } //namespace skype_sc

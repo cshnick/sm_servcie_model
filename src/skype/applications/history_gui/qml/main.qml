@@ -15,6 +15,11 @@ ApplicationWindow {
     height: 768
     visible: true
 
+    property var g_settings : sky_model.settings()
+    function updateSettings(new_settings) {
+        sky_model.updateSettings(new_settings)
+    }
+
     menuBar: MenuBar {
         Menu {
             title: qsTr("&File")
@@ -72,14 +77,9 @@ ApplicationWindow {
             }
 
             Component.onCompleted: {
-                var accs = sky_model.settings()["Accounts"]
-                var i = 0
-                for(var acc in accs) {
-                    var acc_o = accs[acc]
-                    console.log(acc_o["Name"])
-                    console.log(acc_o["FilePath"]);
-                    itemModel.createaAccSettingsRect(acc_o["Name"], acc_o["FilePath"])
-                    i++
+                var accs = g_settings["Accounts"]
+                for(var i in accs) {
+                    itemModel.createaAccSettingsRect(accs[i].Name, accs[i].HistoryDBPath)
                 }
             }
         }

@@ -36,6 +36,9 @@ struct ISettings
 	BOSS_DECLARE_IFACEID_HEX(0x600999e0) //skype_sc.ISettings
 
 	virtual Boss::RetCode BOSS_CALL Accounts(Boss::IEnum **) = 0;
+	virtual Boss::RetCode BOSS_CALL AsJsonString(IString **) = 0;
+	virtual Boss::RetCode BOSS_CALL Update() = 0;
+	virtual Boss::RetCode BOSS_CALL UpdateFromJson(IString *json_string) = 0;
 };
 
 struct IDBController

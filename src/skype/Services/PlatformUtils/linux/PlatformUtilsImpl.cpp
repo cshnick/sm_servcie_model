@@ -9,14 +9,21 @@
 #include <iostream>
 #include "core/error_codes.h"
 #include "common/string.h"
+#include "common/string_helper.h"
 
 #include <unistd.h>
 #include <sys/types.h>
 #include <pwd.h>
 
+#include "core/exceptions.h"
+
+#include "sys/stat.h"
+
 namespace skype_sc {
 using namespace std;
 using namespace Boss;
+
+BOSS_DECLARE_RUNTIME_EXCEPTION(PlatfromUtils)
 
 PlatformUtilsImpl::PlatformUtilsImpl() {
 	// TODO Auto-generated constructor stub

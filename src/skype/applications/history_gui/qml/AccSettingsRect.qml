@@ -59,6 +59,15 @@ Rectangle {
                 folder: accSettingsTop.text
                 selectFolder: true
                 onAccepted: {
+                    path_field.text = fileUrl.toString().replace("file://", "")
+                    var settings = container_window.g_settings
+                    for (var i in settings.Accounts) {
+                        if (settings.Accounts[i].Name === text) {
+                            settings.Accounts[i].HistoryDBPath = path_field.text
+                            container_window.updateSettings(settings)
+                        }
+                    }
+
                     visible: false
                 }
                 onRejected: {

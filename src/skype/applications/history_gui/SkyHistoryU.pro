@@ -4,7 +4,7 @@ QMAKE_CXX = g++-4.9
 TEMPLATE = app
 QT += qml quick widgets qml
 
-isEmpty(MAIN_SRC)       : MAIN_SRC=/home/ilia/Development/sm_service_model
+isEmpty(MAIN_SRC)       : MAIN_SRC=/home/ilia/Development/sm_servcie_model
 isEmpty(LITE_SQL_CMAKE) : MAIN_LIB_DIR=/home/ilia/Development/cmake_sm/lib
 
 LITE_SQL_SRC=$$MAIN_SRC/src/skype/litesql
@@ -30,7 +30,7 @@ INCLUDEPATH += $$LITE_SQL_SRC/include \
 
 LIBS += \
         -lstdc++ -ldl \
-        -L$$MAIN_LIB_DIR -llitesql
+        -L$$MAIN_LIB_DIR -llitesql -ljson
 
 HEADERS += \
     src/skymodel.h \

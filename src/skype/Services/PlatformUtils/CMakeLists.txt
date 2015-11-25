@@ -15,7 +15,7 @@ message("own libs: ${OWN_LIBS}")
 
 get_filename_component(SELF_NAME "${CMAKE_CURRENT_LIST_DIR}" NAME)
 
-SET(SOURCE_LIST PlatformUtilsImpl.cpp)
+#SET(SOURCE_LIST PlatformUtilsImpl.cpp)
 if (APPLE)
     SET(SOURCE_LIST macosx/PlatformUtilsImpl.cpp)
 elseif (UNIX)

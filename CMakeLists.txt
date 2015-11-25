@@ -37,6 +37,7 @@ endif (APPLE)
 SET (COMMON_LIBS
     dl
     pthread
+    json
     ${MAC_COMMON_LIBS}
 )
 
@@ -57,7 +58,7 @@ SET (service_registry service_registry)
 SET (class_factory class_factory)
 SET (regtool regtool)
 
-SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wno-vla")
+SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14 -Wno-vla -Wno-deprecated-declarations")
 
 set (lib_path_prefix "../lib")
 set (bin_path_prefix "")

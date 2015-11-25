@@ -17,7 +17,7 @@
 #include "../../include/skype_helpers.h"
 
 
-std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/luxa_ryabic/main.db";
+std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
 BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi)
 
 using namespace Boss;
@@ -31,6 +31,7 @@ public:
 				                                      MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory")));
 		try {
 			m_dbctrl = CreateObject<IDBController>(skype_sc::service::id::DBControler);
+            m_settings = CreateObject<ISettings>(skype_sc::service::id::Settings);
 
 			qi_ptr<IDBWatcher> watcher(m_dbctrl);
 			m_observer = Base<UIObserver>::Create(this).Get();
@@ -69,13 +70,15 @@ public:
     }
 
     QJsonObject settings() {
-        QFile jsonf("settings.json");
-        jsonf.open(QIODevice::ReadOnly);
-        QByteArray all = jsonf.readAll();
-        jsonf.close();
-        QJsonDocument jdoc = QJsonDocument::fromJson(all);
+        Settings_hlpr shlpr(m_settings);
+        QString json_str = QString::fromStdString(shlpr.AsJsonString());
+        QJsonDocument jdoc = QJsonDocument::fromJson(json_str.toLocal8Bit());
         QJsonObject o = jdoc.object();
         return o;
+    }
+    void updateSettings(const QJsonDocument &doc) {
+        Settings_hlpr shlpr(m_settings);
+        shlpr.UpdateFromJson(doc.toJson().data());
     }
 
     QVariantMap convert(const Message_hlpr &h) {
@@ -112,6 +115,7 @@ private:
     int m_progress = 0, m_state = 0;
 
 	ref_ptr<IDBController> m_dbctrl;
+    ref_ptr<ISettings> m_settings;
     ref_ptr<UIObserver> m_observer;
 	std::unique_ptr<sm::filewatcher> m_fw;
 	std::unique_ptr<Loader> m_pluginLoader = nullptr;
@@ -229,6 +233,10 @@ void SkyProxyModel::loadRecent() {
 }
 QJsonObject SkyProxyModel::settings() {
     return d->settings();
+}
+
+void SkyProxyModel::updateSettings(const QJsonDocument &doc) {
+    return d->updateSettings(doc);
 }
 
 //INVOKABLE

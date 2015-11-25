@@ -9,14 +9,41 @@
 #define SRC_SKYPE_INCLUDE_SKYPE_HELPERS_H_
 
 #include "ifaces.h"
+#include "iplatformutils.h"
 
 #include "common/string.h"
 #include "common/string_helper.h"
 #include "core/ref_obj_ptr.h"
+#include "core/exceptions.h"
 #include "common/enum.h"
 #include "common/enum_helper.h"
 
+BOSS_DECLARE_RUNTIME_EXCEPTION(SkypeHelpers)
 namespace skype_sc {
+
+struct PlatformUtils_hlpr {
+	PlatformUtils_hlpr(Boss::ref_ptr<IPlatformUtils> p_arg) : m_pu(p_arg) {
+	}
+	bool Exists(const std::string &fname) {
+		auto fname_ref = Base<String>::Create(fname);
+		bool ex = false;
+		m_pu->Exists(fname_ref.Get(), &ex);
+		return ex;
+	}
+	std::string SkypeLocation() {
+		ref_ptr<IString> str;
+		m_pu->SkypeLocation(str.GetPPtr());
+		return Boss::StringHelper(str).GetString<Boss::IString::AnsiString>();
+	}
+	std::string UserSettingsDir() {
+		ref_ptr<IString> str;
+		m_pu->UserSettingsDir(str.GetPPtr());
+		return Boss::StringHelper(str).GetString<Boss::IString::AnsiString>();
+	}
+
+private:
+	mutable ref_ptr<IPlatformUtils> m_pu;
+};
 
 struct Account_hlpr {
 	Account_hlpr(Boss::ref_ptr<IAccount> p_acc) : m_acc(p_acc) {
@@ -41,6 +68,45 @@ struct Account_hlpr {
 	constexpr static const char* THistoryDBPath = "HistoryDBPath";
 private:
 	mutable ref_ptr<IAccount> m_acc;
+};
+
+struct Settings_hlpr {
+	Settings_hlpr(Boss::ref_ptr<ISettings> p_arg) : m_val(p_arg) {
+	}
+	std::vector<Account_hlpr> Accounts() {
+		ref_ptr<IEnum> accs;
+		if (m_val->Accounts(accs.GetPPtr()) != Boss::Status::Ok) {
+			throw SkypeHelpersException("Error in Settings_hlpr");
+		}
+		EnumHelper<IAccount> en_h(accs);
+		std::vector<Account_hlpr> res;
+		for (ref_ptr<IAccount> iter = en_h.First(); accs.Get(); iter = en_h.Next()) {
+			Account_hlpr ah(iter);
+			res.push_back(ah);
+		}
+		return res;
+	}
+	std::string AsJsonString() {
+		ref_ptr<IString> res;
+		if (m_val->AsJsonString(res.GetPPtr()) != Status::Ok) {
+			throw SkypeHelpersException("Error in Settings_hlpr");
+		}
+		return Boss::StringHelper(res).GetString<Boss::IString::AnsiString>();
+	}
+    void Update() {
+    	if (m_val->Update() != Status::Ok) {
+    		throw SkypeHelpersException("Error in Settings_hlpr");
+    	}
+    }
+    void UpdateFromJson(const std::string &json) {
+    	auto ref_str = Base<String>::Create(json);
+    	if (m_val->UpdateFromJson(ref_str.Get()) != Status::Ok) {
+    		throw SkypeHelpersException("Error in Settings_hlpr");
+    	}
+    }
+
+private:
+	mutable ref_ptr<ISettings> m_val;
 };
 
 struct User_hlpr {

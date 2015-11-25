@@ -14,7 +14,7 @@ set (OWN_LIBS
 message("own libs: ${OWN_LIBS}")
 
 get_filename_component(SELF_NAME "${CMAKE_CURRENT_LIST_DIR}" NAME)
-#file (GLOB SOURCE_LIST "*.cpp")
+file (GLOB SOURCE_LIST "*.cpp")
 set(SOURCE_LIST
     DBCtrlImpl.cpp
     DBEventImpl.cpp
