@@ -16,6 +16,7 @@
 #include <atomic>
 
 #include "core/exceptions.h"
+#include "common/time_calculator.h"
 
 
 
@@ -62,7 +63,7 @@ public:
 	~FileWatcherImpl() {
 		stop();
 		m_flag = 2;
-		pthread_join(m_thread, 0);
+		usleep(1000 * 30); //Give 30 ms to read to be unblocked;
 		pthread_detach(m_thread);
 		pthread_mutex_destroy(&m_mutex);
 	}
@@ -95,6 +96,7 @@ private:
 	}
 	static void *thread_func(void *context) {
 		reinterpret_cast<FileWatcherImpl*>(context)->thread_loop();
+		return 0;
 	}
 	void thread_loop() {
 		for (;;) {
@@ -126,7 +128,7 @@ private:
 			for (;;) {
 				numRead = read(inotify_fd, buf, buf_len);
 				if (m_flag == 0) {
-					continue;
+					break;
 				} else if (m_flag == 2) {
 					break;
 				}

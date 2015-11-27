@@ -76,8 +76,9 @@ public:
         QJsonObject o = jdoc.object();
         return o;
     }
-    void updateSettings(const QJsonDocument &doc) {
+    void updateSettings(const QJsonObject &o) {
         Settings_hlpr shlpr(m_settings);
+        QJsonDocument doc(o);
         shlpr.UpdateFromJson(doc.toJson().data());
     }
 
@@ -235,8 +236,8 @@ QJsonObject SkyProxyModel::settings() {
     return d->settings();
 }
 
-void SkyProxyModel::updateSettings(const QJsonDocument &doc) {
-    return d->updateSettings(doc);
+void SkyProxyModel::updateSettings(const QJsonObject &o) {
+    d->updateSettings(o);
 }
 
 //INVOKABLE

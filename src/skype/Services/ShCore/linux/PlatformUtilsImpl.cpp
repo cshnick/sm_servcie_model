@@ -43,21 +43,88 @@ Boss::RetCode BOSS_CALL PlatformUtilsImpl::UserSettingsDir(Boss::IString **)  {
 	return Boss::Status::NotImplemented;
 }
 
-Boss::RetCode BOSS_CALL PlatformUtilsImpl::Exists(Boss::IString *filename, bool *exists) {
+namespace {
+Boss::RetCode CheckStat(Boss::IString *filename, bool *result, bool (*check_mode)(const struct stat&)) {
 	std::string std_name = StringHelper(filename).GetString<IString::AnsiString>();
-	*exists = false;
+	*result = false;
 	struct stat sb;
 
 	if (stat(std_name.c_str(), &sb) == -1) {
-		*exists = false;
+		*result = false;
 		return Status::Ok;
 	}
 
-	if (S_ISREG(sb.st_mode) || S_ISDIR(sb.st_mode)) {
-		*exists = true;
+	if (check_mode(sb)) {
+		*result = true;
 	}
 
 	return Status::Ok;
 }
+typedef struct stat Stat;
+static int do_mkdir(const char *path, mode_t mode)
+{
+    Stat            st;
+    int             status = 0;
+
+    if (stat(path, &st) != 0) {
+        /* Directory does not exist. EEXIST for race condition */
+        if (mkdir(path, mode) != 0 && errno != EEXIST)
+            status = -1;
+    } else if (!S_ISDIR(st.st_mode)) {
+        errno = ENOTDIR;
+        status = -1;
+    }
+
+    return(status);
+}
+int mkpath(const char *path, mode_t mode)
+{
+    char           *pp;
+    char           *sp;
+    int             status;
+    char           *copypath = strdup(path);
+
+    status = 0;
+    pp = copypath;
+    while (status == 0 && (sp = strchr(pp, '/')) != 0) {
+        if (sp != pp) {
+            /* Neither root nor double slash in path */
+            *sp = '\0';
+            status = do_mkdir(copypath, mode);
+            *sp = '/';
+        }
+        pp = sp + 1;
+    }
+    if (status == 0)
+        status = do_mkdir(path, mode);
+    free(copypath);
+    return (status);
+}
+} //Private namespace
+
+Boss::RetCode BOSS_CALL PlatformUtilsImpl::Exists(Boss::IString *filename, bool *exists) {
+	return CheckStat(filename, exists, [](const struct stat &sb) -> bool {
+		return S_ISREG(sb.st_mode) || S_ISDIR(sb.st_mode);
+	});
+}
+
+Boss::RetCode BOSS_CALL PlatformUtilsImpl::IsFile(Boss::IString *filename, bool *exists) {
+	return CheckStat(filename, exists, [](const struct stat &sb) -> bool {
+		return S_ISREG(sb.st_mode);
+	});
+}
+
+Boss::RetCode BOSS_CALL PlatformUtilsImpl::IsDir(Boss::IString *filename, bool *exists) {
+	return CheckStat(filename, exists, [](const struct stat &sb) -> bool {
+		return S_ISDIR(sb.st_mode);
+	});
+}
+
+RetCode PlatformUtilsImpl::MkPath(Boss::IString *path, bool *ok) {
+	int rc = mkpath(StringHelper(path).GetString<>().c_str(), 0755);
+	*ok = !rc;
+	return Status::Ok;
+}
+
 
 } /* namespace skype_sc */

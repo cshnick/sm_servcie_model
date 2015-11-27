@@ -5,6 +5,7 @@ import QtQuick.Dialogs 1.2
 
 Rectangle {
     id: accSettingsTop
+    color: "transparent"
 
     property alias text: txt.text
     property alias path: path_field.text
@@ -20,7 +21,15 @@ Rectangle {
             renderType: Text.NativeRendering
             font.pointSize: 11
             color: "#333"
+
+            MouseArea {
+                anchors.fill: parent
+                onClicked: {
+                    accounts_view.currentIndex = index
+                }
+            }
         }
+
         TextField {
             id: path_field
             width: parent.width
@@ -28,7 +37,7 @@ Rectangle {
             style: TextFieldStyle {
                 textColor: "black"
                 background: Rectangle {
-                    color : "lightblue"
+                    color : "transparent"
                     radius: 0
                     border.color: "#333"
                     border.width: 0
@@ -75,6 +84,11 @@ Rectangle {
                 }
                 Component.onCompleted: visible = false
             }
+        }
+        Rectangle {
+            width: parent.width
+            height: 1
+            color: "#aaa"
         }
     }
 }

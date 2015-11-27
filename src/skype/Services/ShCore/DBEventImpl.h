@@ -8,6 +8,9 @@
 #include "common/string.h"
 #include "common/enum.h"
 
+namespace HistoryDB {
+class Messages;
+} //namespace HistoryDB
 namespace skype_sc {
 using namespace Boss;
 
@@ -58,6 +61,7 @@ public:
 	DBMessage() {
 		m_author = Base<String>::Create("Naked body");
 	}
+	DBMessage(std::unique_ptr<HistoryDB::Messages> &&);
 
 	virtual RetCode BOSS_CALL Author(IString **author) override {
 		return m_author.QueryInterface(author);
@@ -97,6 +101,14 @@ public:
 		id = p_id;
 		return Status::Ok;
 	}
+	virtual RetCode BOSS_CALL SkypeId(int *p_id) override {
+		*p_id = skype_id;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL SetSkypeId(int p_id) override {
+		skype_id = p_id;
+		return Status::Ok;
+	}
 	virtual RetCode BOSS_CALL SetConversation(IConversation *p_conv) override {
 		conversation = p_conv;
 		return Status::Ok;
@@ -106,7 +118,7 @@ public:
 	}
 
 private:
-	int id = -1, timestamp = -1, skype_timestamp = -1;
+	int id = -1, skype_id = -1, timestamp = -1, skype_timestamp = -1;
 
 	ref_ptr<IString> body;
 	ref_ptr<IString> m_author;

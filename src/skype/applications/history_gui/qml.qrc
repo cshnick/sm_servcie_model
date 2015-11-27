@@ -12,5 +12,6 @@
         <file>qml/MainView.qml</file>
         <file>qml/AccSettingsRect.qml</file>
         <file>qml/Helper.js</file>
+        <file>qml/SettingsView.qml</file>
     </qresource>
 </RCC>

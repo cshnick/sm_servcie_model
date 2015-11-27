@@ -26,6 +26,8 @@
 #   define MAIN_DB__ "/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db"
 #endif
 
+BOSS_DECLARE_RUNTIME_EXCEPTION(FunctionalityTest)
+
 using namespace Boss;
 using namespace skype_sc;
 
@@ -34,12 +36,11 @@ struct UIObserver
 
 	Boss::RetCode BOSS_CALL ReactOnDbChanged(IDBEvent *event) override {
 		ref_ptr<IMessage> mesg;
-		auto ret = event->Message(mesg.GetPPtr());
-		ref_ptr<IString> body;
-		if (ret == Status::Ok) ret = mesg->Body(body.GetPPtr());
-		int id;
-		ret = mesg->Id(&id);
-		std::cout << id << " - " << StringHelper(body).GetString<IString::AnsiString>() << std::endl;
+		if (event->Message(mesg.GetPPtr()) != Status::Ok) {
+			throw FunctionalityTestException("Error getting message");
+		}
+		Message_hlpr msg_hlpr(mesg);
+		std::cout << msg_hlpr.SkypeId() << " - " << msg_hlpr.Body() << std::endl;
 
 		return Boss::Status::Ok;
 	}
@@ -51,10 +52,19 @@ int main()
 		Boss::Loader Ldr("sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
 				                       MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory"));
 
-		auto ctrl = Boss::CreateObject<skype_sc::IDBController>(skype_sc::service::id::DBControler);
+		auto pu = PlatformUtils_hlpr(CreateObject<IPlatformUtils>(skype_sc::service::id::PlatformUtils));
+
+		pu.MkPath("skype/sc.ryabokon.ilia");
+		pu.MkPath("skype/luxa_ryabic");
+
+		auto ctrl = CreateObject<IDBController>(skype_sc::service::id::DBControler);
 		qi_ptr<skype_sc::IDBWatcher> watcher(ctrl);
 
-		watcher->SetWatchFile(Base<String>::Create(MAIN_DB__).Get());
+
+		std::string first_skype = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db", first_history = "skype/sc.ryabokon.ilia";
+		std::cout << "Initial data: \n" << "\tSkype: " << first_skype << "\n\tHistory: " << first_history << std::endl;
+		watcher->SetWatchFile(Base<String>::Create(first_skype).Get());
+		ctrl->SetDBPath(Base<String>::Create(first_history).Get());
 
 		ref_ptr<UIObserver> ui_observer = Base<UIObserver>::Create();
 		watcher->AddObserver(ui_observer.Get());
@@ -62,6 +72,7 @@ int main()
 		qi_ptr<skype_sc::IService> service(ctrl);
 
 		service->Start();
+
 		ref_ptr<IEnum> recent;
 		ctrl->Recent(recent.GetPPtr());
 		int counter = 0;
@@ -73,6 +84,15 @@ int main()
 		}
 		std::cout << "Counter: " << counter << std::endl;
 
+		sleep(10);
+
+		std::string second_skype = MAIN_DB__, second_history = "skype/luxa_ryabic";
+		std::cout << "Initial data: \n" << "\tSkype: " << second_skype << "\tHistory: " << second_history << std::endl;
+		ctrl->Reset(Base<String>::Create(second_skype).Get(), Base<String>::Create(second_history).Get());
+		std::cout << "Reseted; wait for events" << std::endl;
+		sleep(10);
+		service->Stop();
+		std::cout << "Stopped" << std::endl;
 		while (true) {
 			sleep(5);
 		}

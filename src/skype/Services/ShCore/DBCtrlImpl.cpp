@@ -1,5 +1,7 @@
 #include "DBCtrlImp.h"
 #include "DBEventImpl.h"
+#include "PlatformUtilsImpl.h"
+#include "skype_helpers.h"
 
 #include <atomic>
 #include <iostream>
@@ -23,6 +25,8 @@
 #include "skype_main_db.hpp"
 #include "history_main_db.hpp"
 
+BOSS_DECLARE_RUNTIME_EXCEPTION(DBCtrl)
+
 using Boss::ref_ptr;
 using Boss::qi_ptr;
 using Boss::IString;
@@ -37,73 +41,77 @@ namespace skype_sc {
 
 class DBControllerImplPrivate {
 	friend class DBControllerImpl;
+
 	DBControllerImplPrivate(DBControllerImpl *p_q)
 		: q(p_q)
-		, m_watching_bound_line(-1) {
+		, m_watching_bound_line(-1)
+		, m_pu(Base<PlatformUtilsImpl>::Create()) {
 		try {
-			history_db.reset(new HistoryDB::history("sqlite3", std::string("database=") + "history.db"));
-			if (history_db->needsUpgrade()) {
-				history_db->upgrade();
-			}
-			history_db->verbose = false;
+
 		} catch (const std::exception &e) {
 			cout << "Error in constructor DBControllerImplPrivate" << endl;
 			throw std::runtime_error(e.what());
 		}
 	}
+
 	template<typename T = void>
 	void start() {
+		if (isRunning()) return;
 		if (m_filename.empty()) {
 			std::cout << "Filename is empty, nothing to start" << std::endl;
 			return;
 		}
-		if (!skype_main.get()) {
-			try {
-				skype_main.reset(new SkypeDB::main("sqlite3", std::string("database=") + m_filename));
-				skype_main->verbose = false;
-				auto accs = select<SkypeDB::Accounts>(*skype_main).all();
-				assert(accs.size() == 1);
-				auto usr = convert<SkypeDB::Accounts, HistoryDB::Users> (accs.at(0));
-				me = usr.name;
-				cache_element(usr);
-			} catch (const std::exception &e) {
-				throw runtime_error(e.what());
+		try {
+			std::string history_db_file = m_historyDBDir.empty() ? "history.db" : m_historyDBDir + "/history.db";
+			history_db.reset(new HistoryDB::history("sqlite3", std::string("database=") + history_db_file));
+			history_db->verbose = false;
+			if (history_db->needsUpgrade()) {
+				history_db->upgrade();
 			}
+			skype_main.reset(new SkypeDB::main("sqlite3", std::string("database=") + m_filename));
+			skype_main->verbose = false;
+			auto accs = select<SkypeDB::Accounts>(*skype_main).all();
+			assert(accs.size() == 1);
+			auto usr = convert<SkypeDB::Accounts, HistoryDB::Users> (accs.at(0));
+			me = usr.name;
+			cache_element(usr);
+
+			cacheHistoryDB();
+			import();
+			m_watching_bound_line = check_bound();
+			if (!m_w.get()) {
+				m_w.reset(new sm::filewatcher(m_filename, [this](std::string file, int mode) {
+					using namespace SkypeDB;
+					std::lock_guard<Boss::Mutex> lock(m_mutex);
+					uint newBound = check_bound();
+					//cout << (mode == sm::filewatcher::e_modify ? "modify" : "access") << endl;
+					if (newBound != m_watching_bound_line) {
+						int oldBound = m_watching_bound_line;
+						auto ms = select<SkypeDB::Messages>(*skype_main,
+								(Messages::Id > oldBound) && (Messages::Id <= newBound)).
+										orderBy(Messages::Timestamp, true).all();
+						std::for_each(ms.begin(), ms.end(), [this](const Messages &source) {
+							cout << source.id << " - " << source.body_xml << std::endl;
+							HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(source);
+							cache_element(hm);
+							for (auto obs : m_observers) {
+								auto db_event = Base<DBEventImpl>::Create();
+								db_event->SetMessage(convert<HistoryDB::Messages, ref_ptr<IMessage>>(hm).Get());
+								//std::async(std::launch::async, &IDBObserver::ReactOnDbChanged, obs, db_event.Get()); call async if needed
+								obs->ReactOnDbChanged(db_event.Get());
+							}
+						});
+						m_watching_bound_line = newBound;
+					}
+				}));
+			}
+			m_w->start();
+		} catch (const std::exception &e) {
+			throw runtime_error(e.what());
 		}
-		cacheHistoryDB();
-		import();
-		m_watching_bound_line = check_bound();
-		if (!m_w.get()) {
-			m_w.reset(new sm::filewatcher(m_filename, [this](std::string file, int mode) {
-				using namespace SkypeDB;
-				std::lock_guard<Boss::Mutex> lock(m_mutex);
-				uint newBound = check_bound();
-				//cout << (mode == sm::filewatcher::e_modify ? "modify" : "access") << endl;
-				if (newBound != m_watching_bound_line) {
-					int oldBound = m_watching_bound_line;
-					auto ms = select<SkypeDB::Messages>(*skype_main,
-							(Messages::Id > oldBound) && (Messages::Id <= newBound)).
-									orderBy(Messages::Timestamp, true).all();
-					std::for_each(ms.begin(), ms.end(), [this](const Messages &source) {
-						cout << source.id << " - " << source.body_xml << std::endl;
-						HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(source);
-						cache_element(hm);
-						for (auto obs : m_observers) {
-							auto db_event = Base<DBEventImpl>::Create();
-							db_event->SetMessage(convert<HistoryDB::Messages, ref_ptr<IMessage>>(hm).Get());
-							std::async(std::launch::async, &IDBObserver::ReactOnDbChanged, obs, db_event.Get());
-						}
-					});
-					m_watching_bound_line = newBound;
-				}
-			}));
-		}
-		m_w->start();
 	}
 	void stop() {
-		if (!m_w.get()) {
-			return;
-		}
+		if (!isRunning()) return;
 		m_w->stop();
 	}
 	void addObserver(IDBObserver *obsr) {
@@ -123,10 +131,13 @@ class DBControllerImplPrivate {
 		m_observers.erase(iter);
 	}
 	void setWatchFile(std::string &&str) {
+		if (isRunning()) {
+			reset(str, m_historyDBDir);
+			return;
+		}
 		if (str == m_filename) {
 			return;
 		}
-		m_w.reset(nullptr);
 		m_filename = str;
 	}
 	uint check_bound() {
@@ -213,6 +224,31 @@ class DBControllerImplPrivate {
         res.QueryInterface(result);
 	}
 
+	template<typename T = void>
+	void reset(const std::string &new_filename, const std::string &history_db_path) {
+		stop();
+		m_w.reset(nullptr);
+		m_watching_bound_line = -1;
+		if (new_filename != m_filename) {
+			skype_main.reset(nullptr);
+			m_filename = new_filename;
+		}
+		if (history_db_path != m_historyDBDir) {
+			history_db.reset(nullptr);
+			m_historyDBDir = m_pu.Exists(history_db_path) ? history_db_path : "";
+		}
+		clearCache();
+		start();
+	}
+
+	template<typename T = void>
+	void setHistoryDBPath(const std::string &hdbpath) {
+		if (!m_pu.IsDir(hdbpath)) {
+			throw DBCtrlException("Path: " + hdbpath + " is not a directory");
+		}
+		m_historyDBDir = hdbpath;
+	}
+
 	std::string conv_body(const std::string &resource) {
 		std::string converted(resource);
 		return std::move(converted);
@@ -232,6 +268,10 @@ class DBControllerImplPrivate {
 		return converted;
 	}
 
+	bool isRunning() const {
+		return m_w.get();
+	}
+
 	template<typename T>
 	class DBCache {
 	public:
@@ -248,6 +288,7 @@ class DBControllerImplPrivate {
 		void sort() {
 		}
 		void free() {
+			map.clear();
 		}
 	private:
 		std::unordered_map<key_type, T> map;
@@ -265,6 +306,11 @@ class DBControllerImplPrivate {
 	    cache_m<HistoryDB::Messages>();
 	    cout << "Caching messages time: " << Boss::GetTimeMs64() - start << endl;
 	    cout << "Finished Caching" << endl;
+	}
+	void clearCache() {
+		std::get<DBCache<HistoryDB::Users>>(m_hash).free();
+		std::get<DBCache<HistoryDB::Messages>>(m_hash).free();
+		std::get<DBCache<SkypeDB::Contacts>>(m_hash).free();
 	}
 
 	template<typename T, typename F>
@@ -294,6 +340,7 @@ class DBControllerImplPrivate {
 private:
 	DBControllerImpl *q;
 	std::string m_filename;
+	std::string m_historyDBDir;
 	std::unique_ptr<sm::filewatcher> m_w = nullptr;
 	atomic_int m_watching_bound_line;
 	Boss::Mutex m_mutex;
@@ -305,6 +352,7 @@ private:
 		      > m_hash;
 	std::string me;
 	std::vector<IDBObserver*> m_observers;
+	PlatformUtils_hlpr m_pu;
 }; //class DBControllerImplPrivate
 
 template<>
@@ -402,6 +450,7 @@ ref_ptr<IMessage> DBControllerImplPrivate::convert(const HistoryDB::Messages &so
 	ref_ptr<IMessage> dest = Base<DBMessage>::Create();
 	dest->SetBody(Base<String>::Create(source.body).Get());
 	dest->SetId(source.id);
+	dest->SetSkypeId(source.skype_id);
 	dest->SetAuthor(Base<String>::Create(source.author).Get());
 	dest->SetTimestamp(source.timestamp);
 	dest->SetSkypeTimestamp(source.skype_timestamp);
@@ -439,6 +488,18 @@ Boss::RetCode BOSS_CALL DBControllerImpl::Import() {
 Boss::RetCode BOSS_CALL DBControllerImpl::Recent(Boss::IEnum **result) {
 	cout << "DBControllerImpl::Recent()" << endl;
 	d->recent(result);
+	return Boss::Status::Ok;
+}
+
+Boss::RetCode BOSS_CALL DBControllerImpl::Reset(Boss::IString *skype, Boss::IString *history) {
+	std::cout << "DBWatcherImpl::Reset()" << std::endl;
+	d->reset(StringHelper(skype).GetString<>(), StringHelper(history).GetString<>());
+	return Boss::Status::Ok;
+}
+
+Boss::RetCode BOSS_CALL DBControllerImpl::SetDBPath(Boss::IString *ptr) {
+	std::cout << "DBWatcherImpl::SetDBPath()" << std::endl;
+	d->setHistoryDBPath(StringHelper(ptr).GetString<>());
 	return Boss::Status::Ok;
 }
 

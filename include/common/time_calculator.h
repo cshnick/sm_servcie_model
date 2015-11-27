@@ -1,7 +1,7 @@
 /*
  * time_calculator.h
  *
- *  Created on: 14 окт. 2015 г.
+ *  Created on: 14 пїЅпїЅпїЅ. 2015 пїЅ.
  *      Author: ilia
  */
 
@@ -14,6 +14,8 @@
 #include <sys/time.h>
 #include <ctime>
 #endif
+
+#include "sstream"
 
 
 namespace Boss {

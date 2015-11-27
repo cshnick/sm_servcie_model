@@ -27,6 +27,7 @@ public:
 
 	//ISettings
 	virtual Boss::RetCode BOSS_CALL Accounts(Boss::IEnum **) override;
+	virtual Boss::RetCode BOSS_CALL DefaultAccount(int *) override;
 	virtual Boss::RetCode BOSS_CALL AsJsonString(IString **str) override;
 	virtual Boss::RetCode BOSS_CALL Update() override;
 	virtual Boss::RetCode BOSS_CALL UpdateFromJson(IString *json_string) override;

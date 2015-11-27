@@ -63,12 +63,11 @@ public:
 
 	SettingsImplPrivate(SettingsImpl *q)
 		: q(q), pu_h(Base<PlatformUtilsImpl>::Create()) {
-		if (!loadAccounts()) {
+		if (!loadSettings()) {
 			AccountsDefault(m_accounts.GetPPtr());
 		}
 	}
-	bool loadAccounts() {
-		auto str = Base<String>::Create(json_filename);
+	bool loadSettings() {
 		if (!pu_h.Exists(json_filename)) return false;
 
 		auto fs = Base<IFileStream>::Create(json_filename);
@@ -97,8 +96,7 @@ public:
 		}
 
 		json_parse(jobj);
-
-		return false;
+                return true;
 	}
 	void json_parse(json_object * jobj) {
 		enum json_type type;
@@ -189,6 +187,14 @@ public:
 
 		return res_enum.QueryInterface(res);
 	}
+	Boss::RetCode DefaultAccount(int *val) {
+		*val = 0;
+		return Status::Ok;
+	}
+	Boss::RetCode DefaultAccountDefault(int *val) {
+		*val = 0;
+		return Status::Ok;
+	}
 
 	std::string toString() {
 		if (!m_accounts.Get()) {
@@ -236,7 +242,7 @@ public:
 				throw SettingsException("Error update from json");
 			}
 		}
-		loadAccounts();
+		loadSettings();
 		return Status::Ok;
 	}
 
@@ -282,6 +288,11 @@ Boss::RetCode BOSS_CALL SettingsImpl::UpdateFromJson(IString *json_string) {
 Boss::RetCode BOSS_CALL SettingsImpl::Accounts(Boss::IEnum **result) {
 	cout << "SettingsImpl::Accounts" << endl;
 	return p->Accounts(result);
+}
+
+Boss::RetCode BOSS_CALL SettingsImpl::DefaultAccount(int *val) {
+	cout << "SettingsImpl::Accounts" << endl;
+	return p->DefaultAccount(val);
 }
 
 } /* namespace skype_sc */

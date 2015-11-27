@@ -25,6 +25,9 @@ public:
 	virtual Boss::RetCode BOSS_CALL SkypeLocation(Boss::IString **) override;
 	virtual Boss::RetCode BOSS_CALL UserSettingsDir(Boss::IString **) override;
 	virtual Boss::RetCode BOSS_CALL Exists(Boss::IString*, bool *) override;
+	virtual Boss::RetCode BOSS_CALL IsDir(Boss::IString*, bool *) override;
+	virtual Boss::RetCode BOSS_CALL IsFile(Boss::IString*, bool *) override;
+	virtual Boss::RetCode BOSS_CALL MkPath(Boss::IString*, bool *) override;
 };
 
 } /* namespace skype_sc */

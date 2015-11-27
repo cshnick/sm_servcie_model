@@ -33,6 +33,8 @@ struct IMessage
 	virtual RetCode BOSS_CALL SetSkypeTimestamp(int p_id) = 0;
 	virtual RetCode BOSS_CALL Id(int *p_id) = 0;
 	virtual RetCode BOSS_CALL SetId(int p_id) = 0;
+	virtual RetCode BOSS_CALL SkypeId(int *p_id) = 0;
+	virtual RetCode BOSS_CALL SetSkypeId(int p_id) = 0;
 	virtual RetCode BOSS_CALL SetConversation(IConversation *p_conv) = 0;
 	virtual RetCode BOSS_CALL Conversation(IConversation **p_conv) = 0;
 };

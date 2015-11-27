@@ -30,6 +30,24 @@ struct PlatformUtils_hlpr {
 		m_pu->Exists(fname_ref.Get(), &ex);
 		return ex;
 	}
+	bool IsFile(const std::string &fname) {
+		auto fname_ref = Base<String>::Create(fname);
+		bool ex = false;
+		m_pu->IsFile(fname_ref.Get(), &ex);
+		return ex;
+	}
+	bool IsDir(const std::string &fname) {
+		auto fname_ref = Base<String>::Create(fname);
+		bool ex = false;
+		m_pu->IsDir(fname_ref.Get(), &ex);
+		return ex;
+	}
+	bool MkPath(const std::string &fname) {
+		auto fname_ref = Base<String>::Create(fname);
+		bool ok = false;
+		m_pu->MkPath(fname_ref.Get(), &ok);
+		return ok;
+	}
 	std::string SkypeLocation() {
 		ref_ptr<IString> str;
 		m_pu->SkypeLocation(str.GetPPtr());
@@ -160,32 +178,51 @@ struct Message_hlpr {
 
 	std::string Author() const {
 		Boss::ref_ptr<Boss::IString> author;
-		m_msg->Author(author.GetPPtr());
+		if (m_msg->Author(author.GetPPtr()) != Boss::Status::Ok) {
+			throw SkypeHelpersException("Author");
+		}
 		return Boss::StringHelper(author).GetString<Boss::IString::AnsiString>();
 	}
 	std::string Body() const {
 		Boss::ref_ptr<Boss::IString> body;
-		m_msg->Body(body.GetPPtr());
+		if (m_msg->Body(body.GetPPtr()) != Boss::Status::Ok) {
+			throw SkypeHelpersException("Body");
+		}
 		return Boss::StringHelper(body).GetString<Boss::IString::AnsiString>();
 	}
 	int Id() const {
 		int res = -1;
-		m_msg->Id(&res);
+		if (m_msg->Id(&res) != Boss::Status::Ok) {
+			throw SkypeHelpersException("Id");
+		}
+		return res;
+	}
+	int SkypeId() const {
+		int res = -1;
+		if (m_msg->SkypeId(&res) != Boss::Status::Ok) {
+			throw SkypeHelpersException("SkypeId");
+		}
 		return res;
 	}
 	int Timestamp() const {
 		int res = -1;
-		m_msg->Timestamp(&res);
+		if (m_msg->Timestamp(&res) != Boss::Status::Ok) {
+			throw SkypeHelpersException("Timestamp");
+		}
 		return res;
 	}
 	int SkypeTimestamp() const {
 		int res = -1;
-		m_msg->SkypeTimestamp(&res);
+		if (m_msg->SkypeTimestamp(&res) != Boss::Status::Ok) {
+			throw SkypeHelpersException("SkypeTimestamp");
+		}
 		return res;
 	}
-        Conversation_hlpr Conversation() const {
+	Conversation_hlpr Conversation() const {
 		Boss::ref_ptr<IConversation> conv;
-		m_msg->Conversation(conv.GetPPtr());
+		if (m_msg->Conversation(conv.GetPPtr()) != Boss::Status::Ok) {
+			throw SkypeHelpersException("SkypeId");
+		}
 		Conversation_hlpr hc(conv);
 
 		return hc;
@@ -193,6 +230,17 @@ struct Message_hlpr {
 
 private:
 	mutable ref_ptr<IMessage> m_msg;
+};
+
+struct DBCtrl_hlpr {
+	void Import() {
+		if (m_val->Import() != Boss::Status::Ok) {
+			throw SkypeHelpersException("Import");
+		}
+	}
+
+private:
+	mutable ref_ptr<IDBController> m_val;
 };
 
 

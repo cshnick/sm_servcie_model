@@ -81,7 +81,7 @@ public:
     Q_INVOKABLE void loadSkypeTest();
     Q_INVOKABLE void loadRecent();
     Q_INVOKABLE QJsonObject settings();
-    Q_INVOKABLE void updateSettings(const QJsonDocument &doc);
+    Q_INVOKABLE void updateSettings(const QJsonObject &);
 
 protected:
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const;
