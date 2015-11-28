@@ -38,9 +38,16 @@ Boss::RetCode BOSS_CALL PlatformUtilsImpl::SkypeLocation(Boss::IString **res) {
 	auto location = Base<String>::Create(std_loc);
 	return location.QueryInterface(res);
 }
-Boss::RetCode BOSS_CALL PlatformUtilsImpl::UserSettingsDir(Boss::IString **)  {
+Boss::RetCode BOSS_CALL PlatformUtilsImpl::UserSettingsDir(Boss::IString **res)  {
 	cout << "PlatformUtils::UserSettingsDir" << endl;
-	return Boss::Status::NotImplemented;
+	struct passwd *pw = getpwuid(getuid());
+	std::string std_loc(pw->pw_dir);
+	std_loc.append("/.local/");
+
+	auto location = Base<String>::Create(std_loc);
+	return location.QueryInterface(res);
+
+	return Boss::Status::Ok;
 }
 
 namespace {

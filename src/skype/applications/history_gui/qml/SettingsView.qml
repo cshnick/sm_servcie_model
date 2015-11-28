@@ -45,7 +45,6 @@ Rectangle {
         Component.onCompleted: {
             var accs = g_settings["Accounts"]
             for(var i in accs) {
-                //settings_view_container.createaAccSettingsRect(accs[i].Name, accs[i].HistoryDBPath)
                 accounts_model.append({AccName: accs[i].Name, HistoryDBPath : accs[i].HistoryDBPath})
             }
             accounts_view.currentIndex = 0

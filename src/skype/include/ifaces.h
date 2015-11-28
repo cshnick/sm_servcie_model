@@ -28,6 +28,12 @@ struct IAccount
 	virtual Boss::RetCode BOSS_CALL Name(Boss::IString **) = 0;
 	virtual Boss::RetCode BOSS_CALL FilePath(Boss::IString **) = 0;
 	virtual Boss::RetCode BOSS_CALL HistoryDBPath(Boss::IString **) = 0;
+
+	constexpr static const char* TDefaultAccount = "DefaultAccount";
+	constexpr static const char* TAccounts = "Accounts";
+	constexpr static const char* TName = "Name";
+	constexpr static const char* TFilePath = "FilePath";
+	constexpr static const char* THistoryDBPath = "HistoryDBPath";
 };
 
 struct ISettings

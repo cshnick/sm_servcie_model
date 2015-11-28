@@ -63,40 +63,54 @@ public:
 
 	SettingsImplPrivate(SettingsImpl *q)
 		: q(q), pu_h(Base<PlatformUtilsImpl>::Create()) {
-		if (!loadSettings()) {
-			AccountsDefault(m_accounts.GetPPtr());
-		}
+		loadSettings();
 	}
 	bool loadSettings() {
-		if (!pu_h.Exists(json_filename)) return false;
+		if (pu_h.Exists(json_filename)) { //Parse file if it exists
+			auto fs = Base<IFileStream>::Create(json_filename);
+			ref_ptr<IBuffer> buf;
+			fs->Read(buf.GetPPtr());
+			UInt sz;
+			if (buf->GetSize(&sz) != Status::Ok) {
+				throw SettingsException("Invalid buffer size");
+			}
+			const void* data = 0;
+			if (buf->GetData(&data) != Status::Ok) {
+				throw SettingsException("Invalid buffer data");
+			}
 
-		auto fs = Base<IFileStream>::Create(json_filename);
-		ref_ptr<IBuffer> buf;
-		fs->Read(buf.GetPPtr());
-		UInt sz;
-		if (buf->GetSize(&sz) != Status::Ok) {
-			throw SettingsException("Invalid buffer size");
+			std::string c_data = (const char*)data;
+
+			json_tokener *tok = json_tokener_new();
+			enum json_tokener_error jerr;
+			do {
+				if (m_json_root) {
+					json_object_put(m_json_root);
+					m_json_root = nullptr;
+				}
+				m_json_root = json_tokener_parse_ex(tok, c_data.c_str(), c_data.size());
+			} while ((jerr = json_tokener_get_error(tok)) == json_tokener_continue);
+
+			if (jerr != json_tokener_success) {
+				throw SettingsException(json_tokener_error_desc(jerr));
+			}
 		}
-		const void* data = 0;
-		if (buf->GetData(&data) != Status::Ok) {
-			throw SettingsException("Invalid buffer data");
+
+		parse_accounts(json_find(IAccount::TAccounts));
+		parse_default_account(json_find(IAccount::TDefaultAccount));
+	}
+	json_object *json_find(const char* p_key) {
+		if (!m_json_root) return nullptr;
+		enum json_type type;
+		json_object_object_foreach(m_json_root, key, val) {
+			type = json_object_get_type(val);
+			if (!strcmp(key, p_key)) {
+				json_object *jresult = json_object_object_get(m_json_root, key);
+				return jresult;
+			}
 		}
 
-		std::string c_data = (const char*)data;
-
-		json_tokener *tok = json_tokener_new();
-		json_object *jobj = 0;
-		enum json_tokener_error jerr;
-		do {
-			jobj = json_tokener_parse_ex(tok, c_data.c_str(), c_data.size());
-		} while ((jerr = json_tokener_get_error(tok)) == json_tokener_continue);
-
-		if (jerr != json_tokener_success) {
-			throw SettingsException(json_tokener_error_desc(jerr));
-		}
-
-		json_parse(jobj);
-                return true;
+		return 0;
 	}
 	void json_parse(json_object * jobj) {
 		enum json_type type;
@@ -122,6 +136,10 @@ public:
 		}
 	}
 	void parse_accounts(json_object *accs) {
+		if (!accs) {
+			AccountsDefault(m_accounts.GetPPtr());
+			return;
+		}
 		int acc_len = json_object_array_length(accs);
 		json_object *next_obj;
 
@@ -136,11 +154,11 @@ public:
 			string name, path, hdbpath;
 			json_object_object_foreach(next_obj, key, val) {
 				const char* str_val = json_object_get_string(val);
-				if (!strcmp(key, Account_hlpr::TName)) {
+				if (!strcmp(key, IAccount::TName)) {
 					name = str_val;
-				} else if (!strcmp(key, Account_hlpr::TFilePath)) {
+				} else if (!strcmp(key, IAccount::TFilePath)) {
 					path = str_val;
-				} else if (!strcmp(key, Account_hlpr::THistoryDBPath)) {
+				} else if (!strcmp(key, IAccount::THistoryDBPath)) {
 					hdbpath = str_val;
 				}
 			}
@@ -148,6 +166,13 @@ public:
 			accounts->AddItem(account_impl);
 		}
 		accounts.QueryInterface(m_accounts.GetPPtr());
+	}
+	void parse_default_account(json_object *d_acc) {
+		if (!d_acc) {
+			m_defaultAccount = 0;
+			return;
+		}
+		m_defaultAccount = json_object_get_int(d_acc);
 	}
 
 	Boss::RetCode Accounts(Boss::IEnum **res) {
@@ -175,7 +200,9 @@ public:
 					subd = opendir(buf);
 					while ((subdir = readdir(subd)) != NULL) {
 						if (subdir->d_type == DT_REG && !strcmp(subdir->d_name, "main.db")) {
-							res_enum->AddItem(Base<AccountImpl>::Create(dir->d_name, buf, ""));
+							std::string hdbp = pu_h.UserSettingsDir() + "/.SkyHistory/" + dir->d_name;
+							pu_h.MkPath(hdbp);
+							res_enum->AddItem(Base<AccountImpl>::Create(dir->d_name, std::string(buf) + "/main.db", hdbp));
 							break;
 						}
 					}
@@ -188,18 +215,16 @@ public:
 		return res_enum.QueryInterface(res);
 	}
 	Boss::RetCode DefaultAccount(int *val) {
-		*val = 0;
-		return Status::Ok;
-	}
-	Boss::RetCode DefaultAccountDefault(int *val) {
-		*val = 0;
+		if (m_defaultAccount == -1) {
+			throw SettingsException("Error in getting default account");
+		}
+		*val = m_defaultAccount;
 		return Status::Ok;
 	}
 
 	std::string toString() {
-		if (!m_accounts.Get()) {
-			throw SettingsException("Error in getting accounts");
-		}
+		assert(m_accounts.Get());
+		assert(m_defaultAccount != -1);
 		json_object * jobj_settings = json_object_new_object();
 		EnumHelper<IAccount> accs_enum(m_accounts);
 		json_object *arr = json_object_new_array();
@@ -209,16 +234,19 @@ public:
 			json_object * jname = json_object_new_string(hlpr.Name().c_str());
 			json_object * jpath = json_object_new_string(hlpr.FilePath().c_str());
 			json_object * jhdbpath = json_object_new_string(hlpr.HistoryDBPath().c_str());
-			json_object_object_add(jobj_acc, Account_hlpr::TName, jname);
-			json_object_object_add(jobj_acc, Account_hlpr::TFilePath, jpath);
-			json_object_object_add(jobj_acc, Account_hlpr::THistoryDBPath, jhdbpath);
+			json_object_object_add(jobj_acc, IAccount::TName, jname);
+			json_object_object_add(jobj_acc, IAccount::TFilePath, jpath);
+			json_object_object_add(jobj_acc, IAccount::THistoryDBPath, jhdbpath);
 
 			json_object_array_add(arr, jobj_acc);
 		}
-		json_object_object_add(jobj_settings, "Accounts", arr);
-		std::string res = json_object_to_json_string_ext(jobj_settings, JSON_C_TO_STRING_PLAIN);
-		cout << res << endl;
+		json_object_object_add(jobj_settings, IAccount::TAccounts, arr);
 
+		json_object *d_acc = json_object_new_int(m_defaultAccount);
+		json_object_object_add(jobj_settings, IAccount::TDefaultAccount, d_acc);
+
+		std::string res = json_object_to_json_string_ext(jobj_settings, JSON_C_TO_STRING_PRETTY);
+		json_object_put(jobj_settings);
 		return res;
 	}
 
@@ -237,7 +265,6 @@ public:
 		{ //Close file at filestr destructor
 			auto stream = Base<OFileStream>::Create(json_filename);
 			string filestr = StringHelper(str).GetString<IString::AnsiString>();
-			cout << "Writing str" << filestr << endl;
 			if (stream->Write(filestr.c_str(), filestr.length()) != Status::Ok) {
 				throw SettingsException("Error update from json");
 			}
@@ -257,6 +284,8 @@ private:
 private:
 	SettingsImpl *q;
 
+	json_object *m_json_root = nullptr;
+	int m_defaultAccount = -1;
 	ref_ptr<IEnum> m_accounts;
 	PlatformUtils_hlpr pu_h;
 };

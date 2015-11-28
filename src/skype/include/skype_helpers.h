@@ -81,9 +81,6 @@ struct Account_hlpr {
 		m_acc->HistoryDBPath(path.GetPPtr());
 		return Boss::StringHelper(path).GetString<Boss::IString::AnsiString>();
 	}
-	constexpr static const char* TName = "Name";
-	constexpr static const char* TFilePath = "FilePath";
-	constexpr static const char* THistoryDBPath = "HistoryDBPath";
 private:
 	mutable ref_ptr<IAccount> m_acc;
 };
@@ -96,11 +93,18 @@ struct Settings_hlpr {
 		if (m_val->Accounts(accs.GetPPtr()) != Boss::Status::Ok) {
 			throw SkypeHelpersException("Error in Settings_hlpr");
 		}
-		EnumHelper<IAccount> en_h(accs);
+		EnumHelper<IAccount> accsEnum(accs);
 		std::vector<Account_hlpr> res;
-		for (ref_ptr<IAccount> iter = en_h.First(); accs.Get(); iter = en_h.Next()) {
+		for (ref_ptr<IAccount> iter = accsEnum.First(); iter.Get(); iter = accsEnum.Next()) {
 			Account_hlpr ah(iter);
 			res.push_back(ah);
+		}
+		return res;
+	}
+	int DefaultAccount() {
+		int res;
+		if (m_val->DefaultAccount(&res) != Status::Ok) {
+			throw SkypeHelpersException("Error in Settings_hlpr");
 		}
 		return res;
 	}

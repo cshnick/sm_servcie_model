@@ -246,6 +246,9 @@ class DBControllerImplPrivate {
 		if (!m_pu.IsDir(hdbpath)) {
 			throw DBCtrlException("Path: " + hdbpath + " is not a directory");
 		}
+		if (hdbpath != m_historyDBDir) {
+			clearCache();
+		}
 		m_historyDBDir = hdbpath;
 	}
 

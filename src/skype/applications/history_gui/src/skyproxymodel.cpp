@@ -17,7 +17,7 @@
 #include "../../include/skype_helpers.h"
 
 
-std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
+std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/luxa_ryabic/main.db";
 BOSS_DECLARE_RUNTIME_EXCEPTION(HistoryUi)
 
 using namespace Boss;
@@ -32,11 +32,15 @@ public:
 		try {
 			m_dbctrl = CreateObject<IDBController>(skype_sc::service::id::DBControler);
             m_settings = CreateObject<ISettings>(skype_sc::service::id::Settings);
+            Settings_hlpr s_h(m_settings);
+            auto accs = s_h.Accounts();
+            auto acc_default = accs.at(s_h.DefaultAccount());
 
-			qi_ptr<IDBWatcher> watcher(m_dbctrl);
+            qi_ptr<IDBWatcher> watcher(m_dbctrl);
 			m_observer = Base<UIObserver>::Create(this).Get();
 			watcher->AddObserver(m_observer.Get());
-			watcher->SetWatchFile(Base<String>::Create(SkyProxyModel::s_dbPath).Get());
+            watcher->SetWatchFile(Base<String>::Create(acc_default.FilePath()).Get());
+            m_dbctrl->SetDBPath(Base<String>::Create(acc_default.HistoryDBPath()).Get());
 			qi_ptr<IService> serv(m_dbctrl);
             serv->Start();
 
@@ -67,6 +71,15 @@ public:
                 model_impl()->append(m);
             }
         }
+    }
+
+    void reset(const QJsonObject &o) {
+        model_impl()->clear();
+        QString skype_path = o.value(QString::fromStdString(IAccount::TFilePath)).toString();
+        QString history_path = o.value(QString::fromStdString(IAccount::THistoryDBPath)).toString();
+        m_dbctrl->Reset(Base<String>::Create(skype_path.toLocal8Bit().data()).Get(),
+                        Base<String>::Create(history_path.toLocal8Bit().data()).Get());
+        loadRecent();
     }
 
     QJsonObject settings() {
@@ -232,6 +245,10 @@ void SkyProxyModel::loadSkypeTest() {
 void SkyProxyModel::loadRecent() {
     d->loadRecent();
 }
+void SkyProxyModel::reset(const QJsonObject &o) {
+    d->reset(o);
+}
+
 QJsonObject SkyProxyModel::settings() {
     return d->settings();
 }

@@ -28,20 +28,13 @@ int main (int argc, char **argv) {
 		Settings_hlpr sh(settings);
 
 		std::string read_data = sh.AsJsonString();
-		cout << "Json resource: " << read_data << endl;
+		cout << "AsJsonString: " << read_data << endl;
+		cout << "Accounts count: " <<  sh.Accounts().size() << endl;
+		cout << "Default acc index: " << sh.DefaultAccount() << endl;
 
-		std::string test_data = "/home/user/.local";
-		auto pos = read_data.find_last_of("HistoryDBPath");
-		pos += 4;
-		read_data.insert(read_data.begin() + pos, test_data.begin(), test_data.end());
-
-		cout << "Json result: " << read_data << endl;
+		cout << "Updating settings" << endl;
 		sh.UpdateFromJson(read_data);
-		cout << "After update" << sh.AsJsonString() << endl;
-
-		//		sz->Save(Base<OFileStream>::Create("settings.json").Get());
-//		sz->Load(Base<OFileStream>::Create("settings.json").Get());
-
+		cout << "Succeded!" << endl;
 
 	} catch (const exception &e) {
 		cout << e.what() << endl;

@@ -25,6 +25,9 @@ Rectangle {
             MouseArea {
                 anchors.fill: parent
                 onClicked: {
+                    if (index != accounts_view.currentIndex) {
+                        sky_model.reset(g_settings.Accounts[index]);
+                    }
                     accounts_view.currentIndex = index
                 }
             }
