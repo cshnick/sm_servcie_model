@@ -13,6 +13,7 @@
 #include "core/co_class.h"
 
 class SkyModel;
+class SkyContactsTreeModel;
 
 template <class T> class VPtr
 {
@@ -57,7 +58,7 @@ class SkyProxyModel : public QSortFilterProxyModel
     Q_PROPERTY(int state READ loadProgress WRITE setState NOTIFY stateChanged)
 
 public:
-    explicit SkyProxyModel(QObject *parent = 0);
+    explicit SkyProxyModel(SkyContactsTreeModel *contacts, QObject *parent = 0);
     virtual ~SkyProxyModel();
 
     static std::string s_dbPath;

@@ -15,6 +15,7 @@
 #include "common/enum_helper.h"
 
 #include "../../include/skype_helpers.h"
+#include "skycontactstreemodel.h"
 
 
 std::string SkyProxyModel::s_dbPath = "/home/ilia/.Skype/luxa_ryabic/main.db";
@@ -26,7 +27,7 @@ using namespace skype_sc;
 class SkyModelPrivate {
 public:
 	friend class SkyProxyModel;
-	SkyModelPrivate(SkyProxyModel *p_q) : q(p_q) {
+    SkyModelPrivate(SkyProxyModel *p_q, SkyContactsTreeModel *contacts) : q(p_q), m_contacts(contacts) {
 		m_pluginLoader.reset(new Loader("sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
 				                                      MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory")));
 		try {
@@ -70,6 +71,7 @@ public:
             if (model_impl()) {
                 model_impl()->append(m);
             }
+            m_contacts->processMessage(mh);
         }
     }
 
@@ -126,6 +128,7 @@ public:
 
 private:
 	SkyProxyModel *q;
+    SkyContactsTreeModel *m_contacts;
     int m_progress = 0, m_state = 0;
 
 	ref_ptr<IDBController> m_dbctrl;
@@ -156,9 +159,9 @@ int calcPercent(int cnt, int i) {
     return status_res;
 }
 
-SkyProxyModel::SkyProxyModel(QObject *parent)
+SkyProxyModel::SkyProxyModel(SkyContactsTreeModel *contacts, QObject *parent)
     :QSortFilterProxyModel(parent) ,
-	 d(new SkyModelPrivate(this))
+     d(new SkyModelPrivate(this, contacts))
 {
 	setSourceModel(new SkyModel);
 //    sort(0);

@@ -154,10 +154,10 @@ struct Conversation_hlpr {
 	}
 	std::vector<User_hlpr> Users() const {
 		ref_ptr<IEnum> users;
-		m_conversation.QueryInterface(users.GetPPtr());
+		m_conversation->Users(users.GetPPtr());
 		EnumHelper<IUser> UsersEnum(users);
 		std::vector<User_hlpr> res;
-		for (ref_ptr<IUser> iter = UsersEnum.First(); users.Get(); iter = UsersEnum.Next()) {
+		for (ref_ptr<IUser> iter = UsersEnum.First(); iter.Get(); iter = UsersEnum.Next()) {
 			User_hlpr uh(iter);
 			res.push_back(uh);
 		}

@@ -5,7 +5,7 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++14")
 SET (SRC_DIR "src")
 include_directories(
     ${INCLUDES_DIR}
-    include
+    ../../include
     ../../litesql/include/
     ../../litesql/src/skype/
     .

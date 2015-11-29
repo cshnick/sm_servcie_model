@@ -47,7 +47,7 @@ Rectangle {
             for(var i in accs) {
                 accounts_model.append({AccName: accs[i].Name, HistoryDBPath : accs[i].HistoryDBPath})
             }
-            accounts_view.currentIndex = 0
+            accounts_view.currentIndex = g_settings.DefaultAccount
         }
     }
 }

@@ -1,6 +1,8 @@
 #include "skycontactstreemodel.h"
 #include <QtCore>
 
+using namespace skype_sc;
+
 SkyContactsItem::SkyContactsItem(const QString &text, const QString &image)
     : QStandardItem(text) {
     setData(QString("qrc:/images/%1.png").arg(image), Qt::UserRole);
@@ -22,14 +24,22 @@ SkyContactsTreeModel::SkyContactsTreeModel(QObject *parent)
         yesterday->appendRow(new SkyContactsItem("User 6", "profile"));
         yesterday->appendRow(new SkyContactsItem("User 3", "profile"));
 
-    QStandardItem *contacts = new SkyContactsItem("Contacts", "profile");
-    invisibleRootItem()->appendRow(contacts);
-    for (int i = 0; i < 10; i++) {
-        contacts->appendRow(new SkyContactsItem(QString("User %1").arg(i), "profile"));
-    }
+    m_contacts = new SkyContactsItem("Contacts", "profile");
+    invisibleRootItem()->appendRow(m_contacts);
 }
 
 QString SkyContactsTreeModel::icon_path(const QModelIndex &ind) {
     return ind.data(Qt::UserRole).toString();
+}
+
+void SkyContactsTreeModel::processMessage(const skype_sc::Message_hlpr &m_hlpr) {
+    auto users = m_hlpr.Conversation().Users();
+    std::for_each(users.begin(), users.end(), [this](const User_hlpr &usr) {
+        if (!m_users.count(usr.Name())) {
+            m_users.emplace(usr.Name(), usr);
+            QStandardItem *item = new SkyContactsItem(QString::fromStdString(usr.Name()), "profile");
+            m_contacts->appendRow(item);
+        }
+    });
 }
 

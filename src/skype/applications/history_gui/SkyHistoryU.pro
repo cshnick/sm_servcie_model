@@ -25,7 +25,8 @@ message($$MAIN_SRC/include)
 INCLUDEPATH += $$LITE_SQL_SRC/include \
                $$LITE_SQL_SRC/src/skype \
                src \
-               $$MAIN_SRC/include
+               $$MAIN_SRC/include \
+               $$MAIN_SRC/src/skype/include
 
 
 LIBS += \

@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    SkyProxyModel *model = new SkyProxyModel();
     SkyContactsTreeModel *contacts_model = new SkyContactsTreeModel;
+    SkyProxyModel *model = new SkyProxyModel(contacts_model);
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("sky_model", model);
