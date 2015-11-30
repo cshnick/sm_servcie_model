@@ -93,9 +93,9 @@ int main()
 		sleep(10);
 		service->Stop();
 		std::cout << "Stopped" << std::endl;
-		while (true) {
-			sleep(5);
-		}
+//		while (true) {
+//			sleep(5);
+//		}
 	} catch (std::exception const &e)  {
 		std::cerr << "Error: " << e.what() << std::endl;
 	}

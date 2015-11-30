@@ -136,6 +136,9 @@ public:
 		}
 	}
 	void parse_accounts(json_object *accs) {
+		if (m_accounts.Get()) {
+			m_accounts.Release();
+		}
 		if (!accs) {
 			AccountsDefault(m_accounts.GetPPtr());
 			return;
@@ -298,6 +301,7 @@ SettingsImpl::SettingsImpl() {
 
 SettingsImpl::~SettingsImpl() {
 	// TODO Auto-generated destructor stub
+	std::cout << "SettingsImpl::~SettingsImpl()" << endl;
 }
 
 RetCode BOSS_CALL SettingsImpl::Update() {

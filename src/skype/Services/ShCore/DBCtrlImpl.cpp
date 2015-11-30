@@ -41,6 +41,7 @@ namespace skype_sc {
 
 class DBControllerImplPrivate {
 	friend class DBControllerImpl;
+public:
 
 	DBControllerImplPrivate(DBControllerImpl *p_q)
 		: q(p_q)
@@ -52,6 +53,10 @@ class DBControllerImplPrivate {
 			cout << "Error in constructor DBControllerImplPrivate" << endl;
 			throw std::runtime_error(e.what());
 		}
+	}
+	~DBControllerImplPrivate() {
+		cout << "~Controller impl private" << endl;
+		m_w.reset(0);
 	}
 
 	template<typename T = void>

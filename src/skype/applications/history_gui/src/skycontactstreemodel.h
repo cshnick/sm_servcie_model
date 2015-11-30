@@ -18,7 +18,7 @@ public:
 class SkyContactsTreeModel : public QStandardItemModel
 {
     Q_OBJECT
-    typedef std::unordered_map<std::string, skype_sc::User_hlpr> UsersHash;
+    typedef std::unordered_map<std::string, std::string> UsersHash;
 public:
     SkyContactsTreeModel(QObject *parent = 0);
 

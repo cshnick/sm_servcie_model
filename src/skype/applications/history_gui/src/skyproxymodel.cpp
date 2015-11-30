@@ -117,6 +117,7 @@ public:
     }
 
 	~SkyModelPrivate() {
+		qDebug() << "~SkyModelPrivate";
 	}
 
     SkyModel *model_impl() {
@@ -130,12 +131,12 @@ private:
 	SkyProxyModel *q;
     SkyContactsTreeModel *m_contacts;
     int m_progress = 0, m_state = 0;
+    std::unique_ptr<Loader> m_pluginLoader = nullptr;
 
-	ref_ptr<IDBController> m_dbctrl;
+    ref_ptr<IDBController> m_dbctrl;
     ref_ptr<ISettings> m_settings;
     ref_ptr<UIObserver> m_observer;
-	std::unique_ptr<sm::filewatcher> m_fw;
-	std::unique_ptr<Loader> m_pluginLoader = nullptr;
+
     QObject *qml_object = nullptr;
 };
 
@@ -188,7 +189,9 @@ bool SkyProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_p
                 author.contains(filterRegExp());
     } break;
     case ModelState::STATE_RECENT_TREE : {
-
+        const QModelIndex ind = sourceModel()->index(source_row, 0, source_parent);
+        QString author = ind.data(Qt::UserRole + 3).toString();
+        accept = author.contains(filterRegExp());
     } break;
     default:
         accept = false;
@@ -223,6 +226,10 @@ void SkyProxyModel::setQmlObject(QObject *o) {
 void SkyProxyModel::stringChanged(const QString &p_str) {
     setState(ModelState::STATE_EDIT);
     setFilterFixedString(p_str);
+}
+void SkyProxyModel::contactTreeItemSelected(const QModelIndex &ind) {
+    setState(ModelState::STATE_RECENT_TREE);
+    setFilterFixedString(ind.data().toString());
 }
 QVariant SkyProxyModel::get(int p_index, int role) {
     return sourceModel()->data(mapToSource(index(p_index, 0)), role);

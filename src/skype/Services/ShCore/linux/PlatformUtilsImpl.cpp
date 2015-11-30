@@ -27,6 +27,7 @@ PlatformUtilsImpl::PlatformUtilsImpl() {
 }
 
 PlatformUtilsImpl::~PlatformUtilsImpl() {
+	cout << "PlatformUtilsImpl::~PlatformUtilsImpl()" << endl;
 	// TODO Auto-generated destructor stub
 }
 

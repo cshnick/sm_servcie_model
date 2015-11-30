@@ -12,18 +12,19 @@
 
 #include "skyproxymodel.h"
 #include "skycontactstreemodel.h"
+#include <memory>
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("utf-8"));
 
-    SkyContactsTreeModel *contacts_model = new SkyContactsTreeModel;
-    SkyProxyModel *model = new SkyProxyModel(contacts_model);
+    std::unique_ptr<SkyContactsTreeModel> contacts_model(new SkyContactsTreeModel);
+    std::unique_ptr<SkyProxyModel> model(new SkyProxyModel(contacts_model.get()));
 
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("sky_model", model);
-    engine.rootContext()->setContextProperty("sky_contacts_model", contacts_model);
+    engine.rootContext()->setContextProperty("sky_model", model.get());
+    engine.rootContext()->setContextProperty("sky_contacts_model", contacts_model.get());
     qmlRegisterType<ModelState>("Enums", 1, 0, "ModelState");
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
     QObject *rect = engine.rootObjects().at(0)->findChild<QObject*>("SkylistRect");

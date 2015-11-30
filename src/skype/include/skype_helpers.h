@@ -18,10 +18,15 @@
 #include "common/enum.h"
 #include "common/enum_helper.h"
 
+#include <iostream>
+
 BOSS_DECLARE_RUNTIME_EXCEPTION(SkypeHelpers)
 namespace skype_sc {
 
 struct PlatformUtils_hlpr {
+	~PlatformUtils_hlpr() {
+		std::cout << "PlatformUtils_hlpr" << std::endl;
+	}
 	PlatformUtils_hlpr(Boss::ref_ptr<IPlatformUtils> p_arg) : m_pu(p_arg) {
 	}
 	bool Exists(const std::string &fname) {

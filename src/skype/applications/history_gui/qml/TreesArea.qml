@@ -57,8 +57,12 @@ Item {
         onCurrentIndexChanged: {
             console.log("Current index changed to " + currentIndex)
             //console.log("Current index data: " + sky_contacts_model.icon_path(currentIndex))
-            sky_contacts_model.icon_path(currentIndex)
+            //sky_contacts_model.icon_path(currentIndex)
 
+        }
+        onActivated: {
+            console.log("Activated index: " + index.data)
+            sky_model.contactTreeItemSelected(index)
         }
 
         model: sky_contacts_model

@@ -75,6 +75,7 @@ public:
     Q_SIGNAL void stateChanged(int);
 
     Q_INVOKABLE void stringChanged(const QString &p_str);
+    Q_INVOKABLE void contactTreeItemSelected(const QModelIndex &ind);
     Q_INVOKABLE QVariant get(int p_index, int role);
     Q_INVOKABLE QString get_name(int p_index);
     Q_INVOKABLE void refresh();
