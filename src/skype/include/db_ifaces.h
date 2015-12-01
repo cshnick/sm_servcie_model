@@ -44,6 +44,8 @@ struct IConversation
 
 	BOSS_DECLARE_IFACEID(skype_sc.IConversation) //
 
+    virtual RetCode BOSS_CALL Id(int *p_id) = 0;
+	virtual RetCode BOSS_CALL SetId(int p_id) = 0;
 	virtual RetCode BOSS_CALL SetName(IString *p_name) = 0;
 	virtual RetCode BOSS_CALL Name(IString **p_name) = 0;
 	virtual RetCode BOSS_CALL SetUsers(IEnum *p_users) = 0;

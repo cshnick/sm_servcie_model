@@ -139,6 +139,9 @@ private:
 struct User_hlpr {
 	User_hlpr(Boss::ref_ptr<IUser> p_usr) : m_user(p_usr) {
 	}
+	ref_ptr<IUser> Get() {
+		return m_user;
+	}
 	std::string Name() const {
 		Boss::ref_ptr<Boss::IString> name;
 		m_user->Name(name.GetPPtr());
@@ -174,6 +177,13 @@ struct Conversation_hlpr {
 		m_conversation->Name(name.GetPPtr());
 		return Boss::StringHelper(name).GetString<Boss::IString::AnsiString>();
 	}
+        int Id() {
+            int res = -1;
+            if (m_conversation->Id(&res) != Boss::Status::Ok) {
+                throw SkypeHelpersException("Conversation Id");
+            }
+            return res;
+        }
 
 private:
 	mutable ref_ptr<IConversation> m_conversation;

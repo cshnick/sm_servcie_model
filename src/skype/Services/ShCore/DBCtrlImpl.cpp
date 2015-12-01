@@ -376,6 +376,7 @@ template<>
 HistoryDB::Users DBControllerImplPrivate::convert(const SkypeDB::Contacts &source) {
 	HistoryDB::Users dest(*history_db);
 	dest.name            = static_cast<std::string>(source.skypename);
+	dest.displayname     = static_cast<std::string>(source.fullname);
 	dest.lastmessagetime = static_cast<int>(source.lastused_timestamp);
 	dest.update();
 
@@ -469,7 +470,6 @@ ref_ptr<IMessage> DBControllerImplPrivate::convert(const HistoryDB::Messages &so
 	ref_ptr<Enum> conversation_users = Base<Enum>::Create();
 	for (auto usr : history_users) {
 		ref_ptr<IUser> iuser = convert<Users, ref_ptr<IUser>>(usr);
-//		auto iuser = Base<DBUser>::Create();
 		conversation_users->AddItem(iuser);
 	}
 	conversation->SetUsers(conversation_users.Get());

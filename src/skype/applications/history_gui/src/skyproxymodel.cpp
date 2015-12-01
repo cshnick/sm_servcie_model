@@ -229,7 +229,7 @@ void SkyProxyModel::stringChanged(const QString &p_str) {
 }
 void SkyProxyModel::contactTreeItemSelected(const QModelIndex &ind) {
     setState(ModelState::STATE_RECENT_TREE);
-    setFilterFixedString(ind.data().toString());
+    setFilterFixedString(ind.data(SkyContactsTreeModel::SkypeNameRole).toString());
 }
 QVariant SkyProxyModel::get(int p_index, int role) {
     return sourceModel()->data(mapToSource(index(p_index, 0)), role);

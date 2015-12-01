@@ -33,11 +33,20 @@ QString SkyContactsTreeModel::icon_path(const QModelIndex &ind) {
 }
 
 void SkyContactsTreeModel::processMessage(const skype_sc::Message_hlpr &m_hlpr) {
-	auto users = m_hlpr.Conversation().Users();
+    auto conversation = m_hlpr.Conversation();
+    uint yesterday = QDateTime::currentDateTime().addDays(-1).toTime_t();
+    if (m_hlpr.Timestamp() > yesterday) {
+        if (!m_today.count(conversation.Id())) {
+            m_today.emplace(conversation.Id());
+        }
+    }
+
+    auto users = conversation.Users();
     std::for_each(users.begin(), users.end(), [this](const User_hlpr &usr) {
         if (!m_users.count(usr.SkypeName())) {
-            m_users.emplace(usr.SkypeName(), usr.Name());
-            QStandardItem *item = new SkyContactsItem(QString::fromStdString(usr.SkypeName()), "profile");
+            m_users.emplace(usr.SkypeName());
+            QStandardItem *item = new SkyContactsItem(QString::fromStdString(usr.Name()), "profile");
+            item->setData(QString::fromStdString(usr.SkypeName()), SkypeNameRole);
             m_contacts->appendRow(item);
         }
     });
