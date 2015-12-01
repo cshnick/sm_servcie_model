@@ -88,7 +88,7 @@ int main()
 
 		std::string second_skype = MAIN_DB__, second_history = "skype/luxa_ryabic";
 		std::cout << "Initial data: \n" << "\tSkype: " << second_skype << "\tHistory: " << second_history << std::endl;
-		ctrl->Reset(Base<String>::Create(second_skype).Get(), Base<String>::Create(second_history).Get());
+		service->Restart(Base<String>::Create(second_skype).Get(), Base<String>::Create(second_history).Get());
 		std::cout << "Reseted; wait for events" << std::endl;
 		sleep(10);
 		service->Stop();

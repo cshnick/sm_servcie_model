@@ -65,6 +65,45 @@ Item {
             sky_model.contactTreeItemSelected(index)
         }
 
+        style : TreeViewStyle {
+            handle: Item {
+                implicitWidth: 14
+                implicitHeight: 26
+                Rectangle {
+                    color: "#03A9F4"
+                    anchors.fill: parent
+                    anchors.topMargin: 0
+                    anchors.leftMargin: 0
+                    anchors.rightMargin: 0
+                    anchors.bottomMargin: 0
+                }
+            }
+            Component {
+                id: inc_dec_control
+                Item {
+                    visible: false
+                }
+            }
+
+            branchDelegate: Image {
+                x: -5
+                source: styleData.isExpanded ? "qrc:/images/expanded.png" : "qrc:/images/haschildren.png"
+                width: 9
+                height: 9
+            }
+
+            incrementControl: inc_dec_control
+            decrementControl: inc_dec_control
+
+            scrollBarBackground: Item {
+                implicitWidth: 6
+                implicitHeight: 26
+            }
+            activateItemOnSingleClick: true
+            indentation: 18
+        }
+        horizontalScrollBarPolicy: Qt.ScrollBarAlwaysOff
+
         model: sky_contacts_model
     }
 }

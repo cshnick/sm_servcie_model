@@ -36,7 +36,7 @@ ApplicationWindow {
         SettingsView {
             id: main_settings
             width: view.width / 2; height: view.height
-            color: "#eee"
+            color: "white"
         }
 
         MainView {

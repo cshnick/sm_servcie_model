@@ -34,9 +34,7 @@ Rectangle {
             model: accounts_model
             highlight: Rectangle {
                 y: accounts_view.currentItem.y
-                color: "#ddd"
-                border.width: 1
-                border.color: "#ddd"
+                color: "lightblue"
             }
             highlightMoveVelocity: 4500
             highlightFollowsCurrentItem: true

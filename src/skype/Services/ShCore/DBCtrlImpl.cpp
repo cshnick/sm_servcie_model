@@ -137,7 +137,7 @@ public:
 	}
 	void setWatchFile(std::string &&str) {
 		if (isRunning()) {
-			reset(str, m_historyDBDir);
+			restart(str, m_historyDBDir);
 			return;
 		}
 		if (str == m_filename) {
@@ -230,7 +230,7 @@ public:
 	}
 
 	template<typename T = void>
-	void reset(const std::string &new_filename, const std::string &history_db_path) {
+	void restart(const std::string &new_filename, const std::string &history_db_path) {
 		stop();
 		m_w.reset(nullptr);
 		m_watching_bound_line = -1;
@@ -499,9 +499,9 @@ Boss::RetCode BOSS_CALL DBControllerImpl::Recent(Boss::IEnum **result) {
 	return Boss::Status::Ok;
 }
 
-Boss::RetCode BOSS_CALL DBControllerImpl::Reset(Boss::IString *skype, Boss::IString *history) {
+Boss::RetCode BOSS_CALL DBControllerImpl::Restart(Boss::IString *skype, Boss::IString *history) {
 	std::cout << "DBWatcherImpl::Reset()" << std::endl;
-	d->reset(StringHelper(skype).GetString<>(), StringHelper(history).GetString<>());
+	d->restart(StringHelper(skype).GetString<>(), StringHelper(history).GetString<>());
 	return Boss::Status::Ok;
 }
 

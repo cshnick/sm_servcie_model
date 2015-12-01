@@ -22,7 +22,6 @@ class DBControllerImpl
 
 	virtual Boss::RetCode BOSS_CALL Import() override;
 	virtual Boss::RetCode BOSS_CALL Recent(Boss::IEnum **) override;
-	virtual Boss::RetCode BOSS_CALL Reset(Boss::IString *, Boss::IString *) override;
 	virtual Boss::RetCode BOSS_CALL SetDBPath(Boss::IString *) override;
 
 	virtual Boss::RetCode BOSS_CALL SetWatchFile(Boss::IString *) override;
@@ -30,6 +29,7 @@ class DBControllerImpl
 
 	virtual Boss::RetCode BOSS_CALL Start() override;
 	virtual Boss::RetCode BOSS_CALL Stop() override;
+	virtual Boss::RetCode BOSS_CALL Restart(Boss::IString *, Boss::IString *) override;
 
 	virtual Boss::RetCode BOSS_CALL AddObserver(IDBObserver *) override;
 	virtual Boss::RetCode BOSS_CALL RemoveObserver(IDBObserver *obsr) override;

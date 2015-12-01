@@ -21,7 +21,7 @@ Rectangle {
             width: parent.width
             objectName: "SkylistRect"
             model: sky_model
-            highlight: Rectangle { color: "#D4EDED"; radius: 0 }
+            highlight: Rectangle { color: "lightblue"; radius: 0 }
             highlightMoveDuration : 50
             highlightMoveVelocity : 200
 
@@ -128,24 +128,8 @@ Rectangle {
             }
         }
 
-        style: ScrollViewStyle {
-            transientScrollBars: true
-            handle: Item {
-                implicitWidth: 14
-                implicitHeight: 26
-                Rectangle {
-                    color: "#424246"
-                    anchors.fill: parent
-                    anchors.topMargin: 6
-                    anchors.leftMargin: 4
-                    anchors.rightMargin: 4
-                    anchors.bottomMargin: 6
-                }
-            }
-            scrollBarBackground: Item {
-                implicitWidth: 14
-                implicitHeight: 26
-            }
+        style: ScrollStyle {
+
         }
     }
 }

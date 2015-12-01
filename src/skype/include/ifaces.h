@@ -56,7 +56,6 @@ struct IDBController
 
 	virtual Boss::RetCode BOSS_CALL Import() = 0;
     virtual Boss::RetCode BOSS_CALL Recent(Boss::IEnum **) = 0;
-    virtual Boss::RetCode BOSS_CALL Reset(Boss::IString *, Boss::IString *) = 0;
     virtual Boss::RetCode BOSS_CALL SetDBPath(Boss::IString *) = 0;
 };
 
@@ -97,6 +96,7 @@ struct IService
 
 	virtual Boss::RetCode BOSS_CALL Start() = 0;
 	virtual Boss::RetCode BOSS_CALL Stop() = 0;
+    virtual Boss::RetCode BOSS_CALL Restart(Boss::IString *, Boss::IString *) = 0;
 };
 
 } //namespace skype_sc

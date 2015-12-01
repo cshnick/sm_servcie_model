@@ -82,7 +82,7 @@ public:
     Q_INVOKABLE void loadTest();
     Q_INVOKABLE void loadSkypeTest();
     Q_INVOKABLE void loadRecent();
-    Q_INVOKABLE void reset(const QJsonObject &);
+    Q_INVOKABLE void restart(const QJsonObject &);
     Q_INVOKABLE QJsonObject settings();
     Q_INVOKABLE void updateSettings(const QJsonObject &);
 

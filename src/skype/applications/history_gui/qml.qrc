@@ -13,5 +13,8 @@
         <file>qml/AccSettingsRect.qml</file>
         <file>qml/Helper.js</file>
         <file>qml/SettingsView.qml</file>
+        <file>qml/ScrollStyle.qml</file>
+        <file>images/haschildren.png</file>
+        <file>images/expanded.png</file>
     </qresource>
 </RCC>

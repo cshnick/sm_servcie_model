@@ -75,11 +75,11 @@ public:
         }
     }
 
-    void reset(const QJsonObject &o) {
+    void restart(const QJsonObject &o) {
         model_impl()->clear();
         QString skype_path = o.value(QString::fromStdString(IAccount::TFilePath)).toString();
         QString history_path = o.value(QString::fromStdString(IAccount::THistoryDBPath)).toString();
-        m_dbctrl->Reset(Base<String>::Create(skype_path.toLocal8Bit().data()).Get(),
+        qi_ptr<IService>(m_dbctrl)->Restart(Base<String>::Create(skype_path.toLocal8Bit().data()).Get(),
                         Base<String>::Create(history_path.toLocal8Bit().data()).Get());
         loadRecent();
     }
@@ -255,8 +255,8 @@ void SkyProxyModel::loadSkypeTest() {
 void SkyProxyModel::loadRecent() {
     d->loadRecent();
 }
-void SkyProxyModel::reset(const QJsonObject &o) {
-    d->reset(o);
+void SkyProxyModel::restart(const QJsonObject &o) {
+    d->restart(o);
 }
 
 QJsonObject SkyProxyModel::settings() {

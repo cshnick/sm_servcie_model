@@ -26,7 +26,7 @@ Rectangle {
                 anchors.fill: parent
                 onClicked: {
                     if (index != accounts_view.currentIndex) {
-                        sky_model.reset(g_settings.Accounts[index]);
+                        sky_model.restart(g_settings.Accounts[index]);
                         g_settings.DefaultAccount = index
                         sky_model.updateSettings(g_settings)
                     }
