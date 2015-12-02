@@ -387,6 +387,7 @@ template<>
 HistoryDB::Conversations DBControllerImplPrivate::convert(const SkypeDB::Conversations &source) {
 	HistoryDB::Conversations dest(*history_db);
 	dest.friendlyname = static_cast<std::string>(source.displayname);
+	dest.skypeid = static_cast<int>(source.id);
 	dest.update();
 	auto skype_participants = select<SkypeDB::Participants>(*skype_main, SkypeDB::Participants::Convo_id == source.id).all();
 	auto usr_cache = std::get<DBCache<HistoryDB::Users>>(m_hash);
@@ -453,9 +454,25 @@ ref_ptr<IUser> DBControllerImplPrivate::convert(const HistoryDB::Users &source) 
 }
 
 template<>
+ref_ptr<IConversation> DBControllerImplPrivate::convert(const HistoryDB::Conversations &source) {
+	using namespace HistoryDB;
+	auto dest = Base<DBConversation>::Create();
+	dest->SetName(Base<String>::Create(source.friendlyname).Get());
+	dest->SetId(source.id);
+	auto source_users = const_cast<Conversations&>(source).users().get().all(); //Shouldn't create unnecessary copy
+	ref_ptr<Enum> dest_users = Base<Enum>::Create();
+	for (auto usr : source_users) {
+		ref_ptr<IUser> iuser = convert<Users, ref_ptr<IUser>>(usr);
+		dest_users->AddItem(iuser);
+	}
+	dest->SetUsers(dest_users.Get());
+
+	return dest;
+}
+
+template<>
 ref_ptr<IMessage> DBControllerImplPrivate::convert(const HistoryDB::Messages &source) {
 	using namespace HistoryDB;
-	Messages src_cpy = source;
 	ref_ptr<IMessage> dest = Base<DBMessage>::Create();
 	dest->SetBody(Base<String>::Create(source.body).Get());
 	dest->SetId(source.id);
@@ -463,17 +480,9 @@ ref_ptr<IMessage> DBControllerImplPrivate::convert(const HistoryDB::Messages &so
 	dest->SetAuthor(Base<String>::Create(source.author).Get());
 	dest->SetTimestamp(source.timestamp);
 	dest->SetSkypeTimestamp(source.skype_timestamp);
-	auto conversation = Base<DBConversation>::Create();
-	auto history_conv = src_cpy.conversation().get().all().at(0);
-	conversation->SetName(Base<String>::Create(history_conv.friendlyname).Get());
-	auto history_users = history_conv.users().get().all();
-	ref_ptr<Enum> conversation_users = Base<Enum>::Create();
-	for (auto usr : history_users) {
-		ref_ptr<IUser> iuser = convert<Users, ref_ptr<IUser>>(usr);
-		conversation_users->AddItem(iuser);
-	}
-	conversation->SetUsers(conversation_users.Get());
-	dest->SetConversation(conversation.Get());
+	auto history_conv = const_cast<Messages&>(source).conversation().get().one(); //Shouldn't create unnecessary copy
+	auto dest_conversation = convert<Conversations, ref_ptr<IConversation>>(history_conv);
+	dest->SetConversation(dest_conversation.Get());
 
 	return dest;
 }

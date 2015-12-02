@@ -203,7 +203,7 @@ public:
 					subd = opendir(buf);
 					while ((subdir = readdir(subd)) != NULL) {
 						if (subdir->d_type == DT_REG && !strcmp(subdir->d_name, "main.db")) {
-							std::string hdbp = pu_h.UserSettingsDir() + "/.SkyHistory/" + dir->d_name;
+							std::string hdbp = pu_h.UserSettingsDir() + "/SkyHistory/" + dir->d_name;
 							pu_h.MkPath(hdbp);
 							res_enum->AddItem(Base<AccountImpl>::Create(dir->d_name, std::string(buf) + "/main.db", hdbp));
 							break;

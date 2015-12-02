@@ -2,16 +2,32 @@
 
 #include "history_main_db.hpp"
 #include "litesql.hpp"
+#include "plugin/loader.h"
+#include "ifaces.h"
+#include "class_ids.h"
+#include "skype_helpers.h"
 
 #include "common/time_calculator.h"
 
 int main (int argc, char **argv) {
+	using namespace Boss;
     using namespace HistoryDB;
     using namespace litesql;
     using namespace std;
+    using namespace skype_sc;
+
+    Boss::Loader Ldr("sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
+    		                       MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory"));
+
     try {
+    	auto settings = CreateObject<ISettings>(service::id::Settings);
+    	Settings_hlpr shlpr(settings);
+    	std::string hdbpath = shlpr.Accounts().at(shlpr.DefaultAccount()).HistoryDBPath();
+
         cout << "HistoryDB test..." << endl;
-        HistoryDB::history db("sqlite3", "database=history.db");
+        string hdbfile = std::string("database=") + (hdbpath.empty() ? "history.db" : hdbpath + "/history.db");
+        cout << "HistoryDB file: " << hdbfile;
+        HistoryDB::history db("sqlite3", hdbfile);
         int mcnt = select<Messages>(db).count();
         cout << "Messages count: " << mcnt << endl;
         

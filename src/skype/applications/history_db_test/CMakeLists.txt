@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.11)
 
 include_directories(
     ${INCLUDES_DIR}
-    include
+    ../../include
     ../../litesql/include/
     ../../litesql/src/skype/
 )

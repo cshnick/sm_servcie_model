@@ -38,6 +38,14 @@ private:
 
 class DBConversation : public SimpleCoClass<IConversation> {
 public:
+	virtual RetCode BOSS_CALL SkypeId(int *p_id) override {
+		*p_id = m_skype_id;
+		return Status::Ok;
+	}
+	virtual RetCode BOSS_CALL SetSkypeId(int p_id) override {
+		m_skype_id = p_id;
+		return Status::Ok;
+	}
 	virtual RetCode BOSS_CALL Id(int *p_id) override {
 		*p_id = m_id;
 		return Status::Ok;
@@ -61,7 +69,7 @@ public:
 		return Status::Ok;
 	}
 private:
-	int m_id = -1;
+	int m_id = -1, m_skype_id = -1;
 	ref_ptr<IEnum> users;
 	ref_ptr<IString> m_name;
 };

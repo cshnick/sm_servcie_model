@@ -16,5 +16,6 @@
         <file>qml/ScrollStyle.qml</file>
         <file>images/haschildren.png</file>
         <file>images/expanded.png</file>
+        <file>images/chat.png</file>
     </qresource>
 </RCC>

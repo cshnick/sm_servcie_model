@@ -11,6 +11,7 @@
 </object>
 
 <object name="Conversations" db_name="Conversations" >
+	<field name="skypeid" type="integer" />
 	<field name="friendlyname" type="string" />
 </object>
 <relation id="ConvUsers" >

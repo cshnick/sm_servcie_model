@@ -298,23 +298,27 @@ const std::string Conversations::table__("Conversations");
 const std::string Conversations::sequence__("Conversations_seq");
 const litesql::FieldType Conversations::Id("id",A_field_type_integer,table__);
 const litesql::FieldType Conversations::Type("type",A_field_type_string,table__);
+const litesql::FieldType Conversations::Skypeid("skypeid",A_field_type_integer,table__);
 const litesql::FieldType Conversations::Friendlyname("friendlyname",A_field_type_string,table__);
 void Conversations::initValues() {
 }
 void Conversations::defaults() {
     id = 0;
+    skypeid = 0;
 }
 Conversations::Conversations(const litesql::Database& db)
-     : litesql::Persistent(db), id(Id), type(Type), friendlyname(Friendlyname) {
+     : litesql::Persistent(db), id(Id), type(Type), skypeid(Skypeid), friendlyname(Friendlyname) {
     defaults();
 }
 Conversations::Conversations(const litesql::Database& db, const litesql::Record& rec)
-     : litesql::Persistent(db, rec), id(Id), type(Type), friendlyname(Friendlyname) {
+     : litesql::Persistent(db, rec), id(Id), type(Type), skypeid(Skypeid), friendlyname(Friendlyname) {
     defaults();
-    size_t size = (rec.size() > 3) ? 3 : rec.size();
+    size_t size = (rec.size() > 4) ? 4 : rec.size();
     switch(size) {
-    case 3: friendlyname = convert<const std::string&, std::string>(rec[2]);
+    case 4: friendlyname = convert<const std::string&, std::string>(rec[3]);
         friendlyname.setModified(false);
+    case 3: skypeid = convert<const std::string&, int>(rec[2]);
+        skypeid.setModified(false);
     case 2: type = convert<const std::string&, std::string>(rec[1]);
         type.setModified(false);
     case 1: id = convert<const std::string&, int>(rec[0]);
@@ -322,12 +326,13 @@ Conversations::Conversations(const litesql::Database& db, const litesql::Record&
     }
 }
 Conversations::Conversations(const Conversations& obj)
-     : litesql::Persistent(obj), id(obj.id), type(obj.type), friendlyname(obj.friendlyname) {
+     : litesql::Persistent(obj), id(obj.id), type(obj.type), skypeid(obj.skypeid), friendlyname(obj.friendlyname) {
 }
 const Conversations& Conversations::operator=(const Conversations& obj) {
     if (this != &obj) {
         id = obj.id;
         type = obj.type;
+        skypeid = obj.skypeid;
         friendlyname = obj.friendlyname;
     }
     litesql::Persistent::operator=(obj);
@@ -349,6 +354,9 @@ std::string Conversations::insert(litesql::Record& tables, litesql::Records& fie
     fields.push_back(type.name());
     values.push_back(type);
     type.setModified(false);
+    fields.push_back(skypeid.name());
+    values.push_back(skypeid);
+    skypeid.setModified(false);
     fields.push_back(friendlyname.name());
     values.push_back(friendlyname);
     friendlyname.setModified(false);
@@ -369,6 +377,7 @@ void Conversations::addUpdates(Updates& updates) {
     prepareUpdate(updates, table__);
     updateField(updates, table__, id);
     updateField(updates, table__, type);
+    updateField(updates, table__, skypeid);
     updateField(updates, table__, friendlyname);
 }
 void Conversations::addIDUpdates(Updates& updates) {
@@ -376,6 +385,7 @@ void Conversations::addIDUpdates(Updates& updates) {
 void Conversations::getFieldTypes(std::vector<litesql::FieldType>& ftypes) {
     ftypes.push_back(Id);
     ftypes.push_back(Type);
+    ftypes.push_back(Skypeid);
     ftypes.push_back(Friendlyname);
 }
 void Conversations::delRecord() {
@@ -422,6 +432,7 @@ std::unique_ptr<Conversations> Conversations::upcastCopy() const {
     Conversations* np = new Conversations(*this);
     np->id = id;
     np->type = type;
+    np->skypeid = skypeid;
     np->friendlyname = friendlyname;
     np->inDatabase = inDatabase;
     return unique_ptr<Conversations>(np);
@@ -430,6 +441,7 @@ std::ostream & operator<<(std::ostream& os, Conversations o) {
     os << "-------------------------------------" << std::endl;
     os << o.id.name() << " = " << o.id << std::endl;
     os << o.type.name() << " = " << o.type << std::endl;
+    os << o.skypeid.name() << " = " << o.skypeid << std::endl;
     os << o.friendlyname.name() << " = " << o.friendlyname << std::endl;
     os << "-------------------------------------" << std::endl;
     return os;
@@ -1140,7 +1152,7 @@ std::vector<litesql::Database::SchemaItem> history::getSchema() const {
         res.push_back(Database::SchemaItem("Users_seq","sequence",backend->getCreateSequenceSQL("Users_seq")));
     }
     res.push_back(Database::SchemaItem("Chats","table","CREATE TABLE Chats (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",owner " + backend->getSQLType(A_field_type_string,"") + "" +",name " + backend->getSQLType(A_field_type_string,"") + "" +",creationtime " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
-    res.push_back(Database::SchemaItem("Conversations","table","CREATE TABLE Conversations (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +")"));
+    res.push_back(Database::SchemaItem("Conversations","table","CREATE TABLE Conversations (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",skypeid " + backend->getSQLType(A_field_type_integer,"") + "" +",friendlyname " + backend->getSQLType(A_field_type_string,"") + "" +")"));
     res.push_back(Database::SchemaItem("ChatUsers","table","CREATE TABLE ChatUsers (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",user_id " + backend->getSQLType(A_field_type_integer,"") + "" +",chat_id " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("info","table","CREATE TABLE info (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",dbversion " + backend->getSQLType(A_field_type_integer,"") + "" +")"));
     res.push_back(Database::SchemaItem("Messages","table","CREATE TABLE Messages (id " + rowIdType + ",type " + backend->getSQLType(A_field_type_string,"") + "" +",author " + backend->getSQLType(A_field_type_string,"") + "" +",body " + backend->getSQLType(A_field_type_string,"") + "" +",chat_id " + backend->getSQLType(A_field_type_integer,"") + "" +",timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +",sender_id " + backend->getSQLType(A_field_type_integer,"") + "" +",skype_id " + backend->getSQLType(A_field_type_integer,"") + "" +",skype_timestamp " + backend->getSQLType(A_field_type_integer,"") + "" +")"));

@@ -12,7 +12,6 @@ public:
     SkyContactsItem(const QString &text, const QString &image);
 };
 
-
 class SkyContactsTreeModel : public QStandardItemModel
 {
     Q_OBJECT
@@ -33,15 +32,27 @@ public:
 
     void processMessage(const skype_sc::Message_hlpr &m_hlpr);
 
-private:
 //    skype_sc::User_hlpr me;
+private:
+    template<typename ...Args>
+    void newIfNull(QStandardItem *chck_val, QStandardItem *parent, const Args &...args) {
+    	if (!chck_val) {
+    		m_today = new SkyContactsItem(args...);
+    		parent->appendRow(chck_val);
+    	}
+    }
+
 
     UserSet m_users;
-    ConversationSet m_today;
-    ConversationSet m_yesterday;
+    ConversationSet today;
+    ConversationSet yesterday;
     ConversationSet two_weeks;
 
+    QStandardItem *m_recent = nullptr;
     QStandardItem *m_contacts = nullptr;
+    QStandardItem *m_today = nullptr;
+    QStandardItem *m_yesterday = nullptr;
+    QStandardItem *m_two_weeks = nullptr;
 };
 
 #endif // SKYCONTACTSTREEMODEL_H

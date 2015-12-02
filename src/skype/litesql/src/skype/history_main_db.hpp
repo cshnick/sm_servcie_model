@@ -123,6 +123,8 @@ public:
     litesql::Field<int> id;
     static const litesql::FieldType Type;
     litesql::Field<std::string> type;
+    static const litesql::FieldType Skypeid;
+    litesql::Field<int> skypeid;
     static const litesql::FieldType Friendlyname;
     litesql::Field<std::string> friendlyname;
     static void initValues();

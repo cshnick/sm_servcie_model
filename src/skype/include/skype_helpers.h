@@ -177,13 +177,21 @@ struct Conversation_hlpr {
 		m_conversation->Name(name.GetPPtr());
 		return Boss::StringHelper(name).GetString<Boss::IString::AnsiString>();
 	}
-        int Id() {
-            int res = -1;
-            if (m_conversation->Id(&res) != Boss::Status::Ok) {
-                throw SkypeHelpersException("Conversation Id");
-            }
-            return res;
-        }
+
+	int Id() {
+		int res = -1;
+		if (m_conversation->Id(&res) != Boss::Status::Ok) {
+			throw SkypeHelpersException("Conversation Id");
+		}
+		return res;
+	}
+	int SkypeId() {
+		int res = -1;
+		if (m_conversation->SkypeId(&res) != Boss::Status::Ok) {
+			throw SkypeHelpersException("Conversation Id");
+		}
+		return res;
+	}
 
 private:
 	mutable ref_ptr<IConversation> m_conversation;
