@@ -17,6 +17,7 @@
 #include "core/core_types.h"
 #include "common/istring.h"
 #include "common/ienum.h"
+#include "common/callback.h"
 
 namespace skype_sc {
 
@@ -48,6 +49,11 @@ struct ISettings
 	virtual Boss::RetCode BOSS_CALL UpdateFromJson(IString *json_string) = 0;
 };
 
+struct IMessageCallback  {
+	virtual ~IMessageCallback() {}
+	virtual void Process(IMessage *) = 0;
+};
+
 struct IDBController
 		: public Boss::Inherit<Boss::IBase> {
 
@@ -56,6 +62,7 @@ struct IDBController
 
 	virtual Boss::RetCode BOSS_CALL Import() = 0;
     virtual Boss::RetCode BOSS_CALL Recent(Boss::IEnum **) = 0;
+    virtual Boss::RetCode BOSS_CALL GetMessagesAsync(IMessageCallback *) = 0;
     virtual Boss::RetCode BOSS_CALL SetDBPath(Boss::IString *) = 0;
 };
 

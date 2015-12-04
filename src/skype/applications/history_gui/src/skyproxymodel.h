@@ -45,6 +45,7 @@ public:
     enum en {
         STATE_UNDEFINED,
         STATE_EDIT,
+        STATE_CONTACTS_TREE,
         STATE_RECENT_TREE
     };
     Q_ENUMS(en)

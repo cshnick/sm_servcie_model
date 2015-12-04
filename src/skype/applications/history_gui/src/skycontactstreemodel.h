@@ -15,14 +15,16 @@ public:
 class SkyContactsTreeModel : public QStandardItemModel
 {
     Q_OBJECT
-    typedef std::unordered_set<std::string> UserSet;
-    typedef std::unordered_set<int> ConversationSet;
 
 public:
+    typedef std::unordered_set<std::string> UserSet;
+    typedef std::unordered_set<uint> ConversationSet;
+
     enum ExRole {
         NameRole = Qt::UserRole + 10,
         SkypeNameRole,
         TimestampRole,
+		ConversationIdRole
     };
 
     SkyContactsTreeModel(QObject *parent = 0);
@@ -34,25 +36,24 @@ public:
 
 //    skype_sc::User_hlpr me;
 private:
-    template<typename ...Args>
-    void newIfNull(QStandardItem *chck_val, QStandardItem *parent, const Args &...args) {
-    	if (!chck_val) {
-    		m_today = new SkyContactsItem(args...);
-    		parent->appendRow(chck_val);
-    	}
-    }
-
 
     UserSet m_users;
-    ConversationSet today;
-    ConversationSet yesterday;
-    ConversationSet two_weeks;
+    ConversationSet m_set_today;
+    ConversationSet m_set_yesterday;
+    ConversationSet m_set_two_weeks;
+    ConversationSet m_set_month;
+    ConversationSet m_set_year;
+    ConversationSet m_set_yplus;
+    ConversationSet m_set_common;
 
-    QStandardItem *m_recent = nullptr;
-    QStandardItem *m_contacts = nullptr;
-    QStandardItem *m_today = nullptr;
-    QStandardItem *m_yesterday = nullptr;
-    QStandardItem *m_two_weeks = nullptr;
+    QStandardItem *m_item_recent = nullptr;
+    QStandardItem *m_item_contacts = nullptr;
+    QStandardItem *m_item_today = nullptr;
+    QStandardItem *m_item_yesterday = nullptr;
+    QStandardItem *m_item_two_weeks = nullptr;
+    QStandardItem *m_item_month = nullptr;
+    QStandardItem *m_item_year = nullptr;
+    QStandardItem *m_item_yplus = nullptr;
 };
 
 #endif // SKYCONTACTSTREEMODEL_H

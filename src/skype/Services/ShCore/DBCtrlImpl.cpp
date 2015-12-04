@@ -230,6 +230,27 @@ public:
 	}
 
 	template<typename T = void>
+	void getMessages(IMessageCallback *callback) {
+		std::lock_guard<Mutex> lock(m_mutex);
+
+		using namespace HistoryDB;
+		ref_ptr<Enum> res = Base<Enum>::Create();
+		cout << "Dump all messages..." << endl;
+		UInt ct = GetTimeMs64();
+		auto messages = select<Messages>(*history_db).orderBy(Messages::Skype_timestamp, false).all();
+		cout << "Done; elapsed: " << GetTimeMs64() - ct << endl;
+		for (Messages m : messages) {
+			ref_ptr<IMessage> im(convert<Messages, ref_ptr<IMessage>>(m));
+			callback->Process(im.Get());
+		}
+	}
+
+	template<typename T = void>
+	void getMessagesAsync(IMessageCallback *callback) {
+		std::async(std::launch::async, &DBControllerImplPrivate::getMessages, this, callback);
+	}
+
+	template<typename T = void>
 	void restart(const std::string &new_filename, const std::string &history_db_path) {
 		stop();
 		m_w.reset(nullptr);
@@ -459,6 +480,7 @@ ref_ptr<IConversation> DBControllerImplPrivate::convert(const HistoryDB::Convers
 	auto dest = Base<DBConversation>::Create();
 	dest->SetName(Base<String>::Create(source.friendlyname).Get());
 	dest->SetId(source.id);
+	dest->SetSkypeId(source.skypeid);
 	auto source_users = const_cast<Conversations&>(source).users().get().all(); //Shouldn't create unnecessary copy
 	ref_ptr<Enum> dest_users = Base<Enum>::Create();
 	for (auto usr : source_users) {
@@ -507,6 +529,13 @@ Boss::RetCode BOSS_CALL DBControllerImpl::Recent(Boss::IEnum **result) {
 	d->recent(result);
 	return Boss::Status::Ok;
 }
+
+Boss::RetCode BOSS_CALL DBControllerImpl::GetMessagesAsync(IMessageCallback *callback) {
+	cout << "DBControllerImpl::GetMessagesAsync()" << endl;
+	d->getMessagesAsync(callback);
+	return Boss::Status::Ok;
+}
+
 
 Boss::RetCode BOSS_CALL DBControllerImpl::Restart(Boss::IString *skype, Boss::IString *history) {
 	std::cout << "DBWatcherImpl::Reset()" << std::endl;

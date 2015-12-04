@@ -57,6 +57,8 @@ namespace Boss {
     return ICallbackPtr(new IFuncCallbackImpl<TFunc>(func));
   }
 
+
+
 } //namespace Boss
 
 #endif  // !__CALLBACK_H__

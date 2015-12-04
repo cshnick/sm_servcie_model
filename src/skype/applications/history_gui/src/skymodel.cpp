@@ -5,7 +5,8 @@ std::vector<QString> SkyModel::s_roles = {"Name",
                                           "Height",
                                           "Timestamp",
                                           "Author",
-                                          "Chatname"
+                                          "Chatname",
+										  "Chatid"
                                          };
 
 class SkyModelPrivate {

@@ -53,10 +53,12 @@ public:
 		Boss::ref_ptr<skype_sc::IMessage> mesg;
 		auto ret = event->Message(mesg.GetPPtr());
         assert(!ret);
-        QVariantMap m(convert(Message_hlpr(mesg)));
+        Message_hlpr mh(mesg);
+        QVariantMap m(convert(mh));
         if (model_impl()) {
             model_impl()->insert(0, m);
         }
+        m_contacts->processMessage(mh);
 
 		return Boss::Status::Ok;
 	}
@@ -112,6 +114,7 @@ public:
         m["Author"] = QString::fromStdString(h.Author());
         m["Timestamp"] = QDateTime::fromTime_t(h.SkypeTimestamp());
         m["Chatname"] = QString::fromStdString(h.Conversation().Name());
+        m["Chatid"] = h.Conversation().SkypeId();
 
         return m;
     }
@@ -188,10 +191,16 @@ bool SkyProxyModel::filterAcceptsRow(int source_row, const QModelIndex &source_p
         accept = name_data.contains(filterRegExp()) ||
                 author.contains(filterRegExp());
     } break;
-    case ModelState::STATE_RECENT_TREE : {
+    case ModelState::STATE_CONTACTS_TREE : {
         const QModelIndex ind = sourceModel()->index(source_row, 0, source_parent);
         QString author = ind.data(Qt::UserRole + 3).toString();
         accept = author.contains(filterRegExp());
+    } break;
+    case ModelState::STATE_RECENT_TREE : {
+        const QModelIndex ind = sourceModel()->index(source_row, 0, source_parent);
+        QString chatid = ind.data(Qt::UserRole + 5).toString();
+        accept = chatid.contains(filterRegExp());
+//        qDebug() << "Filter regexp, chatid" << filterRegExp() << chatid;
     } break;
     default:
         accept = false;
@@ -228,8 +237,17 @@ void SkyProxyModel::stringChanged(const QString &p_str) {
     setFilterFixedString(p_str);
 }
 void SkyProxyModel::contactTreeItemSelected(const QModelIndex &ind) {
-    setState(ModelState::STATE_RECENT_TREE);
-    setFilterFixedString(ind.data(SkyContactsTreeModel::SkypeNameRole).toString());
+    bool contacts = ind.parent().data() == "Contacts";
+    bool recent = ind.parent().parent().data() == "Recent";
+
+    if (contacts) {
+        setState(ModelState::STATE_CONTACTS_TREE);
+        setFilterFixedString(ind.data(SkyContactsTreeModel::SkypeNameRole).toString());
+    } else if (recent) {
+        qDebug() << "recent!!" << ind.data(SkyContactsTreeModel::ConversationIdRole);
+        setState(ModelState::STATE_RECENT_TREE);
+        setFilterFixedString(ind.data(SkyContactsTreeModel::ConversationIdRole).toString());
+    }
 }
 QVariant SkyProxyModel::get(int p_index, int role) {
     return sourceModel()->data(mapToSource(index(p_index, 0)), role);
