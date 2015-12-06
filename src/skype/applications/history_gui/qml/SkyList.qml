@@ -87,6 +87,7 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         font.bold: false
                         font.pointSize: 10
+                        wrapMode: Text.WordWrap
                     }
 
                     spacing: 10
@@ -124,7 +125,7 @@ Rectangle {
                 //sky_model.state = sky_model.STATE_EDIT
                 console.log("State: " + sky_model.state)
                 sky_model.state = ModelState.STATE_EDIT
-                sky_model.loadRecent()
+                sky_model.loadAsync()
             }
         }
 

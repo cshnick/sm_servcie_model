@@ -46,6 +46,7 @@ public:
 	DBControllerImplPrivate(DBControllerImpl *p_q)
 		: q(p_q)
 		, m_watching_bound_line(-1)
+		, m_stop_async(false)
 		, m_pu(Base<PlatformUtilsImpl>::Create()) {
 		try {
 
@@ -55,6 +56,7 @@ public:
 		}
 	}
 	~DBControllerImplPrivate() {
+		m_stop_async = true;
 		cout << "~Controller impl private" << endl;
 		m_w.reset(0);
 	}
@@ -230,28 +232,34 @@ public:
 	}
 
 	template<typename T = void>
-	void getMessages(IMessageCallback *callback) {
+	void getMessages(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished) {
 		std::lock_guard<Mutex> lock(m_mutex);
-
 		using namespace HistoryDB;
+		if (m_stop_async) return;
 		ref_ptr<Enum> res = Base<Enum>::Create();
 		cout << "Dump all messages..." << endl;
 		UInt ct = GetTimeMs64();
+		size_t messages_count = select<Messages>(*history_db).count(), counter = 0;
 		auto messages = select<Messages>(*history_db).orderBy(Messages::Skype_timestamp, false).all();
 		cout << "Done; elapsed: " << GetTimeMs64() - ct << endl;
 		for (Messages m : messages) {
+			if (m_stop_async) return;
 			ref_ptr<IMessage> im(convert<Messages, ref_ptr<IMessage>>(m));
-			callback->Process(im.Get());
+			callback(im.Get(), counter++ * 100 / (messages_count - 1));
+		}
+		if (onLoadFinished) {
+			onLoadFinished();
 		}
 	}
 
 	template<typename T = void>
-	void getMessagesAsync(IMessageCallback *callback) {
-		std::async(std::launch::async, &DBControllerImplPrivate::getMessages, this, callback);
+	void getMessagesAsync(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished) {
+		std::async(std::launch::async, &DBControllerImplPrivate::getMessages, this, callback, onLoadFinished);
 	}
 
 	template<typename T = void>
 	void restart(const std::string &new_filename, const std::string &history_db_path) {
+		m_stop_async = true;
 		stop();
 		m_w.reset(nullptr);
 		m_watching_bound_line = -1;
@@ -265,6 +273,7 @@ public:
 		}
 		clearCache();
 		start();
+		m_stop_async = false;
 	}
 
 	template<typename T = void>
@@ -372,6 +381,7 @@ private:
 	std::string m_historyDBDir;
 	std::unique_ptr<sm::filewatcher> m_w = nullptr;
 	atomic_int m_watching_bound_line;
+	atomic_bool m_stop_async;
 	Boss::Mutex m_mutex;
 	std::unique_ptr<SkypeDB::main> skype_main;
 	std::unique_ptr<HistoryDB::history> history_db;
@@ -530,9 +540,9 @@ Boss::RetCode BOSS_CALL DBControllerImpl::Recent(Boss::IEnum **result) {
 	return Boss::Status::Ok;
 }
 
-Boss::RetCode BOSS_CALL DBControllerImpl::GetMessagesAsync(IMessageCallback *callback) {
+Boss::RetCode BOSS_CALL DBControllerImpl::GetMessagesAsync(MessageCallback callback, VoidCallback onLoadFinished) {
 	cout << "DBControllerImpl::GetMessagesAsync()" << endl;
-	d->getMessagesAsync(callback);
+	d->getMessagesAsync(callback, onLoadFinished);
 	return Boss::Status::Ok;
 }
 

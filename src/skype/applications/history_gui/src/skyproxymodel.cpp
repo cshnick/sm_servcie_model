@@ -77,6 +77,22 @@ public:
         }
     }
 
+    void loadAsync() {
+        m_dbctrl->GetMessagesAsync([this](IMessage *message, int progress) {
+            qi_ptr<IMessage> pm(message);
+            Message_hlpr mh(pm);
+            QVariantMap m(convert(mh));
+            if (model_impl()) {
+                model_impl()->append(m);
+            }
+            m_contacts->processMessage(mh);
+            m_progress = progress;
+            q->emitLoadProgressChanged(progress);
+        } , [this] {
+        	q->emitLoadFinished();
+        });
+    }
+
     void restart(const QJsonObject &o) {
         model_impl()->clear();
         QString skype_path = o.value(QString::fromStdString(IAccount::TFilePath)).toString();
@@ -244,7 +260,6 @@ void SkyProxyModel::contactTreeItemSelected(const QModelIndex &ind) {
         setState(ModelState::STATE_CONTACTS_TREE);
         setFilterFixedString(ind.data(SkyContactsTreeModel::SkypeNameRole).toString());
     } else if (recent) {
-        qDebug() << "recent!!" << ind.data(SkyContactsTreeModel::ConversationIdRole);
         setState(ModelState::STATE_RECENT_TREE);
         setFilterFixedString(ind.data(SkyContactsTreeModel::ConversationIdRole).toString());
     }
@@ -273,6 +288,10 @@ void SkyProxyModel::loadSkypeTest() {
 void SkyProxyModel::loadRecent() {
     d->loadRecent();
 }
+void SkyProxyModel::loadAsync() {
+    d->loadAsync();
+}
+
 void SkyProxyModel::restart(const QJsonObject &o) {
     d->restart(o);
 }

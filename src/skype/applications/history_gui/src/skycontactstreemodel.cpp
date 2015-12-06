@@ -30,7 +30,6 @@ struct ChatAdder {
 
 		if (lcond && ucond) {
 			int skypeId = ch->SkypeId();
-			cout << "Skype id " << skypeId << endl;
 			if (!cache->count(skypeId)) {
 				cache->emplace(skypeId);
 				if (!*parentItem) {

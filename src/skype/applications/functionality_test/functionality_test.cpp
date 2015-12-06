@@ -20,16 +20,11 @@
 
 #include "ifaces.h"
 
-#ifndef __APPLE__
-#   define MAIN_DB__ "/home/ilia/.Skype/luxa_ryabic/main.db"
-#else
-#   define MAIN_DB__ "/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db"
-#endif
-
 BOSS_DECLARE_RUNTIME_EXCEPTION(FunctionalityTest)
 
 using namespace Boss;
 using namespace skype_sc;
+using namespace std;
 
 struct UIObserver
 	:public Boss::CoClass<skype_sc::service::id::DBObserver, IDBObserver> {
@@ -40,7 +35,7 @@ struct UIObserver
 			throw FunctionalityTestException("Error getting message");
 		}
 		Message_hlpr msg_hlpr(mesg);
-		std::cout << msg_hlpr.SkypeId() << " - " << msg_hlpr.Body() << std::endl;
+		cout << msg_hlpr.SkypeId() << " - " << msg_hlpr.Body() << endl;
 
 		return Boss::Status::Ok;
 	}
@@ -60,9 +55,11 @@ int main()
 		auto ctrl = CreateObject<IDBController>(skype_sc::service::id::DBControler);
 		qi_ptr<skype_sc::IDBWatcher> watcher(ctrl);
 
+		auto settings = CreateObject<ISettings>(skype_sc::service::id::Settings);
+		Settings_hlpr seh(settings);
 
-		std::string first_skype = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db", first_history = "skype/sc.ryabokon.ilia";
-		std::cout << "Initial data: \n" << "\tSkype: " << first_skype << "\n\tHistory: " << first_history << std::endl;
+		string first_skype = seh.Accounts().at(0).FilePath(), first_history = seh.Accounts().at(0).HistoryDBPath();
+		cout << "Initial data: \n" << "\tSkype: " << first_skype << "\n\tHistory: " << first_history << endl;
 		watcher->SetWatchFile(Base<String>::Create(first_skype).Get());
 		ctrl->SetDBPath(Base<String>::Create(first_history).Get());
 
@@ -70,37 +67,38 @@ int main()
 		watcher->AddObserver(ui_observer.Get());
 
 		qi_ptr<skype_sc::IService> service(ctrl);
-
 		service->Start();
 
-		ref_ptr<IEnum> recent;
-		ctrl->Recent(recent.GetPPtr());
-		int counter = 0;
-		EnumHelper<IMessage> mess_enum(recent);
-		for (ref_ptr<IMessage> iter = mess_enum.First(); iter.Get(); iter = mess_enum.Next()) {
-			Message_hlpr mh(iter);
-			std::cout << "Body: " << mh.Body() << "; Id: " << mh.Id() << std::endl;
-			counter++;
-		}
-		std::cout << "Counter: " << counter << std::endl;
+		cout << "Get async messages for " << first_skype << endl;
+		ctrl->GetMessagesAsync([](IMessage *m, int progress) {
+			ref_ptr<IMessage>pm(m);
+			skype_sc::Message_hlpr mes_h(pm);
+			cout << "\t" << mes_h.Id() << " : " << mes_h.Body() << " - " << progress  << "%" << endl;
+		}, nullptr);
 
-		sleep(10);
+//		sleep(1);
 
-		std::string second_skype = MAIN_DB__, second_history = "skype/luxa_ryabic";
-		std::cout << "Initial data: \n" << "\tSkype: " << second_skype << "\tHistory: " << second_history << std::endl;
+		string second_skype = seh.Accounts().at(1).FilePath(), second_history = seh.Accounts().at(1).HistoryDBPath();
+		cout << "Initial data: \n" << "\tSkype: " << second_skype << "\tHistory: " << second_history << endl;
+		cout << "Prepairing to restart..." << endl;
 		service->Restart(Base<String>::Create(second_skype).Get(), Base<String>::Create(second_history).Get());
-		std::cout << "Reseted; wait for events" << std::endl;
-		sleep(10);
+		cout << "Restarted; get async messages for " << second_skype << endl;
+		ctrl->GetMessagesAsync([](IMessage *m, int progress) {
+			ref_ptr<IMessage>pm(m);
+			skype_sc::Message_hlpr mes_h(pm);
+			cout << "\t" << mes_h.Id() << " : " << mes_h.Body()  << " - " << progress  << "%" << endl;
+		} , nullptr);
+//		sleep(10);
 		service->Stop();
-		std::cout << "Stopped" << std::endl;
+		cout << "Stopped" << endl;
 //		while (true) {
 //			sleep(5);
 //		}
-	} catch (std::exception const &e)  {
-		std::cerr << "Error: " << e.what() << std::endl;
+	} catch (exception const &e)  {
+		cerr << "Error: " << e.what() << endl;
 	}
 
-	std::cout << "Succeeded!" << std::endl;
+	cout << "Succeeded!" << endl;
 
 	return 0;
 }

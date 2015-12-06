@@ -22,18 +22,29 @@ Item {
         }
     }
 
-    ProgressBarCustom {
+    ProgressBar {
         id: progress_bar
-
         y: search_field.height
-        width: parent.width
         height: 2
+        width: parent.width
         value: sky_model.loadProgress
+        minimumValue: 0
+        maximumValue: 100
 
         Connections {
             target: sky_model
             onLoadFinished: {
                 progress_bar.visible = false
+            }
+        }
+
+        style: ProgressBarStyle {
+            background: Rectangle {
+                color: "white"
+                implicitHeight: 2
+            }
+            progress: Rectangle {
+                color: "#03A9F4"
             }
         }
     }

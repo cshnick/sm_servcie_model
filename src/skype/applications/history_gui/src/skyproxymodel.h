@@ -83,6 +83,7 @@ public:
     Q_INVOKABLE void loadTest();
     Q_INVOKABLE void loadSkypeTest();
     Q_INVOKABLE void loadRecent();
+    Q_INVOKABLE void loadAsync();
     Q_INVOKABLE void restart(const QJsonObject &);
     Q_INVOKABLE QJsonObject settings();
     Q_INVOKABLE void updateSettings(const QJsonObject &);
@@ -93,8 +94,15 @@ protected:
 
 private:
     void prependNewMesages();
+    void emitLoadProgressChanged(int progress) {
+        Q_EMIT loadProgressChanged(progress);
+    }
+    void emitLoadFinished() {
+    	Q_EMIT loadFinished();
+    }
 
 private:
+    friend class SkyModelPrivate;
     std::unique_ptr<SkyModelPrivate> d;
 };
 
