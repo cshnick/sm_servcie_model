@@ -10,6 +10,7 @@
 #include <functional>
 #include <future>
 #include <sstream>
+#include <chrono>
 
 #include "core/error_codes.h"
 #include "core/ref_obj_qi_ptr.h"
@@ -59,6 +60,7 @@ public:
 		m_stop_async = true;
 		cout << "~Controller impl private" << endl;
 		m_w.reset(0);
+		m_thread->join();
 	}
 
 	template<typename T = void>
@@ -238,10 +240,10 @@ public:
 		if (m_stop_async) return;
 		ref_ptr<Enum> res = Base<Enum>::Create();
 		cout << "Dump all messages..." << endl;
-		UInt ct = GetTimeMs64();
+		Boss::UInt ct = Boss::GetTimeMs64();
 		size_t messages_count = select<Messages>(*history_db).count(), counter = 0;
 		auto messages = select<Messages>(*history_db).orderBy(Messages::Skype_timestamp, false).all();
-		cout << "Done; elapsed: " << GetTimeMs64() - ct << endl;
+		cout << "Done; elapsed: " << Boss::GetTimeMs64() - ct << endl;
 		for (Messages m : messages) {
 			if (m_stop_async) return;
 			ref_ptr<IMessage> im(convert<Messages, ref_ptr<IMessage>>(m));
@@ -254,12 +256,17 @@ public:
 
 	template<typename T = void>
 	void getMessagesAsync(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished) {
-		std::async(std::launch::async, &DBControllerImplPrivate::getMessages, this, callback, onLoadFinished);
+		if (m_thread.get()) {
+			m_thread->detach();
+			m_thread.reset(nullptr);
+		}
+		m_thread.reset(new thread(&DBControllerImplPrivate::getMessages, this, callback, onLoadFinished));
+//		std::thread th([]{for (;;) {cout << "Yea!" << endl; sleep(5);}});
 	}
 
 	template<typename T = void>
 	void restart(const std::string &new_filename, const std::string &history_db_path) {
-		m_stop_async = true;
+//		m_stop_async = true;
 		stop();
 		m_w.reset(nullptr);
 		m_watching_bound_line = -1;
@@ -392,6 +399,7 @@ private:
 	std::string me;
 	std::vector<IDBObserver*> m_observers;
 	PlatformUtils_hlpr m_pu;
+	unique_ptr<thread> m_thread;
 }; //class DBControllerImplPrivate
 
 template<>
@@ -543,6 +551,7 @@ Boss::RetCode BOSS_CALL DBControllerImpl::Recent(Boss::IEnum **result) {
 Boss::RetCode BOSS_CALL DBControllerImpl::GetMessagesAsync(MessageCallback callback, VoidCallback onLoadFinished) {
 	cout << "DBControllerImpl::GetMessagesAsync()" << endl;
 	d->getMessagesAsync(callback, onLoadFinished);
+	cout << "Async returned" << endl;
 	return Boss::Status::Ok;
 }
 

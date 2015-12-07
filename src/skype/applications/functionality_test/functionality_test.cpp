@@ -3,7 +3,9 @@
 
 #include "plugin/loader.h"
 #include <iostream>
+#include <fstream>
 #include <unistd.h>
+
 
 #include <common/string.h>
 #include "common/string_helper.h"
@@ -17,7 +19,6 @@
 #include "skype_helpers.h"
 
 #include "cxxabi.h"
-
 #include "ifaces.h"
 
 BOSS_DECLARE_RUNTIME_EXCEPTION(FunctionalityTest)
@@ -44,15 +45,14 @@ struct UIObserver
 int main()
 {
 	try  {
+//		ofstream fstr("functionality_test.log");
+//		cout.rdbuf(fstr.rdbuf());
+
 		Boss::Loader Ldr("sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
 				                       MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory"));
 
 		auto pu = PlatformUtils_hlpr(CreateObject<IPlatformUtils>(skype_sc::service::id::PlatformUtils));
-
-		pu.MkPath("skype/sc.ryabokon.ilia");
-		pu.MkPath("skype/luxa_ryabic");
-
-		auto ctrl = CreateObject<IDBController>(skype_sc::service::id::DBControler);
+    	auto ctrl = CreateObject<IDBController>(skype_sc::service::id::DBControler);
 		qi_ptr<skype_sc::IDBWatcher> watcher(ctrl);
 
 		auto settings = CreateObject<ISettings>(skype_sc::service::id::Settings);
@@ -73,8 +73,9 @@ int main()
 		ctrl->GetMessagesAsync([](IMessage *m, int progress) {
 			ref_ptr<IMessage>pm(m);
 			skype_sc::Message_hlpr mes_h(pm);
-			cout << "\t" << mes_h.Id() << " : " << mes_h.Body() << " - " << progress  << "%" << endl;
+			cout << "\r\t" << mes_h.Id() << " : " << mes_h.Body() << " - " << progress  << "%";
 		}, nullptr);
+		cout << endl;
 
 //		sleep(1);
 
@@ -86,8 +87,9 @@ int main()
 		ctrl->GetMessagesAsync([](IMessage *m, int progress) {
 			ref_ptr<IMessage>pm(m);
 			skype_sc::Message_hlpr mes_h(pm);
-			cout << "\t" << mes_h.Id() << " : " << mes_h.Body()  << " - " << progress  << "%" << endl;
+			cout << "\r\t" << mes_h.Id() << " : " << mes_h.Body()  << " - " << progress  << "%";
 		} , nullptr);
+		cout << endl;
 //		sleep(10);
 		service->Stop();
 		cout << "Stopped" << endl;

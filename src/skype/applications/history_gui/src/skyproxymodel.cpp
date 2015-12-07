@@ -6,6 +6,7 @@
 #include <QRect>
 #include <QtGui>
 #include <QTextDocument>
+#include <mutex>
 
 #include "../../include/class_ids.h"
 #include "plugin/loader.h"
@@ -79,8 +80,10 @@ public:
 
     void loadAsync() {
         m_dbctrl->GetMessagesAsync([this](IMessage *message, int progress) {
-            qi_ptr<IMessage> pm(message);
+            ref_ptr<IMessage> pm(message);
+            m_mutex.lock();
             Message_hlpr mh(pm);
+            m_mutex.unlock();
             QVariantMap m(convert(mh));
             if (model_impl()) {
                 model_impl()->append(m);
@@ -99,7 +102,7 @@ public:
         QString history_path = o.value(QString::fromStdString(IAccount::THistoryDBPath)).toString();
         qi_ptr<IService>(m_dbctrl)->Restart(Base<String>::Create(skype_path.toLocal8Bit().data()).Get(),
                         Base<String>::Create(history_path.toLocal8Bit().data()).Get());
-        loadRecent();
+        loadAsync();
     }
 
     QJsonObject settings() {
@@ -118,9 +121,9 @@ public:
     QVariantMap convert(const Message_hlpr &h) {
         int width = 1115;
         QString body = QString::fromStdString(h.Body());
-        if (qml_object) {
-            width = qml_object->property("width").toInt();
-        }
+//        if (qml_object) {
+//            width = qml_object->property("width").toInt();
+//        }
         QTextDocument doc(body);
         doc.setTextWidth(width);
         int height = doc.size().height();
@@ -151,6 +154,7 @@ private:
     SkyContactsTreeModel *m_contacts;
     int m_progress = 0, m_state = 0;
     std::unique_ptr<Loader> m_pluginLoader = nullptr;
+    std::mutex m_mutex;
 
     ref_ptr<IDBController> m_dbctrl;
     ref_ptr<ISettings> m_settings;
