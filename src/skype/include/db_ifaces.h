@@ -21,7 +21,8 @@ struct IUser;
 struct IMessage
 		: public Boss::Inherit<Boss::IBase> {
 
-	BOSS_DECLARE_IFACEID(skype_sc.IMessage) //
+	//BOSS_DECLARE_IFACEID(skype_sc.IMessage) //
+    BOSS_DECLARE_IFACEID_HEX(0x9fb4cd2d) //skype_sc.IMessage
 
     virtual RetCode BOSS_CALL Author(IString **) = 0;
 	virtual RetCode BOSS_CALL SetAuthor(IString *) = 0;
@@ -42,7 +43,8 @@ struct IMessage
 struct IConversation
 		: public Boss::Inherit<Boss::IBase> {
 
-	BOSS_DECLARE_IFACEID(skype_sc.IConversation) //
+	//BOSS_DECLARE_IFACEID(skype_sc.IConversation) //
+    BOSS_DECLARE_IFACEID_HEX(0xf7c6d05c) //skype_sc.IConversation
 
 	virtual RetCode BOSS_CALL SkypeId(int *p_id) = 0;
 	virtual RetCode BOSS_CALL SetSkypeId(int p_id) = 0;
@@ -57,7 +59,8 @@ struct IConversation
 struct IUser
 		: public Boss::Inherit<Boss::IBase> {
 
-	BOSS_DECLARE_IFACEID(skype_sc.IUser) //
+	//BOSS_DECLARE_IFACEID(skype_sc.IUser) //
+    BOSS_DECLARE_IFACEID_HEX(0x8f4a1abf) //skype_sc.IUser
 
 	virtual RetCode BOSS_CALL SetName(IString *p_name) = 0;
 	virtual RetCode BOSS_CALL Name(IString **p_name) = 0;

@@ -6,7 +6,9 @@ include_directories(
     ../../litesql/include/
     ../../litesql/src/skype/
 )
-
+if (APPLE)
+ list(APPEND include_directories "macosx/include/json-c")
+endif (APPLE)
 set (OWN_LIBS
     litesql
     skype_dbs

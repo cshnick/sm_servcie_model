@@ -5,12 +5,6 @@ set(CMAKE_CXX_COMPILER "/usr/bin/g++-4.9")
 
 project(Sm)
 
-if(APPLE)
-	set(CMAKE_MACOSX_RPATH 1)
-        SET(CMAKE_INSTALL_RPATH
-        "@executable_path/../../lib/Debug/:@executable_path/:@loader_path/")
-endif(APPLE)
-
 SET (EXECUTABLE_OUTPUT_PATH 
 	"${PROJECT_BINARY_DIR}/bin"
 )
@@ -21,6 +15,12 @@ SET(LIBRARY_OUTPUT_PATH
 SET (INCLUDES_DIR 
 	"${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
+if(APPLE)
+        set(CMAKE_MACOSX_RPATH 1)
+        SET(CMAKE_INSTALL_RPATH
+        "@executable_path/../../lib/Debug/:@executable_path/:@loader_path/")
+	list(APPEND INCLUDES_DIR "./src/skype/Services/ShCore/macosx/include/json-c")
+endif(APPLE)
 
 SET (SRC_DIR
 	"${CMAKE_CURRENT_SOURCE_DIR}/src"

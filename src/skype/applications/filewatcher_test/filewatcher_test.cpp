@@ -9,7 +9,8 @@ namespace {
 	constexpr const char *watch_file_skype_1 = "/home/ilia/.Skype/sc.ryabokon.ilia/main.db";
 	constexpr const char *watch_file_skype_2 = "/home/ilia/.Skype/luxa_ryabic/main.db";
 #else
-	constexpr const char *watch_file = "/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db";
+	constexpr const char *watch_file_skype_1 = "/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db";
+    constexpr const char *watch_file_skype_2 = "/Users/ilia/Library/Application Support/Skype/luxa_ryabic/main.db";
 #endif //__APPLE__
 } //namespace
 
