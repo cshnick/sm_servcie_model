@@ -4,7 +4,9 @@ set(LIBNAME litesql)
 # litesql-util library
 ##############################################################################
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") 
+if (NOT MSVC)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC") 
+endif (NOT MSVC)
 
 set(litesql_util_SOURCES split.cpp 
             string.cpp
@@ -40,17 +42,14 @@ set(litesql_SOURCES    database.cpp
             ../../include/litesql/datetime.hpp
 )
 
-if (MSVC)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/debug/litesqld.lib DESTINATION lib/static
-    COMPONENT devel)
-endif(MSVC)
-
+set (SQLITE3_LIB sqlite3)
 if (LITESQL_WITH_SQLITE3)
   set(${LIBNAME}_sqlite_SRC
                 sqlite3_backend.cpp 
                 sqlite3.hpp )
 if(NOT SQLITE3_FOUND)
-  list(APPEND ${LIBNAME}_sqlite_SRC 
+	set (SQLITE3_LIB "")
+    list(APPEND ${LIBNAME}_sqlite_SRC 
                 sqlite3.c
                 sqlite3.h
                 sqlite3ext.h
@@ -89,8 +88,11 @@ if (LITESQL_WITH_ODBC)
   )
 endif (LITESQL_WITH_ODBC)
 
-add_library(${LIBNAME} SHARED ${litesql_SOURCES})
-target_link_libraries(${LIBNAME} litesql-util ${LIBNAME}_sqlite sqlite3)
-
+set (LIB_TYPE SHARED)
+if (MSVC)
+  set (LIB_TYPE STATIC)
+endif (MSVC)
+add_library(${LIBNAME} ${LIB_TYPE} ${litesql_SOURCES})
+target_link_libraries(${LIBNAME} litesql-util ${LIBNAME}_sqlite ${SQLITE3_LIB})
 include_directories(../../src/library ../../include)
 

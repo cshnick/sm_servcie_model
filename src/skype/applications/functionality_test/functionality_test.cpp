@@ -4,7 +4,7 @@
 #include "plugin/loader.h"
 #include <iostream>
 #include <fstream>
-#include <unistd.h>
+//#include <unistd.h>
 
 
 #include <common/string.h>
@@ -17,8 +17,9 @@
 #include "core/base.h"
 #include "core/ibase.h"
 #include "skype_helpers.h"
+#include "core/exceptions.h"
 
-#include "cxxabi.h"
+//#include "cxxabi.h"
 #include "ifaces.h"
 
 BOSS_DECLARE_RUNTIME_EXCEPTION(FunctionalityTest)

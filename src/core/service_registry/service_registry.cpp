@@ -240,8 +240,8 @@ namespace Boss
             qi_ptr<IPropertyBag> TransportProperties(TransportPropertiesProp);
             if (!TransportProperties.Get())
               return Status::Fail;
-            RemoteSrvInfo->SetProps(TransportProperties);
-            ServiceInfo = RemoteSrvInfo;
+			RemoteSrvInfo->SetProps(TransportProperties);
+			ServiceInfo = RemoteSrvInfo;
           }
           else
             return Status::Fail;

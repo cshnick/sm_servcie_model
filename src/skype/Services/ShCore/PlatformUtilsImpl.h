@@ -28,6 +28,8 @@ public:
 	virtual Boss::RetCode BOSS_CALL IsDir(Boss::IString*, bool *) override;
 	virtual Boss::RetCode BOSS_CALL IsFile(Boss::IString*, bool *) override;
 	virtual Boss::RetCode BOSS_CALL MkPath(Boss::IString*, bool *) override;
+	virtual Boss::RetCode BOSS_CALL FindAccounts(Boss::IEnum **) override;
+	virtual Boss::RetCode BOSS_CALL Children(Boss::IString *, Boss::IEnum **) override;
 };
 
 } /* namespace skype_sc */

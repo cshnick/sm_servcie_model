@@ -134,5 +134,37 @@ RetCode PlatformUtilsImpl::MkPath(Boss::IString *path, bool *ok) {
 	return Status::Ok;
 }
 
+RetCode PlatformUtilsImpl::FindAccounts(Boss::IEnum **result_enum) {
+	DIR *d;
+	ref_ptr<Enum> res_enum = Base<Enum>::Create();
+	struct dirent *dir;
+	const std::string char_loc = pu_h.SkypeLocation();
+	d = opendir(char_loc.c_str());
+	if (d) {
+		while ((dir = readdir(d)) != NULL) {
+			if (dir->d_type == DT_DIR) { //Directory
+				if (!strcmp(dir->d_name, ".")) continue;
+				if (!strcmp(dir->d_name, "..")) continue;
+				DIR *subd;
+				struct dirent *subdir;
+				char buf[512];
+				sprintf(buf, "%s/%s", char_loc.c_str(), dir->d_name);
+				subd = opendir(buf);
+				while ((subdir = readdir(subd)) != NULL) {
+					if (subdir->d_type == DT_REG && !strcmp(subdir->d_name, "main.db")) {
+						std::string hdbp = pu_h.UserSettingsDir() + "/SkyHistory/" + dir->d_name;
+						pu_h.MkPath(hdbp);
+						res_enum->AddItem(Base<AccountImpl>::Create(dir->d_name, std::string(buf) + "/main.db", hdbp));
+						break;
+					}
+				}
+				closedir(subd);
+			}
+		}
+		closedir(d);
+	}
+	res_enum.QueryInterface(result_enum);
+}
+
 
 } /* namespace skype_sc */

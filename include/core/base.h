@@ -23,6 +23,7 @@
 #include <utility>
 #include <type_traits>
 
+#pragma warning (disable: 4100)
 namespace Boss
 {
 

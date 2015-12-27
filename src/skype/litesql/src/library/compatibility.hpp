@@ -23,8 +23,4 @@ float strtof (const char *nptr, char **endptr);
 struct tm *localtime_r(const time_t *clock, struct tm *result);
 #endif
 
-#ifdef WIN32
-#define snprintf _snprintf
-#endif
-
 #endif

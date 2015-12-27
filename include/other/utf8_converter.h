@@ -15,6 +15,7 @@
 
 #include <string.h>
 
+#pragma warning (disable:4309)
 namespace Boss
 {
 

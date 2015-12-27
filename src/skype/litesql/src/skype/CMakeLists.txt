@@ -27,5 +27,5 @@ set(HistoryDB_SOURCES ${output_files_history_db})
 add_executable(skype_db skype.cpp ${SkypeDB_SOURCES} skype_main_methods.cpp)
 target_link_libraries (skype_db litesql litesql-util ${BACKEND_LIBRARIES})
 
-add_library(skype_dbs SHARED ${SkypeDB_SOURCES} ${HistoryDB_SOURCES} skype_main_methods.cpp history_main_methods.cpp)
+add_library(skype_dbs STATIC ${SkypeDB_SOURCES} ${HistoryDB_SOURCES} skype_main_methods.cpp history_main_methods.cpp)
 target_link_libraries (skype_dbs litesql litesql-util ${BACKEND_LIBRARIES})

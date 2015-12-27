@@ -92,7 +92,7 @@ public:
 				m_w.reset(new sm::filewatcher(m_filename, [this](std::string file, int mode) {
 					using namespace SkypeDB;
 					std::lock_guard<Boss::Mutex> lock(m_mutex);
-					uint newBound = check_bound();
+					Boss::UInt newBound = check_bound();
 					//cout << (mode == sm::filewatcher::e_modify ? "modify" : "access") << endl;
 					if (newBound != m_watching_bound_line) {
 						int oldBound = m_watching_bound_line;
@@ -149,7 +149,7 @@ public:
 		}
 		m_filename = str;
 	}
-	uint check_bound() {
+	Boss::UInt check_bound() {
 		SelectQuery q;
 		q.result("max(id)");
 		q.source(SkypeDB::Messages::table__);
@@ -260,7 +260,7 @@ public:
 			m_thread->detach();
 			m_thread.reset(nullptr);
 		}
-		m_thread.reset(new thread(&DBControllerImplPrivate::getMessages, this, callback, onLoadFinished));
+		//m_thread.reset(new thread(&DBControllerImplPrivate::getMessages, this, callback, onLoadFinished));
 //		std::thread th([]{for (;;) {cout << "Yea!" << endl; sleep(5);}});
 	}
 

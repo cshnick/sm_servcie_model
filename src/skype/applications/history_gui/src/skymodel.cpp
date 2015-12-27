@@ -28,12 +28,14 @@ public:
         return dta.value(SkyModel::s_roles[role - Qt::UserRole]);
     }
 
-    QHash<int, QByteArray> roleNames() const {
+    QHash<int, QByteArray> roleNames() {
         QHash<int, QByteArray> roles;
         for (size_t i = 0; i < SkyModel::s_roles.size(); i++) {
             QString str = SkyModel::s_roles.at(i);
-            roles[Qt::UserRole + i] = str.toLocal8Bit();
-        }
+            //roles[Qt::UserRole + i] = str.toUtf8();
+			std::string std_s = str.toStdString();
+			roles[Qt::UserRole + i] = std_s.c_str();
+		}
 
         return roles;
     }

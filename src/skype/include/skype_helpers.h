@@ -23,6 +23,28 @@
 BOSS_DECLARE_RUNTIME_EXCEPTION(SkypeHelpers)
 namespace skype_sc {
 
+struct Account_hlpr {
+	Account_hlpr(Boss::ref_ptr<IAccount> p_acc) : m_acc(p_acc) {
+	}
+	std::string Name() const {
+		Boss::ref_ptr<Boss::IString> name;
+		m_acc->Name(name.GetPPtr());
+		return Boss::StringHelper(name).GetString<Boss::IString::AnsiString>();
+	}
+	std::string FilePath() const {
+		Boss::ref_ptr<Boss::IString> path;
+		m_acc->FilePath(path.GetPPtr());
+		return Boss::StringHelper(path).GetString<Boss::IString::AnsiString>();
+	}
+	std::string HistoryDBPath() const {
+		Boss::ref_ptr<Boss::IString> path;
+		m_acc->HistoryDBPath(path.GetPPtr());
+		return Boss::StringHelper(path).GetString<Boss::IString::AnsiString>();
+	}
+private:
+	mutable ref_ptr<IAccount> m_acc;
+};
+
 struct PlatformUtils_hlpr {
 	~PlatformUtils_hlpr() {
 		std::cout << "PlatformUtils_hlpr" << std::endl;
@@ -63,31 +85,35 @@ struct PlatformUtils_hlpr {
 		m_pu->UserSettingsDir(str.GetPPtr());
 		return Boss::StringHelper(str).GetString<Boss::IString::AnsiString>();
 	}
+	std::vector<Account_hlpr> FindAccounts() {
+		ref_ptr<IEnum> accs;
+		if (m_pu->FindAccounts(accs.GetPPtr()) != Boss::Status::Ok) {
+			throw SkypeHelpersException("Error in Plaform Utils");
+		}
+		EnumHelper<IAccount> accsEnum(accs);
+		std::vector<Account_hlpr> res;
+		for (ref_ptr<IAccount> iter = accsEnum.First(); iter.Get(); iter = accsEnum.Next()) {
+			Account_hlpr ah(iter);
+			res.push_back(ah);
+		}
+		return res;
+	}
+	std::vector<std::string> Children(const std::string &parent) {
+		auto istring_parent = Base<String>::Create(parent);
+		ref_ptr<IEnum> files;
+		if (m_pu->Children(istring_parent.Get(), files.GetPPtr()) != Boss::Status::Ok) {
+			throw SkypeHelpersException("Error in Plaform Utils");
+		}
+		EnumHelper<IString> filesEnum(files);
+		std::vector<std::string> res;
+		for (ref_ptr<IString> iter = filesEnum.First(); iter.Get(); iter = filesEnum.Next()) {
+			res.push_back(StringHelper(iter).GetString<>());
+		}
+		return res;
+	}
 
 private:
 	mutable ref_ptr<IPlatformUtils> m_pu;
-};
-
-struct Account_hlpr {
-	Account_hlpr(Boss::ref_ptr<IAccount> p_acc) : m_acc(p_acc) {
-	}
-	std::string Name() const {
-		Boss::ref_ptr<Boss::IString> name;
-		m_acc->Name(name.GetPPtr());
-		return Boss::StringHelper(name).GetString<Boss::IString::AnsiString>();
-	}
-	std::string FilePath() const {
-		Boss::ref_ptr<Boss::IString> path;
-		m_acc->FilePath(path.GetPPtr());
-		return Boss::StringHelper(path).GetString<Boss::IString::AnsiString>();
-	}
-	std::string HistoryDBPath() const {
-		Boss::ref_ptr<Boss::IString> path;
-		m_acc->HistoryDBPath(path.GetPPtr());
-		return Boss::StringHelper(path).GetString<Boss::IString::AnsiString>();
-	}
-private:
-	mutable ref_ptr<IAccount> m_acc;
 };
 
 struct Settings_hlpr {

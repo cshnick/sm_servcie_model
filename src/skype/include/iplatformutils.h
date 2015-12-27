@@ -26,6 +26,8 @@ struct IPlatformUtils
 	virtual Boss::RetCode BOSS_CALL IsDir(Boss::IString*, bool *) = 0;
 	virtual Boss::RetCode BOSS_CALL IsFile(Boss::IString*, bool *) = 0;
 	virtual Boss::RetCode BOSS_CALL MkPath(Boss::IString*, bool *) = 0;
+	virtual Boss::RetCode BOSS_CALL FindAccounts(Boss::IEnum **) = 0;
+	virtual Boss::RetCode BOSS_CALL Children(Boss::IString *, Boss::IEnum **) = 0;
 };
 
 } //namespace skype_sc

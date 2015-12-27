@@ -22,6 +22,21 @@
 
 namespace skype_sc {
 
+	struct IFileInfo
+		: public Boss::Inherit<Boss::IBase> {
+
+		BOSS_DECLARE_IFACEID_HEX(0x8cdf302f) //skype_sc.IFileInfo
+
+		enum class FileType {
+			Undefined,
+			Dir,
+			Reg
+		};
+
+		virtual Boss::RetCode BOSS_CALL Children(Boss::IEnum **) = 0; //If dir fileinfo list
+		virtual Boss::RetCode BOSS_CALL Parent(Boss::IString **) = 0; //Parent fileinfo
+	};
+
 struct IAccount
 		: public Boss::Inherit<Boss::IBase> {
 

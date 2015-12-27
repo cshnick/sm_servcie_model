@@ -8,7 +8,7 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
-#include "unistd.h"
+//#include "unistd.h"
 
 #include "skyproxymodel.h"
 #include "skycontactstreemodel.h"

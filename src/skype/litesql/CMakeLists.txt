@@ -21,13 +21,16 @@ function(gen_from_xml xml_file target_loc)
 endfunction(gen_from_xml)
 
 function(gen_file_depend xml_file output_files)
+    set (cmake_copy cp)
+    if (MSVC) 
+      set (cmake_copy copy)
+    endif (MSVC)
     set_source_files_properties(output_files
         PROPERTIES SYMBOLIC TRUE
     )
     add_custom_command(
        OUTPUT ${output_files}
        COMMAND litesql-gen -t c++ ${xml_file}
-       COMMAND cp -rvf "${CMAKE_CURRENT_SOURCE_DIR}/../../../files/history.db" "${EXECUTABLE_OUTPUT_PATH}"
        MAIN_DEPENDENCY ${xml_file}
        DEPENDS ${xml_file}
        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -45,15 +48,15 @@ if (MSVC)
   option(LITESQL_MSVC_MT "link with /MT instead of /MD (use dlls versus static linked, change also wxWidgets_LIB_DIR)" ON) 
   # see http://msdn.microsoft.com/en-us/library/2kzt1wy3%28VS.71%29.aspx   
   if (LITESQL_MSVC_MT)
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
-    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
-    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+    #set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd")
+    #set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
+    #set(CMAKE_C_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /MT")
   endif (LITESQL_MSVC_MT)
   
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /INCREMENTAL:NO")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W4")
-  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W4")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W3")
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /W3")
   
   set_property(DIRECTORY APPEND PROPERTY COMPILE_DEFINITIONS   _CRT_SECURE_NO_WARNINGS)
 else(MSVC)
@@ -185,19 +188,7 @@ if (LITESQL_WITH_SAX_PARSER)
 endif (LITESQL_WITH_SAX_PARSER)
 
 if(MSVC)
-  set(CMAKE_FIND_LIBRARY_PREFIXES "")
-  set(CMAKE_FIND_LIBRARY_SUFFIXES ".lib")
-  set(CMAKE_STATIC_LIBRARY_PREFIX "")
-  set(CMAKE_STATIC_LIBRARY_SUFFIX ".lib")
-  set(CMAKE_SHARED_LIBRARY_PREFIX "")         # lib
-  set(CMAKE_SHARED_LIBRARY_SUFFIX ".dll")         # .so
-  set(CMAKE_IMPORT_LIBRARY_PREFIX "")
-  set(CMAKE_IMPORT_LIBRARY_SUFFIX ".lib")
-  set(CMAKE_EXECUTABLE_SUFFIX ".exe")         # .exe
-  set(CMAKE_LINK_LIBRARY_SUFFIX ".lib")
-  set(CMAKE_DL_LIBS "")
-  set(CMAKE_DEBUG_POSTFIX "d") 
-    link_directories(${CMAKE_CURRENT_SOURCE_DIR}/win32/lib/)
+  link_directories(${CMAKE_CURRENT_SOURCE_DIR}/win32/lib/)
 elseif(APPLE)
   SET(EXPAT_LIBRARIES ${CMAKE_CURRENT_SOURCE_DIR}/macos/lib/Debug/libexpat.a)
 endif(MSVC)
@@ -278,7 +269,7 @@ set(CPACK_PACKAGE_EXECUTABLES Visual-Litesql;Visual-Litesql;${PROJECT_NAME}-gen;
 #include(CPack)
 
 set(ARCHIVE_NAME ${CMAKE_PROJECT_NAME}-src-${PROJECT_VERSION})
-add_custom_target(dist
-    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
-        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
+#add_custom_target(dist
+#    COMMAND git archive --prefix=${ARCHIVE_NAME}/ HEAD
+#        | bzip2 > ${CMAKE_BINARY_DIR}/${ARCHIVE_NAME}.tar.bz2
+#    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})

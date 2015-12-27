@@ -9,7 +9,7 @@
 #define INCLUDE_COMMON_FILEWATCHER_H_
 
 #if defined(_WIN32)
-#  include "win/filewatcher.h"
+#  include "win/win_filewatcher.h"
 #elif defined(__unix)
 #  include "nix/nix_filewatcher.h"
 #elif defined(__APPLE__)

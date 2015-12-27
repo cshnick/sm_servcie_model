@@ -26,7 +26,7 @@ int main (int argc, char **argv) {
         cout << "Attempting to start filewatcher" << endl;
         fw.start();
         cout << "fw.start() returned, catching events" << endl;
-        sleep(30);
+		Sleep (30);
         cout << "Attempting to stop filewatcher" << endl;
 
         ct = GetTimeMs64();
@@ -41,7 +41,7 @@ int main (int argc, char **argv) {
     	sm::filewatcher fw(watch_file_skype_2, [](const std::string &path, int) {
     		std::cout << "Callback retrieved, incoming path: " << path << std::endl;
     	});
-    	sleep(30);
+    	Sleep(30);
     	cout << "Cleaning next fw" << endl;
     	ct = GetTimeMs64();
     }

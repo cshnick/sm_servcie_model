@@ -61,11 +61,12 @@ uint64 GetTimeMs64()
 }
 
 std::string human_readable(Boss::uint64 val) {
+	using namespace Boss;
 	std::stringstream ss;
-	int msecs = val % 1000;
-	int seconds = (val/1000) % 60;
-	int minutes = val/1000/60;
-	int hours =  val/1000/60/60;
+	uint64 msecs = val % 1000;
+	uint64 seconds = (val/1000) % 60;
+	uint64 minutes = val/1000/60;
+	uint64 hours =  val/1000/60/60;
 	if (hours)   ss << hours   << "h ";
 	if (minutes) ss << minutes << "min ";
 	if (seconds) ss << seconds << "s ";

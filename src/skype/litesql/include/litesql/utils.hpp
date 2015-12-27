@@ -11,6 +11,7 @@
 #include <assert.h>
 #include "litesql/string.hpp"
 #include "litesql/split.hpp"
+
 namespace litesql {
 template <class T>
 const T& min(const T& v1, const T& v2) {

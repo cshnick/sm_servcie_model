@@ -6,14 +6,18 @@ include_directories(
     ../../litesql/include/
     ../../litesql/src/skype/
 )
-if (APPLE)
- list(APPEND include_directories "macosx/include/json-c")
-endif (APPLE)
 set (OWN_LIBS
     litesql
     skype_dbs
 )
 message("own libs: ${OWN_LIBS}")
+
+if (APPLE)
+ list(APPEND include_directories "macosx/include/json-c")
+elseif (MSVC)
+    add_definitions(-DNOMINMAX)
+    list(APPEND OWN_LIBS ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}/json.lib)
+endif (APPLE)
 
 get_filename_component(SELF_NAME "${CMAKE_CURRENT_LIST_DIR}" NAME)
 file (GLOB SOURCE_LIST "*.cpp")
@@ -28,8 +32,8 @@ if (APPLE)
     list(APPEND SOURCE_LIST macosx/PlatformUtilsImpl.cpp)
 elseif (UNIX)
     list(APPEND SOURCE_LIST ${CMAKE_CURRENT_SOURCE_DIR}/linux/PlatformUtilsImpl.cpp)
-elseif (WIN32)
-    list(APPEND SOURCE_LIST win/PlatformUtilsImpl.cpp)
+elseif (MSVC)
+    list(APPEND SOURCE_LIST ${CMAKE_CURRENT_SOURCE_DIR}/win/PlatformUtilsImpl.cpp)
 else (APPLE)
     list(APPEND SOURCE_LIST PlatformUtilsImpl.cpp)
 endif (APPLE)
@@ -37,4 +41,21 @@ endif (APPLE)
 add_library(${SELF_NAME} SHARED ${SOURCE_LIST})
 target_link_libraries(${SELF_NAME} ${COMMON_LIBS} ${OWN_LIBS})
 
+if (MSVC)
+    set(copy_command "copy /Y")
+    set(json_path TOP_LEVEL/src/skype/Services/ShCore/win/files/${BUILD_TYPE_NAME})
+    set(json_name ${CMAKE_STATIC_LIBRARY_PREFIX}json${CMAKE_DEBUG_POSTFIX}${CMAKE_LINK_LIBRARY_SUFFIX})
+else (MSVC)
+    set(copy_command cp)
+endif (MSVC)
+add_custom_target(
+    copy_json
+    #COMMENT("Copy json library...")
+    COMMENT(json_path ${json_path})
+    #COMMAND ${copy_command} ${json_path}/${json_name} ${LIBRARY_OUTPUT_PATH}
+    COMMAND ${CMAKE_COMMAND} -E echo what ${${json_path}} #${json_path}/${json_name} ${LIBRARY_OUTPUT_PATH}
+    COMMAND ${CMAKE_COMMAND} ${json_path}/${json_name} ${LIBRARY_OUTPUT_PATH}
+    )
+
+add_dependencies(${SELF_NAME} copy_json)
 reg_lib(${SELF_NAME})

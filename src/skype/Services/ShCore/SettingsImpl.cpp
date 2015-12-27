@@ -19,7 +19,6 @@
 #include "core/exceptions.h"
 #include "common/buffer.h"
 
-#include <dirent.h>
 #include <iostream>
 
 #include <json/json.h>
@@ -186,36 +185,22 @@ public:
 		return m_accounts.QueryInterface(res);
 	}
 	Boss::RetCode AccountsDefault(Boss::IEnum **res) {
-		DIR *d;
-		ref_ptr<Enum> res_enum = Base<Enum>::Create();
-		struct dirent *dir;
+		auto find_accs = Base<Enum>::Create();
 		const std::string char_loc = pu_h.SkypeLocation();
-		d = opendir(char_loc.c_str());
-		if (d)	{
-			while ((dir = readdir(d)) != NULL) {
-				if (dir->d_type == DT_DIR) { //Directory
-					if (!strcmp(dir->d_name, ".")) continue;
-					if (!strcmp(dir->d_name, "..")) continue;
-					DIR *subd;
-					struct dirent *subdir;
-					char buf[512];
-					sprintf(buf, "%s/%s", char_loc.c_str(), dir->d_name);
-					subd = opendir(buf);
-					while ((subdir = readdir(subd)) != NULL) {
-						if (subdir->d_type == DT_REG && !strcmp(subdir->d_name, "main.db")) {
-							std::string hdbp = pu_h.UserSettingsDir() + "/SkyHistory/" + dir->d_name;
-							pu_h.MkPath(hdbp);
-							res_enum->AddItem(Base<AccountImpl>::Create(dir->d_name, std::string(buf) + "/main.db", hdbp));
-							break;
-						}
+		for (string account_name : pu_h.Children(char_loc)) {
+			string path_account = char_loc + "/" + account_name;
+			if (pu_h.IsDir(path_account)) {
+				for (string main_candidate : pu_h.Children(path_account)) {
+					if (main_candidate == "main.db") {
+						std::string hdbp = pu_h.UserSettingsDir() + "/SkyHistory/" + account_name;
+						pu_h.MkPath(hdbp);
+						find_accs->AddItem(Base<AccountImpl>::Create(account_name, char_loc + "/" + account_name + "/main.db", hdbp));
 					}
-					closedir(subd);
 				}
 			}
-			closedir(d);
 		}
 
-		return res_enum.QueryInterface(res);
+		return find_accs.QueryInterface(res);
 	}
 	Boss::RetCode DefaultAccount(int *val) {
 		if (m_defaultAccount == -1) {
@@ -265,7 +250,7 @@ public:
 		if (!m_accounts.Get() || !str) {
 			throw SettingsException("Error update from json");
 		}
-		{ //Close file at filestr destructor
+		{   //Close file at filestr destructor
 			auto stream = Base<OFileStream>::Create(json_filename);
 			string filestr = StringHelper(str).GetString<IString::AnsiString>();
 			if (stream->Write(filestr.c_str(), filestr.length()) != Status::Ok) {

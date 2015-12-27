@@ -100,15 +100,17 @@ public:
         model_impl()->clear();
         QString skype_path = o.value(QString::fromStdString(IAccount::TFilePath)).toString();
         QString history_path = o.value(QString::fromStdString(IAccount::THistoryDBPath)).toString();
-        qi_ptr<IService>(m_dbctrl)->Restart(Base<String>::Create(skype_path.toLocal8Bit().data()).Get(),
-                        Base<String>::Create(history_path.toLocal8Bit().data()).Get());
+        //qi_ptr<IService>(m_dbctrl)->Restart(Base<String>::Create(skype_path.toUtf8().data()).Get(),
+        //                Base<String>::Create(history_path.toUtf8().data()).Get());
+		qi_ptr<IService>(m_dbctrl)->Restart(Base<String>::Create(skype_path.toStdString().c_str()).Get(),
+			                                Base<String>::Create(history_path.toStdString().c_str()).Get());
         loadAsync();
     }
 
     QJsonObject settings() {
         Settings_hlpr shlpr(m_settings);
         QString json_str = QString::fromStdString(shlpr.AsJsonString());
-        QJsonDocument jdoc = QJsonDocument::fromJson(json_str.toLocal8Bit());
+        QJsonDocument jdoc = QJsonDocument::fromJson(json_str.toStdString().c_str());
         QJsonObject o = jdoc.object();
         return o;
     }
