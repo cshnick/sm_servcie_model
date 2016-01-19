@@ -102,6 +102,7 @@ public:
         QString history_path = o.value(QString::fromStdString(IAccount::THistoryDBPath)).toString();
         //qi_ptr<IService>(m_dbctrl)->Restart(Base<String>::Create(skype_path.toUtf8().data()).Get(),
         //                Base<String>::Create(history_path.toUtf8().data()).Get());
+
 		qi_ptr<IService>(m_dbctrl)->Restart(Base<String>::Create(skype_path.toStdString().c_str()).Get(),
 			                                Base<String>::Create(history_path.toStdString().c_str()).Get());
         loadAsync();
@@ -110,7 +111,8 @@ public:
     QJsonObject settings() {
         Settings_hlpr shlpr(m_settings);
         QString json_str = QString::fromStdString(shlpr.AsJsonString());
-        QJsonDocument jdoc = QJsonDocument::fromJson(json_str.toStdString().c_str());
+		QByteArray json_barr; json_barr.append(json_str);
+        QJsonDocument jdoc = QJsonDocument::fromJson(json_barr);
         QJsonObject o = jdoc.object();
         return o;
     }
@@ -189,7 +191,7 @@ SkyProxyModel::SkyProxyModel(SkyContactsTreeModel *contacts, QObject *parent)
     :QSortFilterProxyModel(parent) ,
      d(new SkyModelPrivate(this, contacts))
 {
-	setSourceModel(new SkyModel);
+	setSourceModel(new SkyModel(nullptr));
 //    sort(0);
     setFilterCaseSensitivity(Qt::CaseInsensitive);
 }

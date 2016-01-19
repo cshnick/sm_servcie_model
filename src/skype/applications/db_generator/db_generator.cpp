@@ -10,10 +10,13 @@
 #include "litesql.hpp"
 #include "skype_main_db.hpp"
 
+#include "common/sm_debug.h"
+
 using namespace std;
+using namespace sm;
 namespace {
 	void print_usage() {
-		cout << "Usage: ./db_generator dbfile" << endl;
+		dcout << "Usage: ./db_generator dbfile" << endl;
 	}
 } //namespace
 
@@ -37,7 +40,7 @@ int main (int argc, char **argv) {
 		auto contacts = select<Contacts>(db).all();
 
 	} catch (const std::exception &e) {
-		cout << e.what() << endl;
+		dcout << e.what() << endl;
 		return 1;
 	}
 

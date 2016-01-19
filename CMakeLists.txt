@@ -21,6 +21,11 @@ SET (INCLUDES_DIR
 	"${CMAKE_CURRENT_SOURCE_DIR}/include"
 )
 
+set (DEFAULT_LIB_TYPE SHARED)
+if (MSVC)
+  set (DEFAULT_LIB_TYPE STATIC)
+endif (MSVC)
+
 set (BUILD_TYPE_NAME Release)
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     set (BUILD_TYPE_NAME Debug)
@@ -44,7 +49,7 @@ elseif (MSVC)
         set(CMAKE_STATIC_LIBRARY_PREFIX "")
         set(CMAKE_STATIC_LIBRARY_SUFFIX ".lib")
         set(CMAKE_SHARED_LIBRARY_PREFIX "")         # lib
-        set(CMAKE_SHARED_LIBRARY_SUFFIX ".dll")         # .so
+        set(CMAKE_SHARED_LIBRARY_SUFFIX ".dll")     # .so
         set(CMAKE_IMPORT_LIBRARY_PREFIX "")
         set(CMAKE_IMPORT_LIBRARY_SUFFIX ".lib")
         set(CMAKE_EXECUTABLE_SUFFIX ".exe")         # .exe
@@ -53,13 +58,15 @@ elseif (MSVC)
         set(CMAKE_DEBUG_POSTFIX "d") 
 endif (APPLE)
 
+set(sm_common sm_common)
+
 SET (SRC_DIR
 	"${CMAKE_CURRENT_SOURCE_DIR}/src"
 )
 
 SET (REGISTRY_FILE sc_reg.xml)
 
-SET (COMMON_LIBS "")
+SET (COMMON_LIBS ${sm_common})
 if (APPLE)
     FIND_LIBRARY(MAC_CORE_SERVICES CoreServices )
     SET(MAC_COMMON_LIBS ${MAC_CORE_SERVICES})

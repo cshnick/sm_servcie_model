@@ -12,6 +12,7 @@
 #include "common/ienum.h"
 #include "common/enum.h"
 #include "common/enum_helper.h"
+#include "common/sm_debug.h"
 #include "core/co_class.h"
 #include "core/ref_obj_ptr.h"
 #include "core/base.h"
@@ -27,6 +28,7 @@ BOSS_DECLARE_RUNTIME_EXCEPTION(FunctionalityTest)
 using namespace Boss;
 using namespace skype_sc;
 using namespace std;
+using namespace sm;
 
 struct UIObserver
 	:public Boss::CoClass<skype_sc::service::id::DBObserver, IDBObserver> {
@@ -37,7 +39,7 @@ struct UIObserver
 			throw FunctionalityTestException("Error getting message");
 		}
 		Message_hlpr msg_hlpr(mesg);
-		cout << msg_hlpr.SkypeId() << " - " << msg_hlpr.Body() << endl;
+		dcout << msg_hlpr.SkypeId() << " - " << msg_hlpr.Body() << endl;
 
 		return Boss::Status::Ok;
 	}
@@ -60,7 +62,7 @@ int main()
 		Settings_hlpr seh(settings);
 
 		string first_skype = seh.Accounts().at(0).FilePath(), first_history = seh.Accounts().at(0).HistoryDBPath();
-		cout << "Initial data: \n" << "\tSkype: " << first_skype << "\n\tHistory: " << first_history << endl;
+		dcout << "Initial data: \n" << "\tSkype: " << first_skype << "\n\tHistory: " << first_history << endl;
 		watcher->SetWatchFile(Base<String>::Create(first_skype).Get());
 		ctrl->SetDBPath(Base<String>::Create(first_history).Get());
 
@@ -70,30 +72,30 @@ int main()
 		qi_ptr<skype_sc::IService> service(ctrl);
 		service->Start();
 
-		cout << "Get async messages for " << first_skype << endl;
+		dcout << "Get async messages for " << first_skype << endl;
 		ctrl->GetMessagesAsync([](IMessage *m, int progress) {
 			ref_ptr<IMessage>pm(m);
 			skype_sc::Message_hlpr mes_h(pm);
-			cout << "\r\t" << mes_h.Id() << " : " << mes_h.Body() << " - " << progress  << "%";
+			dcout << "\r\t" << mes_h.Id() << " : " << mes_h.Body() << " - " << progress  << "%";
 		}, nullptr);
-		cout << endl;
+		dcout << endl;
 
 //		sleep(1);
 
 		string second_skype = seh.Accounts().at(1).FilePath(), second_history = seh.Accounts().at(1).HistoryDBPath();
-		cout << "Initial data: \n" << "\tSkype: " << second_skype << "\tHistory: " << second_history << endl;
-		cout << "Prepairing to restart..." << endl;
+		dcout << "Initial data: \n" << "\tSkype: " << second_skype << "\tHistory: " << second_history << endl;
+		dcout << "Prepairing to restart..." << endl;
 		service->Restart(Base<String>::Create(second_skype).Get(), Base<String>::Create(second_history).Get());
-		cout << "Restarted; get async messages for " << second_skype << endl;
+		dcout << "Restarted; get async messages for " << second_skype << endl;
 		ctrl->GetMessagesAsync([](IMessage *m, int progress) {
 			ref_ptr<IMessage>pm(m);
 			skype_sc::Message_hlpr mes_h(pm);
-			cout << "\r\t" << mes_h.Id() << " : " << mes_h.Body()  << " - " << progress  << "%";
+			dcout << "\r\t" << mes_h.Id() << " : " << mes_h.Body()  << " - " << progress  << "%";
 		} , nullptr);
-		cout << endl;
+		dcout << endl;
 //		sleep(10);
 		service->Stop();
-		cout << "Stopped" << endl;
+		dcout << "Stopped" << endl;
 //		while (true) {
 //			sleep(5);
 //		}
@@ -101,7 +103,7 @@ int main()
 		cerr << "Error: " << e.what() << endl;
 	}
 
-	cout << "Succeeded!" << endl;
+	dcout << "Succeeded!" << endl;
 
 	return 0;
 }

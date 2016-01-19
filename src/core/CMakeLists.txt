@@ -1,3 +1,4 @@
+add_subdirectory(sm_common)
 add_subdirectory(class_factory)
 add_subdirectory(service_registry)
 add_subdirectory(regtool)

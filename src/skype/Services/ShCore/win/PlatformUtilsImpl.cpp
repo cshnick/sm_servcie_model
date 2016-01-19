@@ -11,10 +11,12 @@
 #include "common/string.h"
 #include "common/string_helper.h"
 #include "common/enum.h"
+#include "common/sm_debug.h"
 
 namespace skype_sc {
 using namespace std;
 using namespace Boss;
+using namespace sm;
 
 PlatformUtilsImpl::PlatformUtilsImpl() {
 	// TODO Auto-generated constructor stub
@@ -25,7 +27,7 @@ PlatformUtilsImpl::~PlatformUtilsImpl() {
 }
 
 Boss::RetCode BOSS_CALL PlatformUtilsImpl::SkypeLocation(Boss::IString **result_string) {
-	cout << "PlatformUtils::SkypeLocation" << endl;
+	dcout << "PlatformUtils::SkypeLocation" << endl;
 	wchar_t wide_path[_MAX_PATH]; PWSTR buf_str = wide_path;
 	SHGetKnownFolderPath(FOLDERID_RoamingAppData, KF_FLAG_DEFAULT_PATH, NULL, &buf_str);
 	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;	std::string u8_buf = converter.to_bytes(buf_str);
@@ -35,7 +37,7 @@ Boss::RetCode BOSS_CALL PlatformUtilsImpl::SkypeLocation(Boss::IString **result_
 	return location.QueryInterface(result_string);
 }
 Boss::RetCode BOSS_CALL PlatformUtilsImpl::UserSettingsDir(Boss::IString **result_string)  {
-	cout << "PlatformUtils::UserSettingsDir" << endl;
+	dcout << "PlatformUtils::UserSettingsDir" << endl;
 	wchar_t wide_path[_MAX_PATH]; PWSTR buf_str = wide_path;
 	SHGetKnownFolderPath(FOLDERID_LocalAppData, KF_FLAG_DEFAULT_PATH, NULL, &buf_str);
 	std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t> converter;	std::string u8_buf = converter.to_bytes(buf_str);
@@ -115,7 +117,7 @@ namespace {
 } //namespace
 
 Boss::RetCode BOSS_CALL PlatformUtilsImpl::Exists(Boss::IString *filename, bool *exists) {
-	cout << "PlatformUtilsImpl::Exists" << endl;
+	dcout << "PlatformUtilsImpl::Exists" << endl;
 	*exists = false;
 	return CheckStat(filename, exists, [](DWORD attrs) -> bool {
 		return (attrs != -1) && 
@@ -125,7 +127,7 @@ Boss::RetCode BOSS_CALL PlatformUtilsImpl::Exists(Boss::IString *filename, bool 
 }
 
 Boss::RetCode BOSS_CALL PlatformUtilsImpl::IsDir(Boss::IString *filename, bool *exists) {
-	cout << "PlatformUtilsImpl::IsDir" << endl;
+	dcout << "PlatformUtilsImpl::IsDir" << endl;
 	*exists = false;
 	return CheckStat(filename, exists, [](DWORD attrs) -> bool {
 		return (attrs != -1) &&
@@ -134,7 +136,7 @@ Boss::RetCode BOSS_CALL PlatformUtilsImpl::IsDir(Boss::IString *filename, bool *
 	return Status::Ok;
 }
 Boss::RetCode BOSS_CALL PlatformUtilsImpl::IsFile(Boss::IString *filename, bool *exists) {
-	cout << " PlatformUtilsImpl::IsFile" << endl;
+	dcout << " PlatformUtilsImpl::IsFile" << endl;
 	*exists = false;
 	return CheckStat(filename, exists, [](DWORD attrs) -> bool {
 		return (attrs != -1) &&
@@ -143,16 +145,16 @@ Boss::RetCode BOSS_CALL PlatformUtilsImpl::IsFile(Boss::IString *filename, bool 
 	return Status::Ok;
 }
 Boss::RetCode BOSS_CALL PlatformUtilsImpl::MkPath(Boss::IString *path, bool *ok) {
-	cout << "PlatformUtilsImpl::MkPath" << endl;
+	dcout << "PlatformUtilsImpl::MkPath" << endl;
 	*ok = !mkpath(StringHelper(path).GetString<>().c_str());
 	return Status::Ok;
 }
 Boss::RetCode BOSS_CALL PlatformUtilsImpl::FindAccounts(Boss::IEnum **result_enum) {
-	cout << "PlatformUtilsImpl::FindAccounts" << endl;
+	dcout << "PlatformUtilsImpl::FindAccounts" << endl;
 	return Boss::Status::NotImplemented;
 }
 RetCode PlatformUtilsImpl::Children(IString *parent, IEnum **children) {
-	cout << "PlatformUtilsImpl::Children" << endl;
+	dcout << "PlatformUtilsImpl::Children" << endl;
 	auto result = Base<Enum>::Create();
 	std::string std_parent = StringHelper(parent).GetString();
 	std_parent.append("\\*");
@@ -167,7 +169,7 @@ RetCode PlatformUtilsImpl::Children(IString *parent, IEnum **children) {
 			continue;
 		}
 		result->AddItem(Base<String>::Create(ffd.cFileName));
-		cout << "next filename: " << ffd.cFileName << std::endl;
+		dcout << "next filename: " << ffd.cFileName << std::endl;
 	} while (FindNextFile(hFind, &ffd));
 	FindClose(hFind);
 

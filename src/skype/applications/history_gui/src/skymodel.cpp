@@ -30,11 +30,12 @@ public:
 
     QHash<int, QByteArray> roleNames() {
         QHash<int, QByteArray> roles;
-        for (size_t i = 0; i < SkyModel::s_roles.size(); i++) {
+		int roles_size = SkyModel::s_roles.size();
+        for (size_t i = 0; i < roles_size; i++) {
             QString str = SkyModel::s_roles.at(i);
-            //roles[Qt::UserRole + i] = str.toUtf8();
-			std::string std_s = str.toStdString();
-			roles[Qt::UserRole + i] = std_s.c_str();
+			//roles[Qt::UserRole + i] = str.toUtf8();
+			QByteArray arr;	arr.append(str);
+			roles[Qt::UserRole + i] = arr;
 		}
 
         return roles;

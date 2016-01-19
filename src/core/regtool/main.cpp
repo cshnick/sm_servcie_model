@@ -12,6 +12,7 @@
 #include "core/ref_obj_qi_ptr.h"
 #include "core/error_codes.h"
 #include "common/file_stream.h"
+#include "common/sm_debug.h"
 #include "plugin/module.h"
 #include "plugin/service_info.h"
 #include "plugin/module_holder.h"
@@ -22,8 +23,8 @@
 
 void ShowHelp()
 {
-  std::cout << "regtool -reg reg_file_name service_path" << std::endl;
-  std::cout << "regtool -unreg reg_file_name service_name" << std::endl;
+  sm::dcout << "regtool -reg reg_file_name service_path" << std::endl;
+  sm::dcout << "regtool -unreg reg_file_name service_name" << std::endl;
 }
 
 void Load(Boss::ref_ptr<Boss::ISerializable> serializable, std::string const &filePath)
@@ -56,7 +57,7 @@ int main(int argc, char const **argv)
     
     if (argc != 4)
     {
-      std::cout << "Bad params." << std::endl;
+      sm::dcout << "Bad params." << std::endl;
       return -1;
     }
     
@@ -94,7 +95,7 @@ int main(int argc, char const **argv)
         
         if (Ctrl->AddService(Info.Get()) != Boss::Status::Ok)
         {
-          std::cout << "Failed to reg service." << std::endl;
+          sm::dcout << "Failed to reg service." << std::endl;
           return 0;
         }
         
@@ -110,7 +111,7 @@ int main(int argc, char const **argv)
       
       if (Ctrl->DelService(Boss::Crc32(ServiceName.c_str(), ServiceName.length())) != Boss::Status::Ok)
       {
-        std::cout << "Failed to reg service." << std::endl;
+        sm::dcout << "Failed to reg service." << std::endl;
         return -1;
       }
       
@@ -119,13 +120,13 @@ int main(int argc, char const **argv)
       return 0;
     }
     
-    std::cout << "Bad params." << std::endl;
+    sm::dcout << "Bad params." << std::endl;
     return -1;
     
   }
   catch (std::exception const &e)
   {
-    std::cout << e.what() << std::endl;
+    sm::dcout << e.what() << std::endl;
   }
   return 0;
 }

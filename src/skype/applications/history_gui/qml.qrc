@@ -4,7 +4,6 @@
         <file>qml/SkyList.qml</file>
         <file>qml/ProgressBarCustom.qml</file>
         <file>qml/Test.qml</file>
-        <file>images/logoskype.svg</file>
         <file>qml/DataArea.qml</file>
         <file>qml/TreesArea.qml</file>
         <file>images/clock.png</file>
@@ -17,5 +16,6 @@
         <file>images/haschildren.png</file>
         <file>images/expanded.png</file>
         <file>images/chat.png</file>
+        <file>images/logoskype.png</file>
     </qresource>
 </RCC>

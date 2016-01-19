@@ -8,8 +8,6 @@
 #include <QMenu>
 #include <QSystemTrayIcon>
 
-//#include "unistd.h"
-
 #include "skyproxymodel.h"
 #include "skycontactstreemodel.h"
 #include <memory>
@@ -27,11 +25,12 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("sky_contacts_model", contacts_model.get());
     qmlRegisterType<ModelState>("Enums", 1, 0, "ModelState");
     engine.load(QUrl(QStringLiteral("qrc:/qml/main.qml")));
-    QObject *rect = engine.rootObjects().at(0)->findChild<QObject*>("SkylistRect");
-    model->setQmlObject(rect);
+    //QObject *rect = engine.rootObjects().at(0)->findChild<QObject*>("SkylistRect");
+    //model->setQmlObject(rect);
 
     if (QSystemTrayIcon::isSystemTrayAvailable()) {
         QApplication::setQuitOnLastWindowClosed(false);
+
         QObject *root = 0;
         if (engine.rootObjects().size() > 0)
         {
@@ -56,10 +55,10 @@ int main(int argc, char *argv[])
             QSystemTrayIcon *trayIcon = new QSystemTrayIcon(root);
             root->connect(trayIcon, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), root, SLOT(showNormal()));
             trayIcon->setContextMenu(trayIconMenu);
-            trayIcon->setIcon(QIcon(":images/logoskype.svg"));
+            trayIcon->setIcon(QIcon(":images/logoskype.png"));
             trayIcon->show();
 
-            app.setWindowIcon(QIcon(":images/logoskype.svg"));
+            app.setWindowIcon(QIcon(":images/logoskype.png"));
         }
     }
 

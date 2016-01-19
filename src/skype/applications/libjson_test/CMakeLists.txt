@@ -8,7 +8,7 @@ include_directories(
 
 set(OWN_LIBS "")
 if (MSVC)
-    list(APPEND OWN_LIBS ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}/json.lib)
+    list(APPEND OWN_LIBS ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}/json${CMAKE_DEBUG_POSTFIX}.lib)
 endif (MSVC)
 
 get_filename_component(SELF_NAME "${CMAKE_CURRENT_LIST_DIR}" NAME)

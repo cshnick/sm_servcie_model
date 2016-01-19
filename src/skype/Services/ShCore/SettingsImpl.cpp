@@ -18,6 +18,7 @@
 #include "common/file_stream.h"
 #include "core/exceptions.h"
 #include "common/buffer.h"
+#include "common/sm_debug.h"
 
 #include <iostream>
 
@@ -30,6 +31,7 @@
 namespace skype_sc {
 using namespace std;
 using namespace Boss;
+using namespace sm;
 
 BOSS_DECLARE_RUNTIME_EXCEPTION(Settings)
 
@@ -97,6 +99,8 @@ public:
 
 		parse_accounts(json_find(IAccount::TAccounts));
 		parse_default_account(json_find(IAccount::TDefaultAccount));
+
+		return false;
 	}
 	json_object *json_find(const char* p_key) {
 		if (!m_json_root) return nullptr;
@@ -281,21 +285,21 @@ const char* SettingsImplPrivate::json_filename = "settings.json";
 
 SettingsImpl::SettingsImpl() {
 	p.reset(new SettingsImplPrivate(this));
-	cout << "SettingsImpl::SettingsImpl()" << endl;
+	dcout << "SettingsImpl::SettingsImpl()" << endl;
 }
 
 SettingsImpl::~SettingsImpl() {
 	// TODO Auto-generated destructor stub
-	std::cout << "SettingsImpl::~SettingsImpl()" << endl;
+	dcout << "SettingsImpl::~SettingsImpl()" << endl;
 }
 
 RetCode BOSS_CALL SettingsImpl::Update() {
-	cout << "SettingsImpl::Update" << endl;
+	dcout << "SettingsImpl::Update" << endl;
 	return p->update();
 }
 
 RetCode BOSS_CALL SettingsImpl::AsJsonString(IString **str) {
-	cout << "SettingsImpl::AsJsonString" << endl;
+	dcout << "SettingsImpl::AsJsonString" << endl;
 	return p->AsJsonString(str);
 }
 
@@ -304,12 +308,12 @@ Boss::RetCode BOSS_CALL SettingsImpl::UpdateFromJson(IString *json_string) {
 }
 
 Boss::RetCode BOSS_CALL SettingsImpl::Accounts(Boss::IEnum **result) {
-	cout << "SettingsImpl::Accounts" << endl;
+	dcout << "SettingsImpl::Accounts" << endl;
 	return p->Accounts(result);
 }
 
 Boss::RetCode BOSS_CALL SettingsImpl::DefaultAccount(int *val) {
-	cout << "SettingsImpl::Accounts" << endl;
+	dcout << "SettingsImpl::Accounts" << endl;
 	return p->DefaultAccount(val);
 }
 

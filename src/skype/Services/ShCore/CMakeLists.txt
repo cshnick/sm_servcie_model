@@ -16,7 +16,7 @@ if (APPLE)
  list(APPEND include_directories "macosx/include/json-c")
 elseif (MSVC)
     add_definitions(-DNOMINMAX)
-    list(APPEND OWN_LIBS ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}/json.lib)
+    list(APPEND OWN_LIBS ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}/json${CMAKE_DEBUG_POSTFIX}.lib)
 endif (APPLE)
 
 get_filename_component(SELF_NAME "${CMAKE_CURRENT_LIST_DIR}" NAME)
@@ -39,14 +39,12 @@ else (APPLE)
 endif (APPLE)
 
 add_library(${SELF_NAME} SHARED ${SOURCE_LIST})
+message(COMMON LIBS: ${COMMON_LIBS})
 target_link_libraries(${SELF_NAME} ${COMMON_LIBS} ${OWN_LIBS})
 
 if (MSVC)
-    set(copy_command "copy /Y")
-    set(json_path TOP_LEVEL/src/skype/Services/ShCore/win/files/${BUILD_TYPE_NAME})
-    set(json_name ${CMAKE_STATIC_LIBRARY_PREFIX}json${CMAKE_DEBUG_POSTFIX}${CMAKE_LINK_LIBRARY_SUFFIX})
-else (MSVC)
-    set(copy_command cp)
+    set(json_path "${TOP_LEVEL}/src/skype/Services/ShCore/win/files/${BUILD_TYPE_NAME}")
+    set(json_name "${CMAKE_STATIC_LIBRARY_PREFIX}json${CMAKE_DEBUG_POSTFIX}${CMAKE_LINK_LIBRARY_SUFFIX}")
 endif (MSVC)
 add_custom_target(
     copy_json
@@ -54,7 +52,7 @@ add_custom_target(
     COMMENT(json_path ${json_path})
     #COMMAND ${copy_command} ${json_path}/${json_name} ${LIBRARY_OUTPUT_PATH}
     COMMAND ${CMAKE_COMMAND} -E echo what ${${json_path}} #${json_path}/${json_name} ${LIBRARY_OUTPUT_PATH}
-    COMMAND ${CMAKE_COMMAND} ${json_path}/${json_name} ${LIBRARY_OUTPUT_PATH}
+    COMMAND ${CMAKE_COMMAND} -E copy ${json_path}/${json_name} ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
     )
 
 add_dependencies(${SELF_NAME} copy_json)

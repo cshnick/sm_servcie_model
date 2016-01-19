@@ -88,11 +88,7 @@ if (LITESQL_WITH_ODBC)
   )
 endif (LITESQL_WITH_ODBC)
 
-set (LIB_TYPE SHARED)
-if (MSVC)
-  set (LIB_TYPE STATIC)
-endif (MSVC)
-add_library(${LIBNAME} ${LIB_TYPE} ${litesql_SOURCES})
+add_library(${LIBNAME} ${DEFAULT_LIB_TYPE} ${litesql_SOURCES})
 target_link_libraries(${LIBNAME} litesql-util ${LIBNAME}_sqlite ${SQLITE3_LIB})
 include_directories(../../src/library ../../include)
 

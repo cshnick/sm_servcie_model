@@ -7,10 +7,8 @@
 
 #include <windows.h>
 
-#include "../non_copyable.h"
 #include "../callback.h"
 #include "../exceptions.h"
-
 
 namespace Boss
 {
@@ -21,7 +19,6 @@ namespace Boss
   {
 
     class ThreadImpl
-      : private NonCopyable
     {
     public:
       ThreadImpl(ICallbackPtr callback)

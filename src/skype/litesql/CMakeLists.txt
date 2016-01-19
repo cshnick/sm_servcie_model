@@ -143,7 +143,7 @@ if (LITESQL_WITH_OCILIB AND OCILIB_FOUND)
   list(APPEND BACKEND_DEFINITIONS ${OCILIB_DEFINITIONS})
   # the precompiled ocilib client libraries are compiled with libcmt - this causes duplicate symbols
   if (MSVC)
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+    list(APPEND CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
   endif(MSVC)
 else(LITESQL_WITH_OCILIB AND OCILIB_FOUND)
   message("can not use ocilib")

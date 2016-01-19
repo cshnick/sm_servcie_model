@@ -14,13 +14,15 @@
 
 #include "core/error_codes.h"
 #include "core/ref_obj_qi_ptr.h"
+#include "core/exceptions.h"
 #include "common/mutex.h"
+
 #include "common/filewatcher.h"
 #include "common/string.h"
 #include "common/enum.h"
 #include "common/string_helper.h"
 #include "common/time_calculator.h"
-#include "core/exceptions.h"
+#include "common/sm_debug.h"
 
 #include "litesql.hpp"
 #include "skype_main_db.hpp"
@@ -35,8 +37,9 @@ using Boss::String;
 using Boss::StringHelper;
 using Boss::Base;
 
-using std::atomic; using std::atomic_int; using std::cout; using std::endl;
+using std::atomic; using std::atomic_int; using std::endl;
 using namespace litesql;
+using namespace sm;
 
 namespace skype_sc {
 
@@ -52,13 +55,13 @@ public:
 		try {
 
 		} catch (const std::exception &e) {
-			cout << "Error in constructor DBControllerImplPrivate" << endl;
+			dcout << "Error in constructor DBControllerImplPrivate" << endl;
 			throw std::runtime_error(e.what());
 		}
 	}
 	~DBControllerImplPrivate() {
 		m_stop_async = true;
-		cout << "~Controller impl private" << endl;
+		dcout << "~Controller impl private" << endl;
 		m_w.reset(0);
 		m_thread->join();
 	}
@@ -67,7 +70,7 @@ public:
 	void start() {
 		if (isRunning()) return;
 		if (m_filename.empty()) {
-			std::cout << "Filename is empty, nothing to start" << std::endl;
+			dcout << "Filename is empty, nothing to start" << std::endl;
 			return;
 		}
 		try {
@@ -93,14 +96,14 @@ public:
 					using namespace SkypeDB;
 					std::lock_guard<Boss::Mutex> lock(m_mutex);
 					Boss::UInt newBound = check_bound();
-					//cout << (mode == sm::filewatcher::e_modify ? "modify" : "access") << endl;
+					dcout << (mode == sm::filewatcher::e_modify ? "modify" : "access") << endl;
 					if (newBound != m_watching_bound_line) {
 						int oldBound = m_watching_bound_line;
 						auto ms = select<SkypeDB::Messages>(*skype_main,
 								(Messages::Id > oldBound) && (Messages::Id <= newBound)).
 										orderBy(Messages::Timestamp, true).all();
 						std::for_each(ms.begin(), ms.end(), [this](const Messages &source) {
-							cout << source.id << " - " << source.body_xml << std::endl;
+							dcout << source.id << " - " << source.body_xml << std::endl;
 							HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(source);
 							cache_element(hm);
 							for (auto obs : m_observers) {
@@ -126,7 +129,7 @@ public:
 	void addObserver(IDBObserver *obsr) {
 		auto iter = std::find(m_observers.begin(), m_observers.end(), obsr);
 		if (iter != m_observers.end()) {
-			std::cout << "Observer " << obsr << " allready exists" << std::endl;
+			dcout << "Observer " << obsr << " allready exists" << std::endl;
 			return;
 		}
 		m_observers.push_back(obsr);
@@ -134,7 +137,7 @@ public:
 	void removeObserver(IDBObserver *obsr) {
 		auto iter = std::find(m_observers.begin(), m_observers.end(), obsr);
 		if (iter == m_observers.end()) {
-			std::cout << "Observer " <<  obsr << " is not registered" << std::endl;
+			dcout << "Observer " <<  obsr << " is not registered" << std::endl;
 			return;
 		}
 		m_observers.erase(iter);
@@ -158,7 +161,7 @@ public:
 		try {
 			result =  atoi(skype_main->query(q)[0][0]);
 		} catch (const litesql::CorruptError &e) {
-			cout << "Error: " << e << endl;
+			dcout << "Error: " << e << endl;
 		}
 		return result;
 	}
@@ -168,7 +171,7 @@ public:
 		auto start_time = Boss::GetTimeMs64();
 		std::unordered_map<std::string, std::string> chats_hash, contacts_hash;
 		auto contacts_cursor = select<SkypeDB::Contacts>(*skype_main).cursor();
-		cout << "Create users base" << endl;
+		dcout << "Create users base" << endl;
 		history_db->begin();
 		for (;contacts_cursor.rowsLeft();contacts_cursor++) {
 			SkypeDB::Contacts ctc = *contacts_cursor;
@@ -184,7 +187,7 @@ public:
 		auto cnt = atoi(skype_main->query(q)[0][0]);
 
 		int counter = 0, transac_cnt = 0, package = 2000, percent = 0, cut = 0;
-		cout << "Importing skype messages" << endl;
+		dcout << "Importing skype messages" << endl;
 		auto messages_vec = select<SkypeDB::Messages>(*skype_main).orderBy(SkypeDB::Messages::Timestamp).all();
 		history_db->begin();
 		auto messages_cache = std::get<DBCache<HistoryDB::Messages>>(m_hash);
@@ -193,30 +196,30 @@ public:
 			if (!messages_cache.contains(sky_mes.id)) {
 				if (!(transac_cnt % package)) {
 					history_db->begin();
-					cout << "\rHistorydb begin" << endl;
+					dcout << "\rHistorydb begin" << endl;
 				}
-				cout << "\r" << percent << "% - "<< counter << " Not in cache, Converting" << endl;
+				dcout << "\r" << percent << "% - "<< counter << " Not in cache, Converting" << endl;
 				for (;;) {
 					try {
 						HistoryDB::Messages hm = convert<SkypeDB::Messages, HistoryDB::Messages>(sky_mes);
 						break;
 					} catch (const std::exception &e) {
-						cout << "\r" << e.what();
+						dcout << "\r" << e.what();
 					}
 				}
 				if ((transac_cnt % package) == package - 1 || counter == cnt - 1) {
 					history_db->commit();
-					cout << "\rHistorydb commit" << endl;
+					dcout << "\rHistorydb commit" << endl;
 				}
 				transac_cnt++;
 			}
 
-			cout << "\r" << counter << " - " << percent << "%" << flush;
+			dcout << "\r" << counter << " - " << percent << "%" << flush;
       		counter++;
 			if (!--cut) break;
 		}
 		history_db->commit();
-		cout << endl << "Succeeded! Time: " << human_readable(GetTimeMs64() - start_time) << endl;
+		dcout << endl << "Succeeded! Time: " << human_readable(GetTimeMs64() - start_time) << endl;
 	}
 
 	template<typename T = void>
@@ -239,11 +242,11 @@ public:
 		using namespace HistoryDB;
 		if (m_stop_async) return;
 		ref_ptr<Enum> res = Base<Enum>::Create();
-		cout << "Dump all messages..." << endl;
+		dcout << "Dump all messages..." << endl;
 		Boss::UInt ct = Boss::GetTimeMs64();
 		size_t messages_count = select<Messages>(*history_db).count(), counter = 0;
 		auto messages = select<Messages>(*history_db).orderBy(Messages::Skype_timestamp, false).all();
-		cout << "Done; elapsed: " << Boss::GetTimeMs64() - ct << endl;
+		dcout << "Done; elapsed: " << Boss::GetTimeMs64() - ct << endl;
 		for (Messages m : messages) {
 			if (m_stop_async) return;
 			ref_ptr<IMessage> im(convert<Messages, ref_ptr<IMessage>>(m));
@@ -260,8 +263,8 @@ public:
 			m_thread->detach();
 			m_thread.reset(nullptr);
 		}
-		//m_thread.reset(new thread(&DBControllerImplPrivate::getMessages, this, callback, onLoadFinished));
-//		std::thread th([]{for (;;) {cout << "Yea!" << endl; sleep(5);}});
+		void (DBControllerImplPrivate::*fn)(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished) = &DBControllerImplPrivate::getMessages;
+		m_thread.reset(new thread(fn, this, callback, onLoadFinished));
 	}
 
 	template<typename T = void>
@@ -342,15 +345,15 @@ public:
 
 	void cacheHistoryDB() {
 		Boss::uint64 start;
-		cout << "Caching users..." << endl;
+		dcout << "Caching users..." << endl;
 		start = Boss::GetTimeMs64();
 		cache_m<HistoryDB::Users>();
-		cout << "Caching users time: " << Boss::GetTimeMs64() - start << endl;
-		cout << "Caching messages..." << endl;
+		dcout << "Caching users time: " << Boss::GetTimeMs64() - start << endl;
+		dcout << "Caching messages..." << endl;
 		start = Boss::GetTimeMs64();
 	    cache_m<HistoryDB::Messages>();
-	    cout << "Caching messages time: " << Boss::GetTimeMs64() - start << endl;
-	    cout << "Finished Caching" << endl;
+	    dcout << "Caching messages time: " << Boss::GetTimeMs64() - start << endl;
+	    dcout << "Finished Caching" << endl;
 	}
 	void clearCache() {
 		std::get<DBCache<HistoryDB::Users>>(m_hash).free();
@@ -399,7 +402,7 @@ private:
 	std::string me;
 	std::vector<IDBObserver*> m_observers;
 	PlatformUtils_hlpr m_pu;
-	unique_ptr<thread> m_thread;
+	unique_ptr<std::thread> m_thread;
 }; //class DBControllerImplPrivate
 
 template<>
@@ -533,37 +536,37 @@ DBControllerImpl::DBControllerImpl()
 }
 
 DBControllerImpl::~DBControllerImpl() {
-	cout << "~DBControllerImpl()" << endl;
+	dcout << "~DBControllerImpl()" << endl;
 }
 
 Boss::RetCode BOSS_CALL DBControllerImpl::Import() {
-	cout << "DBControllerImpl::Import()" << endl;
+	dcout << "DBControllerImpl::Import()" << endl;
 	d->import();
 	return Boss::Status::Ok;
 }
 
 Boss::RetCode BOSS_CALL DBControllerImpl::Recent(Boss::IEnum **result) {
-	cout << "DBControllerImpl::Recent()" << endl;
+	dcout << "DBControllerImpl::Recent()" << endl;
 	d->recent(result);
 	return Boss::Status::Ok;
 }
 
 Boss::RetCode BOSS_CALL DBControllerImpl::GetMessagesAsync(MessageCallback callback, VoidCallback onLoadFinished) {
-	cout << "DBControllerImpl::GetMessagesAsync()" << endl;
+	dcout << "DBControllerImpl::GetMessagesAsync()" << endl;
 	d->getMessagesAsync(callback, onLoadFinished);
-	cout << "Async returned" << endl;
+	dcout << "Async returned" << endl;
 	return Boss::Status::Ok;
 }
 
 
 Boss::RetCode BOSS_CALL DBControllerImpl::Restart(Boss::IString *skype, Boss::IString *history) {
-	std::cout << "DBWatcherImpl::Reset()" << std::endl;
+	dcout << "DBWatcherImpl::Reset()" << std::endl;
 	d->restart(StringHelper(skype).GetString<>(), StringHelper(history).GetString<>());
 	return Boss::Status::Ok;
 }
 
 Boss::RetCode BOSS_CALL DBControllerImpl::SetDBPath(Boss::IString *ptr) {
-	std::cout << "DBWatcherImpl::SetDBPath()" << std::endl;
+	dcout << "DBWatcherImpl::SetDBPath()" << std::endl;
 	d->setHistoryDBPath(StringHelper(ptr).GetString<>());
 	return Boss::Status::Ok;
 }
@@ -578,23 +581,23 @@ Boss::RetCode BOSS_CALL DBControllerImpl::GetWatchFile(Boss::IString **pptr) {
 }
 
 Boss::RetCode BOSS_CALL DBControllerImpl::Start() {
-	std::cout << "DBWatcherImpl::Start()" << std::endl;
+	dcout << "DBWatcherImpl::Start()" << std::endl;
 	d->start();
 	return Boss::Status::Ok;
 }
 Boss::RetCode BOSS_CALL DBControllerImpl::Stop() {
-	std::cout << "DBWatcherImpl::Stop()" << std::endl;
+	dcout << "DBWatcherImpl::Stop()" << std::endl;
 	d->stop();
 	return Boss::Status::Ok;
 }
 
 Boss::RetCode BOSS_CALL DBControllerImpl::AddObserver(IDBObserver *obsr) {
-	std::cout << "DBWatcherImpl::AddObserver()" << std::endl;
+	dcout << "DBWatcherImpl::AddObserver()" << std::endl;
 	d->addObserver(obsr);
 	return Boss::Status::Ok;
 }
 Boss::RetCode BOSS_CALL DBControllerImpl::RemoveObserver(IDBObserver *obsr) {
-	std::cout << "DBWatcherImpl::RemoveObserver()" << std::endl;
+	dcout << "DBWatcherImpl::RemoveObserver()" << std::endl;
 	d->removeObserver(obsr);
 	return Boss::Status::Ok;
 }

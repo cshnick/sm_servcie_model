@@ -26,7 +26,7 @@
 #include <string>
 
 #ifdef _WIN32
-#   define MAKE_MODULE_NAME(name_) name_ ".dll"
+#   define MAKE_MODULE_NAME(name_) name_ "d.dll"
 #   define MAKE_MODULE_PATH ""
 #elif (defined(__SM_QTCREATOR__))
 #   define MAKE_MODULE_NAME(name_) "lib" name_ ".so"

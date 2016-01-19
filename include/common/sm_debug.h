@@ -9,10 +9,13 @@
 #define INCLUDE_COMMON_SM_DEBUG_H_
 
 #ifdef _WIN32
-#  include "win/callstack.h"
+#  include <direct.h>
+#  include "win/win_sm_debug.h"
+#  define SM_GET_CWD _getcwd
 #else
 #  if (defined(__linux__) || defined __APPLE__)
 #    include "nix/callstack.h"
+#    define SM_GET_CWD getcwd
 #  else
 //Stub
 namespace PrivateSM {
@@ -23,6 +26,7 @@ static inline bool callstack_dump(std::ostream &, unsigned int max_frames = 63) 
 #  endif
 #endif
 
+#include <stdio.h>
 #include <vector>
 #include <sstream>
 
@@ -45,12 +49,17 @@ public:
 private:
 	static std::stringstream m_strm;
 };
+
 } //namespace private
 
 namespace sm {
-	typedef Private::CallstackImpl callstack;
+	typedef ::Private::CallstackImpl callstack;
+	typedef ::Private::dostream dostream;
+
+	extern dostream dcout;
+
+	std::string cwd();
+	std::pair<std::string, std::string> split_argv0(const std::string& str);
 }
-
-
 
 #endif /* INCLUDE_COMMON_SM_DEBUG_H_ */

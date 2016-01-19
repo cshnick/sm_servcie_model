@@ -1,12 +1,14 @@
 #include <iostream>
 #include "litesql.hpp"
 #include "skype_main_db.hpp"
+#include "common/sm_debug.h"
 #include <random>
 
 // no name collisions expected
 using namespace litesql;
 using namespace SkypeDB;
 using namespace std;
+using namespace sm;
 
 int misc_test() {
 	SkypeDB::main db("sqlite3", "database=/Users/ilia/Library/Application Support/Skype/sc.ryabokon.ilia/main.db");
@@ -39,7 +41,7 @@ int expand_database() {
         int delta = messages_bound - dest_count;
         
         if (delta <= 0) {
-            cout << "The base is big enough" << endl;
+            dcout << "The base is big enough" << endl;
             return 0;
         }
         
@@ -49,7 +51,7 @@ int expand_database() {
             
             if (i % package == 0) {
                 gen_db.begin();
-                //cout << "gen_db.begin" << endl;
+                //dcout << "gen_db.begin" << endl;
             }
             
             SkypeDB::Messages ins_candidate(gen_db);
@@ -80,14 +82,14 @@ int expand_database() {
             
             ins_candidate.update();
             
-            cout << "\r" << i << " - " << i * 100 / bound  << "%";
+            dcout << "\r" << i << " - " << i * 100 / bound  << "%";
             if ((i % package == package - 1) || (delta == 1)) {
                 gen_db.commit();
-                //cout << "gen_db.commit" << endl;
+                //dcout << "gen_db.commit" << endl;
             }
         }
         
-        cout << endl << "New base elements count: " << select<SkypeDB::Messages>(gen_db).count() << endl;
+        dcout << endl << "New base elements count: " << select<SkypeDB::Messages>(gen_db).count() << endl;
         
     } catch (const Except &e) {
         std::cerr << "Error: " << e << std::endl;

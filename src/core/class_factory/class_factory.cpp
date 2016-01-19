@@ -14,6 +14,7 @@
 #include "plugin/module_holder.h"
 #include "plugin/factory_tools.h"
 #include "plugin/service_locator_ids.h"
+#include "common/sm_debug.h"
 
 #include <chrono>
 #include <set>
@@ -154,11 +155,11 @@ namespace Boss
     }
     catch (const std::runtime_error &e)
     {
-    	std::cout << "std::runtime_error generated: " << e.what() << std::endl;
+    	sm::dcout << "std::runtime_error generated: " << e.what() << std::endl;
     	return Status::Fail;
     }
     catch (...) {
-    	std::cout << "failed to create object" << std::endl;
+    	sm::dcout << "failed to create object" << std::endl;
     	return Status::Fail;
     }
     return Status::NotFound;

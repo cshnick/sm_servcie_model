@@ -2,6 +2,7 @@
 #include <iostream>
 #include "litesql.hpp"
 #include "exampledatabase.hpp"
+
 // provide implementation for Person::sayHello
 void example::Person::sayHello() {
     std::cout << "Hi! My name is " << name 
