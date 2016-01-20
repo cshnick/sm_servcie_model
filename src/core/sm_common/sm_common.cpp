@@ -19,9 +19,9 @@ namespace sm {
 
 	void sleep(int secs) {
 #if defined(_WIN32)
-		Sleep(secs * 1000);
+		::Sleep(secs * 1000);
 #elif defined(__unix) || defined(__APPLE)
-		sleep(secs);
+		::sleep(secs);
 #endif //defined(_WIN32)
 	}
 }
