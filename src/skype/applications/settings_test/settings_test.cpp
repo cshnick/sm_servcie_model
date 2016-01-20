@@ -30,12 +30,10 @@ int main (int argc, char **argv) {
 		
 		dcout <<"Skype location: " << skype_location << "; exists: " << pu_h.Exists(skype_location) << endl;
 		dcout <<"UserSettingsDir: " << user_settings_dir << endl;
-		dcout <<"Is directory: " << pu_h.IsDir(user_settings_dir) << endl;
-		dcout <<"Is file: " << pu_h.IsFile(user_settings_dir) << endl;
-		//dcout <<"Mkpath test/test1: " << pu_h.MkPath("test\\test1") << endl;
-		string parent = "G:\\test1";
-		auto file_children = pu_h.Children(parent);
-		dcout <<"Request children for: " << parent << endl;
+		dcout <<"\tIs directory: " << pu_h.IsDir(user_settings_dir) << endl;
+		dcout <<"\tIs file: " << pu_h.IsFile(user_settings_dir) << endl;
+		auto file_children = pu_h.Children(skype_location);
+		dcout <<"Request children for: " << skype_location << endl;
 		for (auto file : file_children) {
 			dcout <<"\tNext child: " << file << endl;
 		}

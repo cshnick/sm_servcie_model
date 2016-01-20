@@ -16,8 +16,6 @@
 
 namespace Private {
 
-
-
 template <class CharT, class TraitsT = std::char_traits<CharT>>
 class basic_debugbuf :	public std::basic_stringbuf<CharT, TraitsT> {
 public:

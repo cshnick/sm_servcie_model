@@ -1,7 +1,7 @@
 /*
  * filewatcher.h
  *
- *  Created on: 05 окт. 2015 г.
+ *  Created on: 05 пїЅпїЅпїЅ. 2015 пїЅ.
  *      Author: ilia
  */
 
@@ -17,8 +17,6 @@
 #else
 #  include "stub/stub_filewatcher.h"
 #endif //defined(_WIN32)
-
-
 
 
 #endif /* INCLUDE_COMMON_FILEWATCHER_H_ */

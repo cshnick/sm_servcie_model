@@ -30,13 +30,13 @@ int main (int argc, char **argv) {
 		dcout << "Attempting to start filewatcher" << endl;
 		fw.start();
 		dcout << "fw.start() returned, catching events" << endl;
-		Sleep(30 * 1000);
+		sm::sleep(30 * 1000);
 		dcout << "Attempting to stop filewatcher" << endl;
 		ct = GetTimeMs64();
 		fw.stop();
 		dcout << "fw.stop() returned, elapsed time " << GetTimeMs64() - ct << "; catching events stopped. Ensuring stop watching" << endl;
 		ct = GetTimeMs64();
-		Sleep(30 * 1000);
+		sm::sleep(30 * 1000);
 		dcout << "Finished, cleaning thread" << endl;
 	}
     dcout << "Cleaning finished; elapsed time: " << human_readable(GetTimeMs64() - ct) << endl;

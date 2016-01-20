@@ -6,20 +6,25 @@
  */
 
 #include "../PlatformUtilsImpl.h"
-#include <iostream>
-#include "core/error_codes.h"
-#include "common/string.h"
-#include "common/string_helper.h"
 
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include  "dirent.h"
 #include <pwd.h>
+#include <iostream>
+
+#include "core/error_codes.h"
+#include "common/string.h"
+#include "common/string_helper.h"
+#include "common/sm_debug.h"
+#include "common/enum.h"
 
 
 namespace skype_sc {
 using namespace std;
 using namespace Boss;
+using namespace sm;
 
 PlatformUtilsImpl::PlatformUtilsImpl() {
 	// TODO Auto-generated constructor stub
@@ -135,36 +140,32 @@ RetCode PlatformUtilsImpl::MkPath(Boss::IString *path, bool *ok) {
 }
 
 RetCode PlatformUtilsImpl::FindAccounts(Boss::IEnum **result_enum) {
-	DIR *d;
-	ref_ptr<Enum> res_enum = Base<Enum>::Create();
-	struct dirent *dir;
-	const std::string char_loc = pu_h.SkypeLocation();
-	d = opendir(char_loc.c_str());
-	if (d) {
-		while ((dir = readdir(d)) != NULL) {
-			if (dir->d_type == DT_DIR) { //Directory
-				if (!strcmp(dir->d_name, ".")) continue;
-				if (!strcmp(dir->d_name, "..")) continue;
-				DIR *subd;
-				struct dirent *subdir;
-				char buf[512];
-				sprintf(buf, "%s/%s", char_loc.c_str(), dir->d_name);
-				subd = opendir(buf);
-				while ((subdir = readdir(subd)) != NULL) {
-					if (subdir->d_type == DT_REG && !strcmp(subdir->d_name, "main.db")) {
-						std::string hdbp = pu_h.UserSettingsDir() + "/SkyHistory/" + dir->d_name;
-						pu_h.MkPath(hdbp);
-						res_enum->AddItem(Base<AccountImpl>::Create(dir->d_name, std::string(buf) + "/main.db", hdbp));
-						break;
-					}
-				}
-				closedir(subd);
-			}
-		}
-		closedir(d);
-	}
-	res_enum.QueryInterface(result_enum);
+	dcout << "PlatformUtilsImpl::FindAccounts" << endl;
+	return Status::NotImplemented;
 }
 
+Boss::RetCode BOSS_CALL PlatformUtilsImpl::Children(Boss::IString *parent, Boss::IEnum **children) {
+	dcout << "PlatformUtilsImpl::Children" << endl;
+		auto result = Base<Enum>::Create();
+		std::string std_parent = StringHelper(parent).GetString<>();
+		DIR *d;
+		struct dirent *dir;
+    	d = opendir(std_parent.c_str());
+    	if (!d) {
+    		return result.QueryInterface(children);
+    	}
+    	while ((dir = readdir(d)) != NULL) {
+    		if (dir->d_type == DT_DIR || dir->d_type == DT_REG) { //Directory
+    			if (!strcmp(dir->d_name, ".")) continue;
+    			if (!strcmp(dir->d_name, "..")) continue;
+    			char buf[512];
+    			sprintf(buf, "%s/%s", std_parent.c_str(), dir->d_name);
+    			result->AddItem(Base<String>::Create(buf));
+
+    		}
+    	}
+    	closedir(d);
+		return result.QueryInterface(children);
+}
 
 } /* namespace skype_sc */

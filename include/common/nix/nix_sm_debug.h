@@ -5,8 +5,8 @@
  *      Author: ilia
  */
 
-#ifndef INCLUDE_COMMON_NIX_CALLSTACK_H_
-#define INCLUDE_COMMON_NIX_CALLSTACK_H_
+#ifndef INCLUDE_COMMON_NIX_NIX_SM_DEBUG_H_
+#define INCLUDE_COMMON_NIX_NIX_SM_DEBUG_H_
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -89,8 +89,32 @@ static inline bool callstack_dump(std::ostream &out, unsigned int max_frames = 6
 
 	return ret;
 }
+
+template <class CharT, class TraitsT = std::char_traits<CharT>>
+class basic_debugbuf :	public std::basic_stringbuf<CharT, TraitsT> {
+public:
+	virtual ~basic_debugbuf() {sync();}
+protected:
+	int sync() {
+		output_debug_string(this->str().c_str());
+		this->str(std::basic_string<CharT>());    // Clear the string buffer
+		return 0;
+	}
+	void output_debug_string(const CharT *text) {std::cout << text;}
+};
+
+template<class CharT, class TraitsT = std::char_traits<CharT> >
+class basic_dostream : public std::basic_ostream<CharT, TraitsT> {
+public:
+	 basic_dostream() : std::basic_ostream<CharT, TraitsT>(new basic_debugbuf<CharT, TraitsT>()) {}
+	~basic_dostream() {delete this->rdbuf();}
+};
+
+typedef basic_dostream<char>    dostream;
+typedef basic_dostream<wchar_t> wdostream;
+
 } // namespace Private
 
 
 
-#endif /* INCLUDE_COMMON_NIX_CALLSTACK_H_ */
+#endif /* INCLUDE_COMMON_NIX_NIX_SM_DEBUG_H_ */

@@ -8,13 +8,19 @@
 #ifndef INCLUDE_COMMON_SM_DEBUG_H_
 #define INCLUDE_COMMON_SM_DEBUG_H_
 
+#include <stdio.h>
+#include <vector>
+#include <sstream>
+#include <iostream>
+
 #ifdef _WIN32
 #  include <direct.h>
 #  include "win/win_sm_debug.h"
 #  define SM_GET_CWD _getcwd
 #else
 #  if (defined(__linux__) || defined __APPLE__)
-#    include "nix/callstack.h"
+#    include <common/nix/nix_sm_debug.h>
+#	 include "unistd.h"
 #    define SM_GET_CWD getcwd
 #  else
 //Stub
@@ -25,10 +31,6 @@ static inline bool callstack_dump(std::ostream &, unsigned int max_frames = 63) 
 } //namespace Private
 #  endif
 #endif
-
-#include <stdio.h>
-#include <vector>
-#include <sstream>
 
 namespace Private {
 class CallstackImpl {

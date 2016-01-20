@@ -63,4 +63,8 @@ namespace Boss
 
 }
 
+namespace sm {
+	void sleep(int secs);
+}
+
 #endif  // !__BOSS_CORE_UTILS_H__

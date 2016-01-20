@@ -11,6 +11,7 @@ set (OWN_LIBS
     skype_dbs
 )
 message("own libs: ${OWN_LIBS}")
+message("CXX_FLAGS for ShCore: ${CMAKE_CXX_FLAGS}")
 
 if (APPLE)
  list(APPEND include_directories "macosx/include/json-c")
