@@ -76,7 +76,7 @@ struct IDBController
 
     virtual Boss::RetCode BOSS_CALL Import() = 0;
     virtual Boss::RetCode BOSS_CALL Recent(Boss::IEnum **) = 0;
-    virtual Boss::RetCode BOSS_CALL GetMessagesAsync(MessageCallback onMessageGet, VoidCallback onLoadFinished) = 0;
+    virtual Boss::RetCode BOSS_CALL GetMessagesAsync(MessageCallback onMessageGet, VoidCallback onLoadFinished, unsigned int period) = 0;
     virtual Boss::RetCode BOSS_CALL SetDBPath(Boss::IString *) = 0;
 };
 

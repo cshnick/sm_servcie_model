@@ -22,7 +22,7 @@ class DBControllerImpl
 
 	virtual Boss::RetCode BOSS_CALL Import() override;
 	virtual Boss::RetCode BOSS_CALL Recent(Boss::IEnum **) override;
-	virtual Boss::RetCode BOSS_CALL GetMessagesAsync(MessageCallback, VoidCallback) override;
+	virtual Boss::RetCode BOSS_CALL GetMessagesAsync(MessageCallback, VoidCallback, uint period) override;
 	virtual Boss::RetCode BOSS_CALL SetDBPath(Boss::IString *) override;
 
 	virtual Boss::RetCode BOSS_CALL SetWatchFile(Boss::IString *) override;

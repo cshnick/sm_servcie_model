@@ -236,16 +236,23 @@ public:
         res.QueryInterface(result);
 	}
 
+	/*!
+	 * 	\briefGet messages from database, specified by period
+	 *
+	 * 	\param callback - Callback, retrieved each row with IMessage and progress
+	 * 	\param onLoadFinished - Callback, retrieved when the load is finished
+	 * 	\param period - unix timestamp, select starting point (from the beginning if 0)
+	 */
 	template<typename T = void>
-	void getMessages(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished) {
+	void getMessages(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished, uint period) { //unix time start times
 		std::lock_guard<Mutex> lock(m_mutex);
 		using namespace HistoryDB;
 		if (m_stop_async) return;
 		ref_ptr<Enum> res = Base<Enum>::Create();
 		dcout << "Dump all messages..." << endl;
 		Boss::UInt ct = Boss::GetTimeMs64();
-		size_t messages_count = select<Messages>(*history_db).count(), counter = 0;
-		auto messages = select<Messages>(*history_db).orderBy(Messages::Skype_timestamp, false).all();
+		size_t messages_count = select<Messages>(*history_db, Messages::Skype_timestamp > period).count(), counter = 0;
+		auto messages = select<Messages>(*history_db, Messages::Skype_timestamp > 0).orderBy(Messages::Skype_timestamp, false).all();
 		dcout << "Done; elapsed: " << Boss::GetTimeMs64() - ct << endl;
 		for (Messages m : messages) {
 			if (m_stop_async) return;
@@ -258,13 +265,13 @@ public:
 	}
 
 	template<typename T = void>
-	void getMessagesAsync(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished) {
+	void getMessagesAsync(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished, uint period) {
 		if (m_thread.get()) {
 			m_thread->detach();
 			m_thread.reset(nullptr);
 		}
-		void (DBControllerImplPrivate::*fn)(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished) = &DBControllerImplPrivate::getMessages;
-		m_thread.reset(new thread(fn, this, callback, onLoadFinished));
+		void (DBControllerImplPrivate::*fn)(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished, uint period) = &DBControllerImplPrivate::getMessages;
+		m_thread.reset(new thread(fn, this, callback, onLoadFinished, period));
 	}
 
 	template<typename T = void>
@@ -551,9 +558,9 @@ Boss::RetCode BOSS_CALL DBControllerImpl::Recent(Boss::IEnum **result) {
 	return Boss::Status::Ok;
 }
 
-Boss::RetCode BOSS_CALL DBControllerImpl::GetMessagesAsync(MessageCallback callback, VoidCallback onLoadFinished) {
+Boss::RetCode BOSS_CALL DBControllerImpl::GetMessagesAsync(MessageCallback callback, VoidCallback onLoadFinished, uint period) {
 	dcout << "DBControllerImpl::GetMessagesAsync()" << endl;
-	d->getMessagesAsync(callback, onLoadFinished);
+	d->getMessagesAsync(callback, onLoadFinished, period);
 	dcout << "Async returned" << endl;
 	return Boss::Status::Ok;
 }

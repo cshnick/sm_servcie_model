@@ -77,10 +77,10 @@ int main()
 			ref_ptr<IMessage>pm(m);
 			skype_sc::Message_hlpr mes_h(pm);
 			dcout << "\r\t" << mes_h.Id() << " : " << mes_h.Body() << " - " << progress  << "%";
-		}, nullptr);
+		}, nullptr, 0);
 		dcout << endl;
 
-//		sleep(1);
+		sm::sleep(1);
 
 		string second_skype = seh.Accounts().at(1).FilePath(), second_history = seh.Accounts().at(1).HistoryDBPath();
 		dcout << "Initial data: \n" << "\tSkype: " << second_skype << "\tHistory: " << second_history << endl;
@@ -91,9 +91,9 @@ int main()
 			ref_ptr<IMessage>pm(m);
 			skype_sc::Message_hlpr mes_h(pm);
 			dcout << "\r\t" << mes_h.Id() << " : " << mes_h.Body()  << " - " << progress  << "%";
-		} , nullptr);
+		} , nullptr, 0);
 		dcout << endl;
-//		sleep(10);
+		sm::sleep(10);
 		service->Stop();
 		dcout << "Stopped" << endl;
 //		while (true) {

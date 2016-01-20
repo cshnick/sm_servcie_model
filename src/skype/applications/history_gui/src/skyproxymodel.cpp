@@ -79,6 +79,9 @@ public:
     }
 
     void loadAsync() {
+    	QDateTime ct(QDateTime::currentDateTime());
+    	QDateTime tw_ago(ct.addDays(-7));
+
         m_dbctrl->GetMessagesAsync([this](IMessage *message, int progress) {
             ref_ptr<IMessage> pm(message);
             m_mutex.lock();
@@ -91,9 +94,12 @@ public:
             m_contacts->processMessage(mh);
             m_progress = progress;
             q->emitLoadProgressChanged(progress);
-        } , [this] {
+        },
+		[this] {
         	q->emitLoadFinished();
-        });
+        },
+		ct.toTime_t()
+		);
     }
 
     void restart(const QJsonObject &o) {
