@@ -12,6 +12,7 @@ set (OWN_LIBS
 )
 message("own libs: ${OWN_LIBS}")
 message("CXX_FLAGS for ShCore: ${CMAKE_CXX_FLAGS}")
+message(Build type name: ${BUILD_TYPE_NAME})
 
 if (APPLE)
  list(APPEND include_directories "macosx/include/json-c")

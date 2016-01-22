@@ -20,6 +20,8 @@ SET (HEADERS
     ${SRC_DIR}/skymodel.h
     ${SRC_DIR}/skyproxymodel.h
 )
+message(CMAKE_CONFIGURATION_TYPES ${CMAKE_INTDIR})
+message(CFG_INTDIR: ${Configuration})
 
 find_package(Qt5 COMPONENTS Quick Core Network Xml Widgets)
 
@@ -44,25 +46,25 @@ add_executable(${PROJECT_NAME}
 qt5_use_modules(${PROJECT_NAME} Quick Core Network Xml Widgets)
 target_link_libraries(${PROJECT_NAME} ${COMMON_LIBS})
 
-if (MSVC)
-add_custom_command (
-    TARGET ${PROJECT_NAME}
-    POST_BUILD
-    COMMENT Copying Qt libraries
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${QT_5_DIR}/bin/Qt5Widgets${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${QT_5_DIR}/bin/Qt5Gui${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${QT_5_DIR}/bin/Qt5Core${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${QT_5_DIR}/bin/Qt5Qml${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
-    COMMAND ${CMAKE_COMMAND} -E copy
-            ${QT_5_DIR}/bin/Qt5Network${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
-            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
-    )
-endif (MSVC)
+#if (MSVC)
+#add_custom_command (
+#    TARGET ${PROJECT_NAME}
+#    POST_BUILD
+#    COMMENT Copying Qt libraries
+#    COMMAND ${CMAKE_COMMAND} -E copy
+#            ${QT_5_DIR}/bin/Qt5Widgets${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
+#            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
+#    COMMAND ${CMAKE_COMMAND} -E copy
+#            ${QT_5_DIR}/bin/Qt5Gui${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
+#            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
+#    COMMAND ${CMAKE_COMMAND} -E copy
+#            ${QT_5_DIR}/bin/Qt5Core${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
+#            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
+#    COMMAND ${CMAKE_COMMAND} -E copy
+#            ${QT_5_DIR}/bin/Qt5Qml${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
+#            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
+#    COMMAND ${CMAKE_COMMAND} -E copy
+#            ${QT_5_DIR}/bin/Qt5Network${CMAKE_DEBUG_POSTFIX}${CMAKE_SHARED_LIBRARY_SUFFIX}
+#            ${LIBRARY_OUTPUT_PATH}/${BUILD_TYPE_NAME}
+#    )
+#endif (MSVC)

@@ -244,7 +244,7 @@ public:
 	 * 	\param period - unix timestamp, select starting point (from the beginning if 0)
 	 */
 	template<typename T = void>
-	void getMessages(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished, uint period) { //unix time start times
+	void getMessages(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished, unsigned period) { //unix time start times
 		std::lock_guard<Mutex> lock(m_mutex);
 		using namespace HistoryDB;
 		if (m_stop_async) return;
@@ -265,12 +265,12 @@ public:
 	}
 
 	template<typename T = void>
-	void getMessagesAsync(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished, uint period) {
+	void getMessagesAsync(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished, unsigned period) {
 		if (m_thread.get()) {
 			m_thread->detach();
 			m_thread.reset(nullptr);
 		}
-		void (DBControllerImplPrivate::*fn)(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished, uint period) = &DBControllerImplPrivate::getMessages;
+		void (DBControllerImplPrivate::*fn)(IDBController::MessageCallback callback, IDBController::VoidCallback onLoadFinished, unsigned period) = &DBControllerImplPrivate::getMessages;
 		m_thread.reset(new thread(fn, this, callback, onLoadFinished, period));
 	}
 
@@ -558,7 +558,7 @@ Boss::RetCode BOSS_CALL DBControllerImpl::Recent(Boss::IEnum **result) {
 	return Boss::Status::Ok;
 }
 
-Boss::RetCode BOSS_CALL DBControllerImpl::GetMessagesAsync(MessageCallback callback, VoidCallback onLoadFinished, uint period) {
+Boss::RetCode BOSS_CALL DBControllerImpl::GetMessagesAsync(MessageCallback callback, VoidCallback onLoadFinished, unsigned period) {
 	dcout << "DBControllerImpl::GetMessagesAsync()" << endl;
 	d->getMessagesAsync(callback, onLoadFinished, period);
 	dcout << "Async returned" << endl;

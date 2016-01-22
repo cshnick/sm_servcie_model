@@ -29,8 +29,10 @@ class SkyModelPrivate {
 public:
 	friend class SkyProxyModel;
     SkyModelPrivate(SkyProxyModel *p_q, SkyContactsTreeModel *contacts) : q(p_q), m_contacts(contacts) {
-		m_pluginLoader.reset(new Loader("sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
-				                                      MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory")));
+		QString argv0 = qApp->arguments().at(0);
+		std::string exe_path = sm::split_argv0(argv0.toStdString()).first;
+		m_pluginLoader.reset(new Loader(exe_path + "/" + "sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
+				                                                       MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory")));
 		try {
 			m_dbctrl = CreateObject<IDBController>(skype_sc::service::id::DBControler);
             m_settings = CreateObject<ISettings>(skype_sc::service::id::Settings);

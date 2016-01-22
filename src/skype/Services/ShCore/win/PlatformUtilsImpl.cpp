@@ -169,7 +169,7 @@ RetCode PlatformUtilsImpl::Children(IString *parent, IEnum **children) {
 			continue;
 		}
 		result->AddItem(Base<String>::Create(ffd.cFileName));
-		dcout << "next filename: " << ffd.cFileName << std::endl;
+		//dcout << "next filename: " << ffd.cFileName << std::endl;
 	} while (FindNextFile(hFind, &ffd));
 	FindClose(hFind);
 

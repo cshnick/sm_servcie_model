@@ -18,11 +18,12 @@ using namespace sm;
 
 int main (int argc, char **argv) {
 
-	Boss::Loader Ldr( "sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
-					                MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory"));
+	Boss::Loader Ldr(split_argv0(argv[0]).first + "/" + "sc_reg.xml", MAKE_MODULE_PATH MAKE_MODULE_NAME("service_registry"),
+																      MAKE_MODULE_PATH MAKE_MODULE_NAME("class_factory"));
 
 	try {
 		//Test PlatformUtils first
+		dcout << "Start settings test" << endl;
 		auto pu = CreateObject<IPlatformUtils>(skype_sc::service::id::PlatformUtils);
 		PlatformUtils_hlpr pu_h(pu);
 		string skype_location = pu_h.SkypeLocation();

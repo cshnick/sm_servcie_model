@@ -116,6 +116,7 @@ namespace Boss
       void Open(std::string const &fileName, std::string const &mode)
       {
         assert(!File && "File already open.");
+		sm::dcout << "Opening file: " << fileName << std::endl;
         if (!(File = std::fopen(fileName.c_str(), mode.c_str())))
           throw FileStreamException("Failed to open file \"" + fileName + "\".");
       }

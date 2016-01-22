@@ -27,8 +27,10 @@ if (MSVC)
 endif (MSVC)
 
 set (BUILD_TYPE_NAME Release)
+set (CMAKE_DEBUG_POSTFIX "")
 if(CMAKE_BUILD_TYPE MATCHES Debug)
     set (BUILD_TYPE_NAME Debug)
+    set(CMAKE_DEBUG_POSTFIX "d")
 endif (CMAKE_BUILD_TYPE MATCHES Debug)
 
 if(APPLE)
@@ -54,8 +56,7 @@ elseif (MSVC)
         set(CMAKE_IMPORT_LIBRARY_SUFFIX ".lib")
         set(CMAKE_EXECUTABLE_SUFFIX ".exe")         # .exe
         set(CMAKE_LINK_LIBRARY_SUFFIX ".lib")
-        set(CMAKE_DL_LIBS "")
-        set(CMAKE_DEBUG_POSTFIX "d") 
+        set(CMAKE_DL_LIBS "") 
 endif (APPLE)
 
 set(sm_common sm_common)

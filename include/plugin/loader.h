@@ -25,8 +25,12 @@
 
 #include <string>
 
+#define SM_DEBUG_POSTFIX ""
+#if (defined(_WIN32) && defined(_DEBUG))
+#	define SM_DEBUG_POSTFIX "d"
+#endif
 #ifdef _WIN32
-#   define MAKE_MODULE_NAME(name_) name_ "d.dll"
+#   define MAKE_MODULE_NAME(name_) name_ SM_DEBUG_POSTFIX".dll"
 #   define MAKE_MODULE_PATH ""
 #elif (defined(__SM_QTCREATOR__))
 #   define MAKE_MODULE_NAME(name_) "lib" name_ ".so"
