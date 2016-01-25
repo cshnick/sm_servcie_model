@@ -16,6 +16,12 @@
   #pragma warning(disable : 4996)
 #endif  // !_MSC_VER
 
+#include <string>
+#include <cstdio>
+#include <iterator>
+
+#include <assert.h>
+
 #include "iistream.h"
 #include "iostream.h"
 #include "iiostream.h"
@@ -24,12 +30,7 @@
 #include "../core/co_class.h"
 #include "../core/error_codes.h"
 #include "../core/exceptions.h"
-
-#include <string>
-#include <cstdio>
-#include <iterator>
-
-#include <assert.h>
+#include "../common/sm_debug.h"
 
 namespace Boss
 {
